@@ -9,6 +9,9 @@ export default {
         noto: ['Noto Sans', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif'],
       },
+      colors: {
+        cream: '#FCF8F3', // Adding the custom color
+      },
     },
   },
   plugins: [],
