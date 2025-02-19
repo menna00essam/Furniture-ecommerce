@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
-  @Input() type: 'filledBtn' | 'outlinedBtn' = 'filledBtn';
+  @Input() type: 'filledBtn' | 'outlinedBtn'| 'plainBtn' = 'filledBtn';
   @Input() btnPadding: string = '10px';
   @Input() btnWidth: string = '150px';
 }
