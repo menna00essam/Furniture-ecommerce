@@ -23,6 +23,7 @@ export const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blog', component: BlogComponent },
+      { path: 'blog/:id', component: BlogComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
