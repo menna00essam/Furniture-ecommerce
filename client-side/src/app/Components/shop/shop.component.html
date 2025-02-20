@@ -58,36 +58,19 @@
     }"
   >
     <div
-      class="grid"
       [ngClass]="{
-        'grid-cols-4': showFilters,
-        'grid-cols-5': !showFilters
+        'sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4': showFilters,
+        'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5': !showFilters
       }"
+      class="grid gap-6 w-full"
     >
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
-      <div>Product</div>
+      @for (item of products; track item.id) {
+      <app-product-item [product]="item"> </app-product-item>
+      }
     </div>
 
     <div>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
+      <app-button class="rounded-5" btnWidth="60px">1</app-button>
     </div>
   </div>
 </div>
