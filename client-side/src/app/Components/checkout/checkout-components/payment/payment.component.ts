@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-checkout',
-  imports: [CommonModule, FormsModule],
-  templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.css',
+  selector: 'app-payment',
+  imports:  [CommonModule,FormsModule],
+  templateUrl: './payment.component.html',
+  styleUrl: './payment.component.css'
 })
-export class CheckoutComponent {
+export class PaymentComponent {
   selectedPayment: string = '';
 }
