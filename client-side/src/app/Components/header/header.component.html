@@ -1,28 +1,157 @@
-<div class="flex justify-between items-center h-[100px] px-[50px]">
+<div
+  class="sticky flex justify-between items-center h-[100px] lg:px-[30px] px-[10px] z-[999]"
+  style="box-shadow: 0 0 10px #0000004d"
+>
   <div class="flex items-center gap-[5px]">
     <img src="images/logo.png" alt="" class="w-[50px]" />
-    <div class="text-[34px] font-bold font-montserrat">Furnio</div>
+    <div class="text-[34px] font-bold font-montserrat">Furniro</div>
   </div>
-  <div class="flex items-center gap-[75px]">
-    <a href="" class="text-[16px] font-medium font-poppins">Home</a>
-    <a href="" class="text-[16px] font-medium font-poppins">Shop</a>
-    <a href="" class="text-[16px] font-medium font-poppins">About</a>
-    <a href="" class="text-[16px] font-medium font-poppins">Contact</a>
+  <div class="hidden md:flex items-center flex-1 justify-center">
+    <ul class="flex gap-[30px] lg:gap-[40px]">
+      <li
+        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+      >
+        <a routerLink="/" class="text-[16px] font-medium font-poppins">Home</a>
+      </li>
+      <li
+        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+      >
+        <a routerLink="/shop" class="text-[16px] font-medium font-poppins"
+          >Shop</a
+        >
+      </li>
+      <li
+        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+      >
+        <a routerLink="/blog" class="text-[16px] font-medium font-poppins"
+          >Blogs</a
+        >
+      </li>
+      <li
+        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+      >
+        <a routerLink="/contact" class="text-[16px] font-medium font-poppins"
+          >Contact</a
+        >
+      </li>
+    </ul>
   </div>
 
-  <div class="flex gap-[45px]">
-    <button class="w-[28px]cursor-pointer">
-      <img src="icons/account-alert.svg" alt="" srcset="" class="w-[28px]" />
-    </button>
-    <button class="w-[28px] cursor-pointer">
-      <img src="icons/search.svg" alt="" srcset="" class="w-[28px]" />
-    </button>
+  <div class="hidden md:flex">
+    <ul class="flex gap-[15px]">
+      <li>
+        <a routerLink="">
+          <img
+            src="icons/account-alert.svg"
+            alt=""
+            srcset=""
+            class="w-[20px]"
+          />
+        </a>
+      </li>
+      <li>
+        <a routerLink="">
+          <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
+        </a>
+      </li>
+      <li>
+        <a routerLink="">
+          <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
+        </a>
+      </li>
+      <li>
+        <a routerLink="">
+          <img
+            src="icons/shopping-cart.svg"
+            alt=""
+            srcset=""
+            class="w-[20px]"
+          />
+        </a>
+      </li>
+    </ul>
+  </div>
+  <button
+    (click)="toggleMenu()"
+    class="cursor-pointer"
+    [class.active]="isActive"
+  >
+    <div
+      class="hamburgerMenu md:hidden flex flex-col justify-evenly items-center w-[40px] h-[40px]"
+    >
+      <span
+        class="menuSign border border-[2px] rounded-[5px] w-[60%] duration-300 ease"
+      ></span>
+      <span
+        class="menuSign border border-[2px] rounded-[5px] w-[90%] duration-300 ease"
+      ></span>
+      <span
+        class="menuSign border border-[2px] rounded-[5px] w-[60%] duration-300 ease"
+      ></span>
+    </div>
+  </button>
 
-    <button class="w-[28px] cursor-pointer">
-      <img src="icons/heart.svg" alt="" srcset="" class="w-[28px]" />
-    </button>
-    <button class="w-[28px] cursor-pointer">
-      <img src="icons/shopping-cart.svg" alt="" srcset="" class="w-[28px]" />
-    </button>
+  <div
+    class="mobileMenu hidden flex-col absolute top-[100px] right-0 w-[250px] text-center bg-white"
+    style="box-shadow: 0 0 10px #0000004d"
+  >
+    <div>
+      <ul>
+        <li
+          class="flex justify-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+        >
+          <a class="w-100 py-[10px]" routerLink="/home"> Home </a>
+        </li>
+        <li
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+        >
+          <a class="w-100 py-[10px]" routerLink="/shop"> Shop </a>
+        </li>
+        <li
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+        >
+          <a class="w-100 py-[10px]" routerLink="/blog"> Blogs </a>
+        </li>
+        <li
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+        >
+          <a class="w-100 py-[10px]" routerLink="/contact"> Contact </a>
+        </li>
+        <li class="flex justify-center items-center border-b border-gray">
+          <ul class="flex gap-[15px] py-[10px]">
+            <li>
+              <a routerLink="">
+                <img
+                  src="icons/account-alert.svg"
+                  alt=""
+                  srcset=""
+                  class="w-[20px]"
+                />
+              </a>
+            </li>
+            <li>
+              <a routerLink="">
+                <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
+              </a>
+            </li>
+            <li>
+              <a routerLink="">
+                <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
+              </a>
+            </li>
+            <li>
+              <a routerLink="">
+                <img
+                  src="icons/shopping-cart.svg"
+                  alt=""
+                  srcset=""
+                  class="w-[20px]"
+                />
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
