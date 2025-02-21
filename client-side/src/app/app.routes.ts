@@ -7,6 +7,7 @@ import { ProductComponent } from './Components/product/product.component';
 import { CartComponent } from './Components/cart/cart.component';
 import { CheckoutComponent } from './Components/checkout/checkout.component';
 import { ContactComponent } from './Components/contact/contact.component';
+import { BlogsComponent } from './Components/blogs/blogs.component';
 import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
 
@@ -22,7 +23,9 @@ export const routes: Routes = [
       { path: 'cart', component: CartComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'blog', component: BlogComponent },
+      { path: 'blogs', component: BlogsComponent },
+      { path: 'blog/:id', component: BlogComponent },
+
       { path: '**', component: NotFoundComponent },
     ],
   },
