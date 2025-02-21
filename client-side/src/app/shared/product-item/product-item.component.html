@@ -1,0 +1,39 @@
+<div class="bg-(--light-gray) relative">
+  <div
+    class="overlay absolute w-full h-full top-0 left-0 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition"
+  >
+    <app-button type="plainBtn">add to cart</app-button>
+    <div class="flex justify-around gap-5 text-white mt-3">
+      <p class="flex gap-3 cursor-pointer">
+        <img src="/icons/share.svg" />share
+      </p>
+      <p class="flex gap-3 cursor-pointer">
+        <img src="/icons/compare.svg" />compare
+      </p>
+      <p class="flex gap-3 cursor-pointer">
+        <img src="/icons/wHeart.svg" /> like
+      </p>
+    </div>
+  </div>
+  @if(product.sale){
+  <p class="saleIcon bg-(--sale-icon)">-{{ product.sale }}%</p>
+
+  }
+  <img [src]="product.img" class="w-full" alt="prduct" />
+  <div class="p-3">
+    <h3 class="font-semibold">{{ product.title }}</h3>
+    <p class="my-3 text-(--product-gray)">{{ product.discription }}</p>
+    @if (product.sale) {
+    <div class="flex justify-between">
+      <p class="font-semibold">
+        {{ (product.sale * product.price) / 100 | currency }}
+      </p>
+      <p class="line-through text-(--product-gray)">
+        {{ product.price | currency }}
+      </p>
+    </div>
+    }@else {
+    <p class="font-semibold">{{ product.price | currency }}</p>
+    }
+  </div>
+</div>
