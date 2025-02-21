@@ -9,6 +9,7 @@ import { CheckoutComponent } from './Components/checkout/checkout.component';
 import { ContactComponent } from './Components/contact/contact.component';
 import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
+import { ComparisonComponent } from './Components/comparison/comparison.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blog', component: BlogComponent },
+      { path: 'comparison', component: ComparisonComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
