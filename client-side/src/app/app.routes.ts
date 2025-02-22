@@ -36,8 +36,7 @@ export const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
-      { path: 'blog/:id', component: BlogComponent },
-
+      { path: 'blog', component: BlogComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
