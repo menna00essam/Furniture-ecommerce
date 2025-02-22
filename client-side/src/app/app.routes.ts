@@ -12,6 +12,7 @@ import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
 import { SignupComponent } from './Components/signup/signup.component';
 import { LoginComponent } from './Components/login/login.component';
+import { FavoritesComponent } from './Components/favorites/favorites.component';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,7 @@ export const routes: Routes = [
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
       { path: 'blog', component: BlogComponent },
+      { path: 'favorites', component: FavoritesComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
