@@ -1,0 +1,148 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  margin: auto;
+}
+
+.checkout-container {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.billing-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.billing-form h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.billing-form label {
+  font-weight: bold;
+  margin-top: 10px;
+  color: #444;
+}
+
+.billing-form input,
+.billing-form select,
+.billing-form textarea {
+  width: 90%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.billing-form input:focus,
+.billing-form select:focus,
+.billing-form textarea:focus {
+  outline: none;
+  border-color: #3333338c;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.Confirming-payment {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: max-content;
+}
+
+.Confirming-payment h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  /* border-bottom: 1px solid #ddd; */
+}
+
+th {
+  background-color: #f3f3f3;
+  border-radius: 5px;
+}
+.total {
+  color: #b88e2f;
+  font-weight: bold;
+}
+.payment-method p {
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.452);
+}
+
+div:nth-child(2) label {
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.76);
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+}
+.policy {
+  font-weight: bold;
+}
+button {
+  margin: 0 auto;
+  display: block;
+  width: 200px;
+  padding: 12px;
+  margin-top: 20px;
+  /* background-color: #333; */
+  color: rgb(0, 0, 0);
+  font-size: 18px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #333;
+  color: white;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  section {
+    flex-direction: row;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  section {
+    flex-direction: column;
+  }
+}
