@@ -68,7 +68,11 @@
     }"
   >
     <div
-      class="grid gap-6 w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+      class="grid gap-6 w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+      [ngClass]="{
+        'lg:grid-cols-4': showFilters,
+        'lg:grid-cols-5': !showFilters
+      }"
     >
       @for (item of products; track item.id) {
       <app-product-item [product]="item"> </app-product-item>
