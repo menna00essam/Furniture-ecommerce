@@ -89,6 +89,7 @@ export class HomeComponent implements AfterViewInit {
       discription: 'Stylish cafe chair',
       price: 2500000,
     },
+
   ];
   ngAfterViewInit() {
     new Swiper(this.swiperRef.nativeElement, {
