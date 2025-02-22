@@ -8,31 +8,28 @@
       <div class="sign text-[36px] font-bold ps-8 pt-5 font-poppins">
         Sign in
       </div>
-      <form action="">
-        <div class="ps-7 mt-7">
-          <label class="block" for="">Email</label>
-          <input
-            type="text"
-            class="w-[90%] outline-0 rounded-md p-1 ps-2 mt-1 bg-[#F9F1E7]"
-            placeholder="test@gmail.com"
-          />
-        </div>
-        <div class="ps-7 mt-5">
-          <div class="flex place-content-between">
-            <label class="block" for="">Password</label>
-            <p class="me-12 opacity-30"><a href=""> Forget Password ?</a></p>
-          </div>
-          <input
-            type="password"
-            class="w-[90%] outline-0 rounded-md p-1 ps-2 mt-1 bg-[#F9F1E7]"
-            placeholder="Password"
-          />
-        </div>
+      <form action="" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <app-input
+          placeholder="Email"
+          label="email"
+          type="email"
+          bgC="dark"
+          width="90%"
+          [control]="form.controls['email']"
+        ></app-input>
+        <app-input
+          placeholder="Password"
+          label="Password"
+          type="password"
+          bgC="dark"
+          width="90%"
+          [control]="form.controls['password']"
+        ></app-input>
         <div class="text-center mt-4">
           <div
             class="m-auto bg-dark rounded-3xl p-2 text-white w-[30%] text-center flex items-center justify-center mt-[50px]"
           >
-            <button type="submit">SIGN IN</button>
+            <button class="cursor-pointer" type="submit">SIGN IN</button>
             <img src="icons/Arrow-1.svg" alt="" class="ms-2" />
           </div>
           <div class="text-center mt-[30px]">
