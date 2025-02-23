@@ -9,26 +9,26 @@
   <div class="hidden md:flex items-center flex-1 justify-center">
     <ul class="flex gap-[30px] lg:gap-[40px]">
       <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+        class="px-[10px] leading-[40px] hover:bg-light duration-300 ease"
       >
         <a routerLink="/" class="text-[16px] font-medium font-poppins">Home</a>
       </li>
       <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+        class="px-[10px] leading-[40px] hover:bg-light duration-300 ease"
       >
         <a routerLink="/shop" class="text-[16px] font-medium font-poppins"
           >Shop</a
         >
       </li>
       <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+        class="px-[10px] leading-[40px] hover:bg-light duration-300 ease"
       >
         <a routerLink="/blogs" class="text-[16px] font-medium font-poppins"
           >Blogs</a
         >
       </li>
       <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
+        class="px-[10px] leading-[40px] hover:bg-light duration-300 ease"
       >
         <a routerLink="/contact" class="text-[16px] font-medium font-poppins"
           >Contact</a
@@ -40,26 +40,35 @@
   <div class="hidden md:flex">
     <ul class="flex gap-[15px]">
       <li>
-        <button class="cursor-pointer">
+        <a routerLink="/register">
           <img
             src="icons/account-alert.svg"
             alt=""
             srcset=""
             class="w-[20px]"
           />
-        </button>
+        </a>
       </li>
       <li>
         <button class="cursor-pointer">
           <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
         </button>
       </li>
-      <li>
+      <li class="relative">
         <button class="cursor-pointer" (click)="toggleFavModal(true)">
           <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
         </button>
+        @if(favorites.length){
+        <div
+          class="absolute top-0 right-0 bg-dark text-white w-[20px] h-[20px] rounded-[50px] text-xs flex justify-center items-center translate-x-[50%] translate-y-[-50%]"
+        >
+          @if(favorites.length<10){
+          {{ favorites.length }}
+          } @else{ 9+ }
+        </div>
+        }
       </li>
-      <li>
+      <li class="relative">
         <button class="cursor-pointer" (click)="toggleCartModal(true)">
           <img
             src="icons/shopping-cart.svg"
@@ -68,6 +77,15 @@
             class="w-[20px]"
           />
         </button>
+        @if(cart.length){
+        <div
+          class="absolute top-0 right-0 bg-dark text-white w-[20px] h-[20px] rounded-[50px] text-xs flex justify-center items-center translate-x-[50%] translate-y-[-50%]"
+        >
+          @if(cart.length<10){
+          {{ cart.length }}
+          } @else{ 9+ }
+        </div>
+        }
       </li>
     </ul>
   </div>
@@ -98,29 +116,29 @@
     <div>
       <ul>
         <li
-          class="flex justify-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+          class="flex justify-center border-b border-gray-medium hover:bg-light duration-300 ease"
         >
           <a class="w-100 py-[10px]" routerLink="/home"> Home </a>
         </li>
         <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-light duration-300 ease"
         >
           <a class="w-100 py-[10px]" routerLink="/shop"> Shop </a>
         </li>
         <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-light duration-300 ease"
         >
           <a class="w-100 py-[10px]" routerLink="/blog"> Blogs </a>
         </li>
         <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
+          class="flex justify-center items-center border-b border-gray-medium hover:bg-light duration-300 ease"
         >
           <a class="w-100 py-[10px]" routerLink="/contact"> Contact </a>
         </li>
         <li class="flex justify-center items-center border-b border-gray">
-          <ul class="flex gap-[15px] py-[10px]">
+          <ul class="flex gap-[15px] py-[15px]">
             <li>
-              <a routerLink="">
+              <a routerLink="/register">
                 <img
                   src="icons/account-alert.svg"
                   alt=""
@@ -130,24 +148,42 @@
               </a>
             </li>
             <li>
-              <a routerLink="">
+              <button class="cursor-pointer">
                 <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
-              </a>
+              </button>
             </li>
-            <li>
-              <a routerLink="">
+            <li class="relative">
+              <button class="cursor-pointer" (click)="toggleFavModal(true)">
                 <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
-              </a>
+              </button>
+              @if(favorites.length){
+              <div
+                class="absolute top-0 right-0 bg-dark text-white w-[20px] h-[20px] rounded-[50px] text-xs flex justify-center items-center translate-x-[50%] translate-y-[-50%]"
+              >
+                @if(favorites.length<10){
+                {{ favorites.length }}
+                } @else{ 9+ }
+              </div>
+              }
             </li>
-            <li>
-              <a routerLink="">
+            <li class="relative">
+              <button class="cursor-pointer" (click)="toggleCartModal(true)">
                 <img
                   src="icons/shopping-cart.svg"
                   alt=""
                   srcset=""
                   class="w-[20px]"
                 />
-              </a>
+              </button>
+              @if(cart.length){
+              <div
+                class="absolute top-0 right-0 bg-dark text-white w-[20px] h-[20px] rounded-[50px] text-xs flex justify-center items-center translate-x-[50%] translate-y-[-50%]"
+              >
+                @if(cart.length<10){
+                {{ cart.length }}
+                } @else{ 9+ }
+              </div>
+              }
             </li>
           </ul>
         </li>
@@ -163,18 +199,37 @@
   (click)="toggleFavModal(false)"
 ></div>
 <div
-  class="w-50 bg-[#f5f5f5] p-[25px] flex flex-col w-[420px] gap-[25px] z-[1000] absolute top-0 right-0 h-full"
+  class="w-50 bg-[#f5f5f5] p-[25px] flex flex-col w-full max-w-[420px] gap-[25px] z-[1000] absolute top-0 right-0 h-full"
 >
   <div class="flex justify-between">
     <h3 class="text-2xl font-semibold">Favorites</h3>
     <div class="cursor-pointer" (click)="toggleFavModal(false)">
-      <img src="icons/cart.svg" alt="" />
+      <img src="icons/close.svg" alt="" />
     </div>
   </div>
-  <div class="border-y border-gray-medium flex-1"></div>
-  <app-button type="blackOutlined"
-    ><a routerLink="/favorites">See more</a></app-button
+  <div
+    class="border-y border-gray-medium flex-1 flex flex-col gap-[25px] py-[25px]"
   >
+    @for(item of favorites; track item.id){
+    <div class="flex items-center gap-[30px]">
+      <img src="{{ item.img }}" alt="" class="w-[80px] rounded-[10px]" />
+      <div class="flex flex-1 justify-between">
+        <h3 class="text-base">{{ item.title }}</h3>
+        <div class="cursor-pointer" (click)="deletefavorites(item.id)">
+          <img src="icons/close-filled.svg" alt="" />
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="flex justify-between">
+    <a
+      routerLink="/favorites"
+      (click)="toggleFavModal(false)"
+      class="border py-[5px] px-[30px] text-xs rounded-[50px]"
+      >See more</a
+    >
+  </div>
 </div>
 } @if(this.cartModalShow){
 <div
@@ -182,13 +237,61 @@
   (click)="toggleCartModal(false)"
 ></div>
 <div
-  class="w-50 bg-[#f5f5f5] p-[25px] flex flex-col w-[420px] gap-[25px] z-[1000] absolute top-0 right-0 h-full"
+  class="w-50 bg-[#f5f5f5] p-[25px] flex flex-col w-full max-w-[420px] gap-[25px] z-[1000] absolute top-0 right-0 h-full"
 >
-  <div class="flex justify-between pb-[25px] border-b border-gray-medium">
-    <h3 class="text-2xl font-semibold">Shopping cart</h3>
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl font-semibold">Shopping Cart</h3>
     <div class="cursor-pointer" (click)="toggleCartModal(false)">
-      <img src="icons/cart.svg" alt="" />
+      <img src="icons/close.svg" alt="" />
     </div>
+  </div>
+  <div
+    class="border-y border-gray-medium flex-1 flex flex-col gap-[25px] py-[25px] justify-between"
+  >
+    <div class="flex flex-col gap-[25px]">
+      @for(item of cart; track item.id){
+      <div class="flex items-center gap-[30px]">
+        <img src="{{ item.img }}" alt="" class="w-[80px] rounded-[10px]" />
+        <div class="flex flex-1 justify-between items-center">
+          <div class="flex flex-col">
+            <h3 class="text-base">{{ item.title }}</h3>
+            <div class="flex gap-[10px]">
+              <div>1</div>
+              <div>x</div>
+              <div class="text-dark">{{ item.price | currency }}</div>
+            </div>
+          </div>
+          <div class="cursor-pointer" (click)="deleteCartProduct(item.id)">
+            <img src="icons/close-filled.svg" alt="" />
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    <div class="flex justify-between">
+      <div>Subtotal</div>
+      <div class="text-dark">{{ cartProductsTotalPrice | currency }}</div>
+    </div>
+  </div>
+  <div class="flex justify-between">
+    <a
+      routerLink="/cart"
+      (click)="toggleCartModal(false)"
+      class="border py-[5px] px-[30px] text-xs rounded-[50px]"
+      >Cart</a
+    >
+    <a
+      routerLink="/checkout"
+      (click)="toggleCartModal(false)"
+      class="border py-[5px] px-[30px] text-xs rounded-[50px]"
+      >Checkout</a
+    >
+    <a
+      routerLink="/comparison"
+      (click)="toggleCartModal(false)"
+      class="border py-[5px] px-[30px] text-xs rounded-[50px]"
+      >Comparison</a
+    >
   </div>
 </div>
 }
