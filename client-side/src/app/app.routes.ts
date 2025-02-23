@@ -10,9 +10,11 @@ import { ContactComponent } from './Components/contact/contact.component';
 import { BlogsComponent } from './Components/blogs/blogs.component';
 import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
+import { ComparisonComponent } from './Components/comparison/comparison.component';
 import { SignupComponent } from './Components/signup/signup.component';
 import { LoginComponent } from './Components/login/login.component';
 import { FavoritesComponent } from './Components/favorites/favorites.component';
+
 
 export const routes: Routes = [
   {
@@ -38,7 +40,10 @@ export const routes: Routes = [
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
       { path: 'blog', component: BlogComponent },
+      { path: 'comparison', component: ComparisonComponent },
+
       { path: 'favorites', component: FavoritesComponent },
+
       { path: '**', component: NotFoundComponent },
     ],
   },
