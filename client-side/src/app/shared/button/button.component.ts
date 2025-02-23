@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-button',
@@ -9,7 +9,16 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
-  @Input() type: 'filledBtn' | 'outlinedBtn'| 'plainBtn' | 'blackOutlined' = 'filledBtn';
+  @Input() type:
+    | 'primary-fill'
+    | 'secondary-fill'
+    | 'primary-outline'
+    | 'plainBtn'
+    | 'black-outline' = 'primary-fill';
   @Input() btnPadding: string = '10px';
   @Input() btnWidth: string = '150px';
+  @Output() click = new EventEmitter<string>();
+  clicked() {
+    this.click.emit();
+  }
 }
