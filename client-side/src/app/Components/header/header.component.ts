@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { product } from '../../models/product.model';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { DropdownComponent } from '../dropdown/dropdown.component';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-header',
-  imports: [RouterModule, ButtonComponent, CurrencyPipe],
+  imports: [RouterModule, CurrencyPipe, CommonModule, FormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -13,6 +15,10 @@ export class HeaderComponent {
   isActive = false;
   favModalShow = false;
   cartModalShow = false;
+  searchShow = false;
+  searchValue = '';
+  productsNames: string[] = [];
+  searchValues: string[] = [];
   favorites: product[] = [
     {
       id: 1,
@@ -100,6 +106,7 @@ export class HeaderComponent {
       (total, i) => total + i.price,
       0
     );
+    this.productsNames = this.products.map((p) => p.title);
   }
 
   toggleMenu() {
@@ -133,6 +140,15 @@ export class HeaderComponent {
     this.cartProductsTotalPrice = this.cart.reduce(
       (total, i) => total + i.price,
       0
+    );
+  }
+  toggleSearch(open: boolean) {
+    this.searchShow = open;
+  }
+
+  updateSearch() {
+    this.searchValues = this.productsNames.filter((p) =>
+      p.toLowerCase().includes(this.searchValue.toLowerCase())
     );
   }
 }
