@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   template: `
     <div class="relative menu-container">
       <button
-        class="bg-white h-14 flex items-center px-5 cursor-pointer w-48 border border-gray-300 rounded-md focus:outline-none"
+        class="bg-white h-14 flex items-center px-5 cursor-pointer w-full min-w-48 border border-gray-300 rounded-md focus:outline-none"
         (click)="toggleMenu()"
       >
         <span class="text-gray-700">{{ selectedValue }}</span>
@@ -16,7 +16,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
       <div
         *ngIf="isMenuOpen"
-        class="absolute top-full left-0 bg-white w-full rounded-md shadow-md p-2 mt-2 z-10"
+        class="absolute top-full left-0 bg-white w-full max-w-[300px] rounded-md shadow-md p-2 mt-2 z-10"
       >
         <ul class="flex flex-col">
           <li
