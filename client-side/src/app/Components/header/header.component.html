@@ -1,13 +1,16 @@
-<div
-  class="sticky flex justify-between items-center h-[100px] lg:px-[30px] px-[10px] z-[999]"
+<header
+  class="sticky top-0 bg-white flex justify-between items-center h-[100px] lg:px-[30px] px-[10px] z-[999] gap-[10px]"
   style="box-shadow: 0 0 10px #0000004d"
 >
+  <!-- logo  -->
   <div class="flex items-center gap-[5px]">
-    <img src="images/logo.png" alt="" class="w-[50px]" />
-    <div class="text-[34px] font-bold font-montserrat">Furniro</div>
+    <img src="images/logo.png" alt="" class="w-[30px] lg:w-[50px]" />
+    <div class="text-2xl lg:text-4xl font-bold font-montserrat">Furniro</div>
   </div>
-  <div class="hidden md:flex items-center flex-1 justify-center">
-    <ul class="flex gap-[30px] lg:gap-[40px]">
+
+  <!-- Navigation links -->
+  <div class="hidden md:block flex-1">
+    <ul class="flex justify-center gap-[20px] lg:gap-[30px] lg:gap-[40px]">
       <li class="px-[10px] leading-[40px] hover:bg-light duration-300 ease">
         <a routerLink="/" class="text-[16px] font-medium font-poppins">Home</a>
       </li>
@@ -29,23 +32,25 @@
     </ul>
   </div>
 
-  <div class="hidden md:flex">
-    <ul class="flex gap-[15px] items-center">
+  <!-- Actions -->
+  <div class="hidden md:block">
+    <ul class="flex gap-[20px] items-center">
       <li>
+        <!-- Search Input -->
         <div
-          class="h-full rounded-[10px] relative p-1 justify-end bg-white h-14 flex items-center cursor-pointer w-60 border border-gray-300 rounded-md focus:outline-none"
+          class="w-[100px] lg:w-48 h-full rounded-[10px] relative p-1 justify-end bg-white h-14 flex items-center cursor-pointer border border-gray-300 rounded-md focus:outline-none"
           (click)="toggleSearch(true)"
         >
           <input
             type="text"
-            class="focus:outline-none"
+            class="focus:outline-none w-full"
             [(ngModel)]="searchValue"
             (input)="updateSearch()"
           />
           <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
           <div
             *ngIf="searchValue"
-            class="absolute top-full left-0 bg-white w-full rounded-md shadow-md p-2 mt-2 z-10"
+            class="absolute top-full left-0 bg-white w-full min-w-[200px] rounded-md shadow-md p-2 mt-2 z-10"
           >
             <ul class="flex flex-col">
               <li
@@ -103,6 +108,35 @@
       </li>
     </ul>
   </div>
+
+  <!-- Search Input -->
+  <div
+    class="lg:hidden w-48 rounded-[10px] relative p-1 justify-end bg-white h-14 flex items-center cursor-pointer border border-gray-300 rounded-md focus:outline-none"
+    (click)="toggleSearch(true)"
+  >
+    <input
+      type="text"
+      class="focus:outline-none w-full"
+      [(ngModel)]="searchValue"
+      (input)="updateSearch()"
+    />
+    <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
+    <div
+      *ngIf="searchValue"
+      class="absolute top-full left-0 bg-white w-full min-w-[200px] rounded-md shadow-md p-2 mt-2 z-10"
+    >
+      <ul class="flex flex-col">
+        <li
+          *ngFor="let item of searchValues"
+          class="p-2 duration-300 ease-in-out cursor-pointer rounded-md"
+        >
+          {{ item }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Menu Button -->
   <button
     (click)="toggleMenu()"
     class="cursor-pointer"
@@ -151,22 +185,7 @@
         </li>
         <li class="flex justify-center items-center border-b border-gray">
           <ul class="flex gap-[15px] py-[15px]">
-            <li>
-              <a routerLink="/register">
-                <img
-                  src="icons/account-alert.svg"
-                  alt=""
-                  srcset=""
-                  class="w-[20px]"
-                />
-              </a>
-            </li>
-            <li>
-              <button class="cursor-pointer">
-                <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
-              </button>
-            </li>
-            <li class="relative">
+            <li class="relative h-[20px]">
               <button class="cursor-pointer" (click)="toggleFavModal(true)">
                 <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
               </button>
@@ -180,7 +199,7 @@
               </div>
               }
             </li>
-            <li class="relative">
+            <li class="relative h-[20px]">
               <button class="cursor-pointer" (click)="toggleCartModal(true)">
                 <img
                   src="icons/shopping-cart.svg"
@@ -199,12 +218,22 @@
               </div>
               }
             </li>
+            <li>
+              <a routerLink="/register">
+                <img
+                  src="icons/account-alert.svg"
+                  alt=""
+                  srcset=""
+                  class="w-[20px]"
+                />
+              </a>
+            </li>
           </ul>
         </li>
       </ul>
     </div>
   </div>
-</div>
+</header>
 
 <!-- modal -->
 @if(this.favModalShow){
