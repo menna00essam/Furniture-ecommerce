@@ -9,9 +9,37 @@
   --font-montserrat: "Montserrat";
   --color-light: #fcf8f3;
   --color-dark: #b88e2f;
+
+  --color-gray: #9f9f9f;
+  --color-light2: #f9f1e7;
+
+  --color-gray-medium: #9f9f9f;
+  --color-gray-light: #acacac80;
+  --color-white: #fff;
+  --color-black: #3a3a3a;
   --color-gray: #9f9f9f;
   --my-color: #fff3e3;
   --dark-gray: #333333;
   --light-gray: #f4f5f7;
   --sale-icon: #e97171;
+  --product-gray: #898989;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

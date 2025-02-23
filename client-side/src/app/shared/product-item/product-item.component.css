@@ -1,7 +1,7 @@
 .saleIcon {
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: 10px;
+  top: 10px;
   padding: 10px;
   color: white;
   width: 50px;
@@ -10,4 +10,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
+}
+.overlay{
+  background-color: #757272ac;
 }
