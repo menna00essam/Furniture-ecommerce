@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router,RouterModule } from '@angular/router';
 import { BlogPost } from '../../models/blog-post';
 import { CommonModule } from '@angular/common';
-
+import { HeaderBannerComponent } from '../header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
 
 @Component({
   selector: 'app-blog',
-  imports: [CommonModule,],
+  imports: [CommonModule,RouterModule,
+     HeaderBannerComponent,
+        FeatureBannerComponent,
+  ],
   templateUrl: './blog.component.html',
   styleUrl: './blog.component.css'
 })
@@ -124,9 +128,9 @@ export class BlogComponent {
       }
     }
   }
-  navigateToPost(postId: number) {
-    this.router.navigate(['/post', postId]);
-  }
+  // navigateToPost(postId: number) {
+  //   this.router.navigate(['/blog', postId]);
+  // }
 
   get relatedPosts(): BlogPost[] {
     return this.posts.filter(post => post.category === this.selectedCategory && post.id !== this.postId);

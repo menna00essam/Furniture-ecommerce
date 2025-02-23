@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators ,ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HeaderBannerComponent } from '../header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,HeaderBannerComponent,FeatureBannerComponent],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
 })
