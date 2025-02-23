@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
-import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.component'
+import { FormsModule } from '@angular/forms';
+import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.component';
+import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../header-banner/header-banner.component';
 
 interface CartItem {
   id: number;
@@ -16,9 +18,14 @@ interface CartItem {
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, CartTotalsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CartTotalsComponent,
+    HeaderBannerComponent,
+    FeatureBannerComponent,
+  ],
 })
-
 export class CartComponent {
   cart: CartItem[] = [
     {
