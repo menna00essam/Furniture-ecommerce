@@ -4,7 +4,10 @@ const app = express();
 
 const cors = require("cors");
 const PORT = process.env.PORT || 5000;
-const connectDB = require("./config/db");
+const connectDB = require("./src/config/db");
+
+console.log("PORT", process.env.PORT);
+console.log("MONGO_URI", process.env.MONGO_URI);
 
 / * * * * Router imports * * * * /;
 
@@ -26,11 +29,11 @@ app.get("/", (req, res) => {
 });
 
 // signup Route
-const signupRouter = require("./routes/signup.routes");
+const signupRouter = require("./src/routes/signup.routes");
 app.use("/signup", signupRouter);
 
 // login Route
-const loginRouter = require("./routes/login.routes");
+const loginRouter = require("./src/routes/login.routes");
 app.use("/login", loginRouter);
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

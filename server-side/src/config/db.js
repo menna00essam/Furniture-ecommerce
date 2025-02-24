@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const mongoose = require("mongoose");
 MONGO_URI =
   "mongodb+srv://mohamedHaleem:furniture236@furniture-ecommerce.j7gb1.mongodb.net/?retryWrites=true&w=majority&appName=furniture-ecommerce";

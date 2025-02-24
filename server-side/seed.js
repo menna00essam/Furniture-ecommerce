@@ -1,17 +1,17 @@
-require("dotenv").config(); // Load env variables
-const mongoose = require("mongoose"); // Import mongoose
-const connectDB = require("../../config/db");
-const User = require("../user.model");
-const Product = require("../product.model");
-const Category = require("../category.model");
-const Cart = require("../cart.model");
-const Blog = require("../blog.model");
-const Order = require("../order.model");
+require("dotenv").config();
+const mongoose = require("mongoose");
+const connectDB = require("./src/config/db");
+const User = require("./src/models/user.model");
+const Product = require("./src/models/product.model");
+const Category = require("./src/models/category.model");
+const Cart = require("./src/models/cart.model");
+const Blog = require("./src/models/blog.model");
+const Order = require("./src/models/order.model");
 
 const seedData = async () => {
   try {
     await connectDB();
-    console.log("URIIIIIIII", process.env.MONGO_URI);
+    console.log("URIIIIIIII", process.env);
     console.log("PORT", process.env.PORT);
     console.log("Seeding Database...");
 
