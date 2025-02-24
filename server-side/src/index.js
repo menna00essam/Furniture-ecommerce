@@ -1,9 +1,12 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+
 const cors = require("cors");
 const PORT = process.env.PORT || 5000;
 const connectDB = require("./config/db");
+
+/ * * * * Router imports * * * * /;
 
 // Connect to MongoDB
 connectDB();
@@ -19,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Default Route GET (/)
 app.get("/", (req, res) => {
-  res.send("Hello in nodejs-app-starter");
+  res.json("Hello in nodejs-app-starter");
 });
 
 // signup Route
@@ -30,4 +33,4 @@ app.use("/signup", signupRouter);
 const loginRouter = require("./routes/login.routes");
 app.use("/login", loginRouter);
 
-app.listen(PORT, () => console.log(`https://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
