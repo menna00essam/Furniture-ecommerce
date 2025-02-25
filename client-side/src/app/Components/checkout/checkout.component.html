@@ -1,7 +1,6 @@
 <app-header-banner bannerTitle="Checkout"></app-header-banner>
 <!-- Checkout Section -->
 <section class="flex flex-col md:flex-row p-10 gap-10">
-  <!-- Billing Details -->
   <div class="checkout-container">
     <form class="billing-form">
       <h2>Billing Details</h2>
@@ -18,9 +17,9 @@
       <label for="country">Country / Region *</label>
       <select id="country" name="country" required>
         <option value="">Select Country</option>
-        <option value="us">United States</option>
+        <option value="us">Egypt</option>
         <option value="uk">United Kingdom</option>
-        <option value="sri-lanka">Sri Lanka</option>
+        <option value="sri-lanka">Qatar</option>
       </select>
 
       <label for="address">Street Address *</label>
@@ -101,8 +100,12 @@
       Your personal data will be used to support your experience throughout this
       website, to manage access to your account, and for other purposes
       described in our <span class="policy">privacy policy</span>.
-      <button>Place Order</button>
     </p>
+    <app-button
+      class="flex justify-center items-center mx-auto mt-8"
+      [type]="'semi-black-outline'"
+      >Place Order</app-button
+    >
   </div>
 </section>
 <app-feature-banner></app-feature-banner>
