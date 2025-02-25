@@ -8,10 +8,16 @@
     <span>Total:</span>
     <span>Rs. {{ subtotal | number : "1.2-2" }}</span>
   </div>
-  <button
+  <!-- <button
   (click)="goToCheckout()" 
     class="w-full mt-6 py-2 bg-dark text-white font-semibold rounded-md hover:bg-[#8c6d1e]"
   >
     Check Out
-  </button>
+  </button> -->
+  <app-button
+    class="flex justify-center items-center mx-auto mt-8"
+    type="primary-fill"
+    (click)="goToCheckout()"
+    >Check Out</app-button
+  >
 </div>
