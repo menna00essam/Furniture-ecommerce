@@ -55,4 +55,14 @@ export class CartComponent {
   removeItem(itemId: number) {
     this.cart = this.cart.filter((item) => item.id !== itemId);
   }
+
+  increaseQuantity(item: any) {
+    item.quantity++;
+  }
+
+  decreaseQuantity(item: any) {
+    if (item.quantity > 1) {
+      item.quantity--;
+    }
+  }
 }
