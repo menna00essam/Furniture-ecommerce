@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HeaderBannerComponent } from '../header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
+import { ButtonComponent } from '../../shared/button/button.component'; 
+
 
 @Component({
   selector: 'app-checkout',
@@ -11,6 +13,7 @@ import { FeatureBannerComponent } from '../feature-banner/feature-banner.compone
     FormsModule,
     HeaderBannerComponent,
     FeatureBannerComponent,
+    ButtonComponent
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',

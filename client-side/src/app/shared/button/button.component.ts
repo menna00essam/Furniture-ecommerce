@@ -13,6 +13,7 @@ export class ButtonComponent {
     | 'primary-fill'
     | 'secondary-fill'
     | 'primary-outline'
+    | 'semi-black-outline'
     | 'plainBtn'
     | 'black-outline' = 'primary-fill';
   @Input() btnPadding: string = '10px';

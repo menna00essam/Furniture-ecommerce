@@ -10,14 +10,15 @@ section {
   gap: 20px;
   padding: 20px;
   margin: auto;
+  background-color:#fcf8f3 ;
 }
 
 .checkout-container {
   flex: 1;
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .billing-form {
@@ -42,7 +43,7 @@ section {
 .billing-form select,
 .billing-form textarea {
   width: 90%;
-  padding: 10px;
+  padding: 15px;
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -59,10 +60,13 @@ section {
 
 .Confirming-payment {
   flex: 1;
-  background-color: #f9f9f9;
+display: flex;
+flex-direction: column;
+gap: 20px;
+  /* background-color: #f9f9f9; */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
   height: max-content;
 }
 
@@ -87,7 +91,6 @@ td {
 }
 
 th {
-  background-color: #f3f3f3;
   border-radius: 5px;
 }
 .total {
@@ -112,25 +115,7 @@ input[type="radio"] {
 }
 .policy {
   font-weight: bold;
-}
-button {
-  margin: 0 auto;
-  display: block;
-  width: 200px;
-  padding: 12px;
-  margin-top: 20px;
-  /* background-color: #333; */
-  color: rgb(0, 0, 0);
-  font-size: 18px;
-  border: 1px solid #333;
-  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s ease-in-out;
-}
-
-button:hover {
-  background-color: #333;
-  color: white;
 }
 
 /* Responsive Design */
