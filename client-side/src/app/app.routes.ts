@@ -15,7 +15,6 @@ import { SignupComponent } from './Components/signup/signup.component';
 import { LoginComponent } from './Components/login/login.component';
 import { FavoritesComponent } from './Components/favorites/favorites.component';
 
-
 export const routes: Routes = [
   {
     path: 'register',
@@ -39,7 +38,7 @@ export const routes: Routes = [
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
-      { path: 'blog', component: BlogComponent },
+      { path: 'blog/:id', component: BlogComponent },
       { path: 'comparison', component: ComparisonComponent },
 
       { path: 'favorites', component: FavoritesComponent },
