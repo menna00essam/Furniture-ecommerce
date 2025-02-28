@@ -45,9 +45,9 @@
       <label for="country">Country / Region *</label>
       <select id="country" formControlName="country" required>
         <option value="">Select Country</option>
-        <option value="us">Egypt</option>
+        <option value="Egypt">Egypt</option>
         <option value="uk">United Kingdom</option>
-        <option value="sri-lanka">Qatar</option>
+        <option value="qatart">Qatar</option>
       </select>
       <div
         *ngIf="checkoutForm.get('country')?.errors?.['required'] && checkoutForm.get('country')?.touched"
