@@ -1,6 +1,9 @@
 <app-header-banner bannerTitle="Blogs"></app-header-banner>
 
-<section class="flex flex-col gap-5 my-0 mx-auto max-w-[1240px] p-5">
+<section
+  class="flex flex-col gap-5 my-0 mx-auto max-w-[1240px] p-5"
+  #blogsContainer
+>
   <!-- categories dropdown small screen -->
   <div class="md:hidden flex flex-col gap-5">
     <p class="text-lg font-semibold text-gray-dark md:hidden">Categories</p>
@@ -98,33 +101,13 @@
   </div>
 
   <!-- Navigation Buttons -->
-  <div class="flex justify-center gap-5 py-5">
-    <app-button
-      *ngIf="currentPage > 1"
-      type="secondary-fill"
-      btnWidth="100px"
-      (click)="prevPage()"
-      >Previous</app-button
-    >
+  <app-pagination
+    [currentPage]="currentPage"
+    [pagesCount]="totalPages"
+    (currentPageChange)="goToPage($event)"
+  ></app-pagination>
 
-    <app-button
-      *ngFor="let page of [].constructor(totalPages); let i = index"
-      [type]="currentPage === i + 1 ? 'primary-fill' : 'secondary-fill'"
-      btnWidth="60px"
-      (click)="goToPage(i + 1)"
-    >
-      {{ i + 1 }}
-    </app-button>
-
-    <app-button
-      *ngIf="currentPage < totalPages"
-      type="secondary-fill"
-      btnWidth="70px"
-      (click)="nextPage()"
-      >Next</app-button
-    >
-  </div>
-
+  <!-- Search Input -->
   <!-- <div class="flex items-center gap-4 mb-6">
     <input
     type="text"
