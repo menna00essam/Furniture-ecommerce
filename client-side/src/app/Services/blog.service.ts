@@ -4,7 +4,6 @@ import { BlogPost } from '../models/blog-post';
 @Injectable({
   providedIn: 'root',
 })
-
 export class BlogService {
   private blogs: BlogPost[] = [
     {
@@ -119,5 +118,9 @@ export class BlogService {
 
   getBlogs(): BlogPost[] {
     return this.blogs;
+  }
+
+  getBlog(id: number): BlogPost | undefined {
+    return this.blogs.find((blog) => blog.id == id);
   }
 }
