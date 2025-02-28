@@ -11,6 +11,6 @@
   align-items: center;
   border-radius: 50%;
 }
-.overlay{
-  background-color: #757272ac;
+.overlay {
+  background-color: var(--color-black-transparent);
 }

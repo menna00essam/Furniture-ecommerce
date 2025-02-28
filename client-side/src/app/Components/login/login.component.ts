@@ -6,10 +6,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { InputComponent } from '../input/input.component';
+import { RouterModule } from '@angular/router';
+import { ButtonComponent } from '../../shared/button/button.component';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, InputComponent],
+  imports: [ReactiveFormsModule, InputComponent, RouterModule, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

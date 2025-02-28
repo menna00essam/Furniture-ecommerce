@@ -2,20 +2,21 @@
   <div
     class="bg-[url('/images/hero.png')] bg-cover bg-no-repeat bg-center h-[calc(100vh-100px)] flex justify-center md:justify-end items-center p-10 bg-fixed"
   >
-    <div class="content bg-(--my-color) p-15 rounded-md">
-      <p class="tracking-wider font-semibold text-(--dark-gray)">New Arrival</p>
+    <div class="content bg-secondary p-15 rounded-md">
+      <p class="tracking-wider font-semibold text-gray-dark">New Arrival</p>
       <h1
         class="text-2xl md:text-5xl md:w-sm md:leading-15 font-extrabold text-(--color-dark) my-3"
       >
         Discover Our New Collection
       </h1>
-      <p class="my-5 md:w-md text-(#333333)">
+      <p class="my-5 md:w-md text-gray-dark">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus,
         luctus nec ullamcorper mattis.
       </p>
       <app-button btnPadding="20px">{{ "Buy Now" | uppercase }}</app-button>
     </div>
   </div>
+
   <div class="flex flex-col items-center justify-center p-10">
     <h2 class="text-4xl my-3 font-bold">Browse The Range</h2>
     <p class="text-(--color-gray) text-center">
@@ -44,6 +45,7 @@
       </div>
     </div>
   </div>
+
   <div class="flex flex-col items-center justify-center p-10">
     <h2 class="text-4xl my-3 font-bold">Our Products</h2>
     <div
@@ -56,12 +58,13 @@
 
     <app-button type="primary-outline" routerLink="/shop">Show More</app-button>
   </div>
+
   <div
-    class="flex flex-col md:flex-row items-center justify-center gap-5 p-10 bg-(--color-light)"
+    class="flex flex-col md:flex-row items-center justify-center gap-5 p-10 bg-secondary"
   >
     <div class="md:w-[50%]">
       <h2 class="text-4xl font-bold my-2">50+ Beautiful rooms inspiration</h2>
-      <p class="my-3 text-(--product-gray)">
+      <p class="my-3 text-gray">
         Our designer already made a lot of beautiful prototipe of rooms that
         inspire you
       </p>
@@ -83,7 +86,8 @@
       <div class="swiper-button-next"></div>
     </div>
   </div>
-  <div class="flex flex-col items-center justify-center bg-(--light-gray) p-10">
+
+  <div class="flex flex-col items-center justify-center bg-gray-light p-10">
     <p class="text-(--color-gray) font-semibold">Share your setup with</p>
     <h2 class="text-4xl my-3 font-semibold">#FurniroFurniture</h2>
     <div #imageSwiper class="swiper w-full">

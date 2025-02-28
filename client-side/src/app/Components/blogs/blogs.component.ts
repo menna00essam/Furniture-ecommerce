@@ -35,9 +35,9 @@ export class BlogsComponent {
     'Small Spaces',
     'Outdoor Living',
     'Wooden',
-    '',
   ];
   selectedCategory: string = 'All';
+  isMenuOpen: boolean = false;
   searchQuery: string = '';
   post?: BlogPost;
   posts: BlogPost[] = [
@@ -151,10 +151,7 @@ export class BlogsComponent {
     },
   ];
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router
-  ) {}
+  constructor(private readonly route: ActivatedRoute) {}
 
   currentPage: number = 1;
   postsPerPage: number = 3;
@@ -166,23 +163,27 @@ export class BlogsComponent {
   get currentPosts(): BlogPost[] {
     const start = (this.currentPage - 1) * this.postsPerPage;
     const end = start + this.postsPerPage;
+
     return this.filteredPosts.slice(start, end);
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   goToPage(page: number): void {
     this.currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   ngOnInit() {
@@ -192,6 +193,7 @@ export class BlogsComponent {
       this.post = this.posts.find((p) => p.id === id);
     }
   }
+
   get filteredPosts(): BlogPost[] {
     return this.posts.filter(
       (post) =>
@@ -205,5 +207,10 @@ export class BlogsComponent {
   filterByCategory(category: string) {
     this.selectedCategory = category;
     this.currentPage = 1;
+    this.toggleDropdown(false);
+  }
+
+  toggleDropdown(open: boolean) {
+    this.isMenuOpen = open;
   }
 }

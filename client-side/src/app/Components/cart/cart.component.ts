@@ -33,14 +33,14 @@ export class CartComponent {
       name: 'Asgaard sofa',
       price: 250000,
       quantity: 1,
-      image: 'images/Nordic-93-Sofa-Recliner-370x247.jpg',
+      image: 'images/mainsofa.png',
     },
     {
       id: 2,
       name: 'Asgaard sofa',
       price: 250000,
       quantity: 1,
-      image: 'images/Nordic-93-Sofa-Recliner-370x247.jpg',
+      image: 'images/mainsofa.png',
     },
   ];
 

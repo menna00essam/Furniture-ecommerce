@@ -14,38 +14,37 @@ button.black-outline {
   background-color: white;
 }
 button.primary-fill {
-  background-color: #b88e2f;
+  background-color: var(--color-primary);
   color: white;
-  border: 2px solid #b88e2f;
 }
 button.primary-fill:hover {
-  border: 2px solid #b88f2fc0;
-  background-color: #b88f2fd2;
+  filter: brightness(105%);
+  -webkit-filter: brightness(105%);
 }
 
 button.secondary-fill {
-  background-color: #fcf8f3;
-  border: 2px solid #fcf8f3;
+  background-color: var(--color-secondary);
+  border: 2px solid var(--color-secondary);
 }
 button.secondary-fill:hover {
-  background-color: #b88e2f;
+  background-color: var(--color-primary);
   color: white;
-  border: 2px solid #b88e2f;
+  border: 2px solid var(--color-primary);
 }
 button.plainBtn {
   background-color: white;
-  color: #b88e2f;
+  color: var(--color-primary);
 }
 button.primary-outline {
   background-color: white;
-  color: #b88e2f;
-  border: 2px solid #b88e2f;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 button.primary-outline:hover {
-  background-color: #b88e2f;
+  background-color: var(--color-primary);
   color: white;
-  border: 2px solid #b88e2f;
+  border: 2px solid var(--color-primary);
 }
 button.black-outline:hover {
   color: white;
@@ -54,9 +53,9 @@ button.black-outline:hover {
 
 button.semi-black-outline {
   color: rgb(0, 0, 0);
-  border: 1px solid #333;
+  border: 1px solid var(--color-gray-dark);
 }
 button.semi-black-outline:hover {
   color: white;
-  background-color: #333;
+  background-color: var(--color-gray-dark);
 }
