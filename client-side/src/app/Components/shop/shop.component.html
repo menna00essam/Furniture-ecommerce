@@ -35,7 +35,7 @@
 </div>
 
 <!-- Content -->
-<div class="p-5 flex relative gap-5">
+<div #productsContainer class="p-5 flex relative gap-5">
   <!-- Overlay -->
   @if (showFilters) {
   <div
@@ -73,15 +73,15 @@
         'lg:grid-cols-5': !showFilters
       }"
     >
-      @for (item of products; track item.id) {
+      @for (item of displayedProducts; track item.id) {
       <app-product-item [product]="item"></app-product-item>
       }
     </div>
-    <div class="flex gap-2">
-      <app-button btnWidth="60px">1</app-button>
-      <app-button btnWidth="60px">1</app-button>
-      <app-button btnWidth="60px">1</app-button>
-    </div>
+    <app-pagination
+      [currentPage]="currentPage"
+      [pagesCount]="pagesCount"
+      (currentPageChange)="goToPage($event)"
+    ></app-pagination>
   </div>
 </div>
 

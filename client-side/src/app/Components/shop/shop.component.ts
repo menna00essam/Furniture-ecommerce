@@ -1,9 +1,10 @@
 import {
   Component,
+  ElementRef,
   HostListener,
   OnInit,
   Renderer2,
-  ElementRef,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
@@ -15,6 +16,7 @@ import { ProductItemComponent } from '../../shared/product-item/product-item.com
 import { ButtonComponent } from '../../shared/button/button.component';
 import { ProductService } from '../../Services/product.service';
 import { product } from '../../models/product.model';
+import { PaginationComponent } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-shop',
@@ -27,6 +29,7 @@ import { product } from '../../models/product.model';
     FilterOptionComponent,
     ProductItemComponent,
     ButtonComponent,
+    PaginationComponent,
   ],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
@@ -43,6 +46,7 @@ import { product } from '../../models/product.model';
   ],
 })
 export class ShopComponent implements OnInit {
+  @ViewChild('productsContainer') productsContainer!: ElementRef;
   searchValue: string = 'Default';
   showFilters: boolean = false;
   isMenuOpen: boolean = false;
@@ -58,16 +62,43 @@ export class ShopComponent implements OnInit {
   ];
 
   products: product[] = [];
+  productsPerPage: number = 5;
+  pagesCount: number = 0;
+  currentPage: number = 1;
 
   constructor(
     private productService: ProductService,
-    private renderer: Renderer2,
-    private el: ElementRef
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
     this.products = this.productService.getProducts();
+    this.pagesCount = Math.ceil(this.products.length / this.productsPerPage);
+    this.goToPage(1);
     this.checkScreenSize();
+  }
+
+  get displayedProducts(): product[] {
+    const start = (this.currentPage - 1) * this.productsPerPage;
+    const end = start + this.productsPerPage;
+    return this.products.slice(start, end);
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+
+    if (this.productsContainer) {
+      const offset = 100;
+      const topPosition =
+        this.productsContainer.nativeElement.getBoundingClientRect().top +
+        window.scrollY -
+        offset;
+
+      window.scrollTo({
+        top: topPosition,
+        behavior: 'smooth',
+      });
+    }
   }
 
   toggleShowFilter(open: boolean = !this.showFilters) {
