@@ -27,7 +27,7 @@ import { ProductService } from '../../Services/product.service';
 })
 export class HomeComponent implements AfterViewInit {
   constructor(private router: Router, private productService: ProductService) {
-    this.products = this.productService.getProducts();
+    this.products = this.productService.getProducts().slice(0, 10);
   }
   @ViewChild('swiperRef', { static: false }) swiperRef!: ElementRef;
   @ViewChild('imageSwiper', { static: false }) imageSwiper!: ElementRef;
