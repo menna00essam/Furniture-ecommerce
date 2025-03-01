@@ -108,9 +108,10 @@ export class ShopComponent implements OnInit {
   }
 
   /** Handles sorting selection change */
-  onSortChange(value: SortOptions) {
-    if (this.selectedSortValue !== value) {
-      this.selectedSortValue = value;
+  onSortChange(value: string) {
+    const sortOption = value as SortOptions;
+    if (Object.values(SortOptions).includes(sortOption)) {
+      this.selectedSortValue = sortOption;
       this.applyFiltersAndSorting();
     }
     this.toggleDropdown(false);

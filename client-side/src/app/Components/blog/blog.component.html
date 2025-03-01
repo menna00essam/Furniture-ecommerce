@@ -1,8 +1,6 @@
 <app-header-banner bannerTitle="Blog"></app-header-banner>
 
-<div
-  class="flex p-4 md:p-30 flex-col md:flex-row justify-center items-start gap-10"
->
+<section class="flex flex-col gap-5 my-0 mx-auto max-w-[1240px] p-10">
   <div *ngIf="blog" class="container mx-auto p-4 max-w-3xl">
     <img
       [src]="blog.image"
@@ -56,6 +54,6 @@
       <p class="text-gray-500 p-2">No related blogs found.</p>
     </ng-template>
   </div>
-</div>
+</section>
 
 <app-feature-banner></app-feature-banner>
