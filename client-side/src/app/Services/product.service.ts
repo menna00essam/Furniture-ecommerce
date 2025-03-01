@@ -179,10 +179,10 @@ export class ProductService {
       category: 'shelf',
     },
   ];
-
-  getProductNames(): string[] {
-    return this.products.map((p) => p.title);
+  getProductNames(): { id: number; value: string }[] {
+    return this.products.map((p) => ({ id: p.id, value: p.title }));
   }
+
   getProducts(): product[] {
     return this.products;
   }

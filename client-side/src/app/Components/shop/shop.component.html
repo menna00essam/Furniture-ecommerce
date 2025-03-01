@@ -25,8 +25,8 @@
           <span class="text-gray-dark">{{ selectedSortValue }}</span>
         </button>
         <app-dropdown
-          *ngIf="showSortMenu && sortIMenutems.length > 0"
-          [items]="sortIMenutems"
+          *ngIf="showSortMenu && sortMenuItems.length > 0"
+          [items]="sortMenuItems"
           (selectedValueChange)="onSortChange($event)"
         ></app-dropdown>
       </div>

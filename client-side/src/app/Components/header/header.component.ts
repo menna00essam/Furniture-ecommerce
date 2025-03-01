@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../search/search.component';
@@ -23,13 +23,17 @@ import { ProductService } from '../../Services/product.service';
 })
 export class HeaderComponent {
   isActive = false;
-  productsNames: string[];
+  productsNames: { id: number; value: string }[];
 
-  constructor(private productService: ProductService) {
+  constructor(private productService: ProductService, private router: Router) {
     this.productsNames = this.productService.getProductNames();
   }
 
   toggleMenu() {
     this.isActive = !this.isActive;
+  }
+
+  goToProduct(id: number) {
+    this.router.navigate([`/product/${id}`]);
   }
 }

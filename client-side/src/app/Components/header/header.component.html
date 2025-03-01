@@ -13,7 +13,10 @@
   </div>
 
   <!-- Search Input -->
-  <app-search [items]="productsNames"></app-search>
+  <app-search
+    [items]="productsNames"
+    (onSelect)="goToProduct($event)"
+  ></app-search>
 
   <!-- Actions -->
   <div class="hidden md:block">

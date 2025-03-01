@@ -16,7 +16,7 @@ import { RouterModule } from '@angular/router';
       </li>
 
       <li
-        class="cursor-pointer border-b border-gray lg:border-transparent px-[10px] leading-[40px] font-medium duration-300 ease hover:bg-secondary lg:hover:border-primary md:hover:bg-transparent"
+        class="cursor-pointer border-b border-gray md:border-transparent px-[10px] leading-[40px] font-medium duration-300 ease hover:bg-secondary md:hover:border-primary md:hover:bg-transparent"
         routerLink="/shop"
       >
         Shop
