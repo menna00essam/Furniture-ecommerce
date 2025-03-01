@@ -1,7 +1,7 @@
 <app-header-banner bannerTitle="Checkout"></app-header-banner>
 <!-- Checkout Section -->
 <section class="flex flex-col md:flex-row p-10 gap-10">
-  <div class="checkout-container">
+  <div class="flex-1 p-6 shadow rounded-lg">
     <form
       [formGroup]="checkoutForm"
       (ngSubmit)="onSubmit()"
@@ -131,7 +131,7 @@
   </div>
 
   <!-- Confirming payment -->
-  <div class="Confirming-payment">
+  <div class="Confirming-payment shadow p-6">
     <h3>Product</h3>
     <table>
       <thead>

@@ -1,48 +1,47 @@
+<!-- Page Header -->
 <app-header-banner bannerTitle="Contact"></app-header-banner>
 
+<!-- Contact Section -->
 <section class="p-10 flex flex-col gap-10">
-  <!-- contact header -->
+  <!-- Contact Header -->
   <div class="text-center flex flex-col items-center gap-4 w-full">
-    <h1 class="text-4xl font-semibold">Get in touch with us</h1>
+    <h1 class="text-4xl font-semibold">Get in Touch with Us</h1>
     <p class="text-base text-gray max-w-2xl">
-      For More Information About Our Product & Services. Please Feel Free To
-      Drop Us An Email. Our Staff Are Always here To Help You Out. Do Not
-      Hesitate!
+      For more information about our products and services, please feel free to
+      drop us an email. Our team is always here to assist you. Don't hesitate to
+      reach out!
     </p>
   </div>
 
   <div class="flex flex-col md:flex-row justify-center items-start gap-[100px]">
-    <!-- contact Info -->
+    <!-- Contact Information -->
     <div class="flex flex-col gap-10">
       <!-- Address -->
       <div class="flex gap-3">
-        <div class="mt-1">
-          <i class="fas fa-map-marker-alt text-xl text-black"></i>
-        </div>
+        <i class="fas fa-map-marker-alt text-xl text-black mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold text-black">Address</p>
           <p class="text-base text-black">
             236 5th SE Avenue,<br />
-            New York NY10000, <br />United States
+            New York, NY 10000,<br />
+            United States
           </p>
         </div>
       </div>
+
       <!-- Phone -->
-      <div class="flex gap-3 text-base text-black">
-        <div class="mt-1">
-          <i class="fas fa-phone text-xl"></i>
-        </div>
+      <div class="flex gap-3">
+        <i class="fas fa-phone text-xl mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold">Phone</p>
-          <p>Mobile: +(84) 546-6789</p>
-          <p>Hotline: +(84) 456-6789</p>
+          <p>Mobile: +1 (84) 546-6789</p>
+          <p>Hotline: +1 (84) 456-6789</p>
         </div>
       </div>
+
       <!-- Working Hours -->
       <div class="flex gap-3">
-        <div class="mt-1">
-          <i class="fas fa-clock text-xl"></i>
-        </div>
+        <i class="fas fa-clock text-xl mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold">Working Hours</p>
           <p>Mon - Fri: 9:00 AM - 10:00 PM</p>
@@ -51,13 +50,14 @@
       </div>
     </div>
 
-    <!-- contact form -->
+    <!-- Contact Form -->
     <div class="max-w-md w-full p-1 bg-white">
       <form
         [formGroup]="contactForm"
         (ngSubmit)="onSubmit()"
         class="flex flex-col space-y-4"
       >
+        <!-- Name Field -->
         <label for="name" class="text-base font-medium">Your Name</label>
         <input
           id="name"
@@ -65,6 +65,7 @@
           type="text"
           class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
           placeholder="Enter Your Name"
+          required
         />
         <p
           *ngIf="
@@ -75,6 +76,7 @@
           Name is required.
         </p>
 
+        <!-- Email Field -->
         <label for="email" class="text-base font-medium">Your Email</label>
         <input
           id="email"
@@ -82,6 +84,7 @@
           type="email"
           class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
           placeholder="Enter Your Email"
+          required
         />
         <p
           *ngIf="
@@ -90,24 +93,29 @@
           "
           class="text-red-light text-sm"
         >
-          Valid email is required.
+          Please enter a valid email.
         </p>
 
-        <label for="subject" class="text-base font-medium">Subjet</label>
+        <!-- Subject Field -->
+        <label for="subject" class="text-base font-medium"
+          >Subject (Optional)</label
+        >
         <input
           id="subject"
           formControlName="subject"
           type="text"
           class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
-          placeholder="This is an Optional"
+          placeholder="Enter a Subject"
         />
 
+        <!-- Message Field -->
         <label for="message" class="text-base font-medium">Your Message</label>
         <textarea
           id="message"
           formControlName="message"
           class="border-2 border-gray px-4 py-2 rounded-md w-full h-28"
           placeholder="Write Your Message"
+          required
         ></textarea>
         <p
           *ngIf="
@@ -119,8 +127,11 @@
           Message cannot be empty.
         </p>
 
+        <!-- Submit Button -->
         <app-button type="primary-fill">Submit</app-button>
       </form>
+
+      <!-- Submission Message -->
       <p
         *ngIf="message"
         [ngClass]="{
@@ -135,4 +146,5 @@
   </div>
 </section>
 
+<!-- Feature Banner -->
 <app-feature-banner></app-feature-banner>
