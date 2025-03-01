@@ -57,26 +57,22 @@ enum SortOptions {
 export class ShopComponent implements OnInit {
   @ViewChild('productsContainer') productsContainer!: ElementRef;
 
-  // UI Controls
-  showFilters: boolean = false;
-  showSortMenu: boolean = false;
-  disableAnimation: boolean = false;
+  // UI State
+  showFilters = false;
+  showSortMenu = false;
+  disableAnimation = false;
 
   // Product Data
   products: product[] = [];
-  filteredProducts: product[] = [];
-  sortedProducts: product[] = [];
-
-  // Filters & Sorting
   selectedSortValue: SortOptions = SortOptions.Default;
   selectedCategories: string[] = [];
 
   // Pagination
-  productsPerPage: number = 5;
-  currentPage: number = 1;
+  productsPerPage = 5;
+  currentPage = 1;
 
-  sortMenuItems: SortOptions[] = Object.values(SortOptions);
-  categories: string[] = [
+  sortMenuItems = Object.values(SortOptions);
+  categories = [
     'chair',
     'sofa',
     'stool',
@@ -94,91 +90,93 @@ export class ShopComponent implements OnInit {
 
   ngOnInit() {
     this.products = this.productService.getProducts();
-    this.applyFiltersAndSorting();
     this.checkScreenSize();
   }
 
+  /** Returns the total number of pages */
   get pagesCount(): number {
-    return Math.ceil(this.sortedProducts.length / this.productsPerPage);
+    return Math.ceil(this.filteredProducts.length / this.productsPerPage);
   }
 
-  get displayedProducts(): product[] {
-    const start = (this.currentPage - 1) * this.productsPerPage;
-    return this.sortedProducts.slice(start, start + this.productsPerPage);
-  }
-
-  /** Handles sorting selection change */
-  onSortChange(value: string) {
-    const sortOption = value as SortOptions;
-    if (Object.values(SortOptions).includes(sortOption)) {
-      this.selectedSortValue = sortOption;
-      this.applyFiltersAndSorting();
-    }
-    this.toggleDropdown(false);
-  }
-
-  /** Handles category filter selection */
-  onCategoryChange(category: string, event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.selectedCategories = checked
-      ? [...this.selectedCategories, category]
-      : this.selectedCategories.filter((c) => c !== category);
-
-    this.applyFiltersAndSorting();
-  }
-
-  /** Filters and sorts products based on selected criteria */
-  applyFiltersAndSorting() {
-    this.filteredProducts = this.selectedCategories.length
+  /** Returns products after filtering and sorting */
+  get filteredProducts(): product[] {
+    let filtered = this.selectedCategories.length
       ? this.products.filter((p) =>
           this.selectedCategories.includes(p.category)
         )
       : [...this.products];
 
-    this.sortedProducts = this.getSortedProducts([...this.filteredProducts]);
-    this.goToPage(1);
+    return this.getSortedProducts(filtered);
   }
 
-  /** Returns a sorted array based on the selected sorting option */
-  private getSortedProducts(products: product[]): product[] {
-    switch (this.selectedSortValue) {
-      case SortOptions.LowToHigh:
-        return products.sort(
-          (a, b) => this.getEffectivePrice(a) - this.getEffectivePrice(b)
-        );
-      case SortOptions.HighToLow:
-        return products.sort(
-          (a, b) => this.getEffectivePrice(b) - this.getEffectivePrice(a)
-        );
-      case SortOptions.Newest:
-        return products.sort(
-          (a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0)
-        );
-      case SortOptions.Discount:
-        return products
-          .filter((p) => typeof p.sale === 'number')
-          .sort((a, b) => (b.sale || 0) - (a.sale || 0));
-      default:
-        return products;
+  /** Returns the paginated products */
+  get displayedProducts(): product[] {
+    const start = (this.currentPage - 1) * this.productsPerPage;
+    return this.filteredProducts.slice(start, start + this.productsPerPage);
+  }
+
+  /** Handles sorting selection */
+  onSortChange(value: string) {
+    const sortOption = value as SortOptions;
+    if (this.sortMenuItems.includes(sortOption)) {
+      this.selectedSortValue = sortOption;
     }
+    this.toggleDropdown(false);
   }
 
-  /** Returns the effective price of a product after discount */
+  /** Handles category selection */
+  onCategoryChange(category: string, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.selectedCategories = checked
+      ? [...this.selectedCategories, category]
+      : this.selectedCategories.filter((c) => c !== category);
+  }
+
+  /** Returns a sorted product list */
+  private getSortedProducts(products: product[]): product[] {
+    return products.sort((a, b) => {
+      switch (this.selectedSortValue) {
+        case SortOptions.LowToHigh:
+          return this.getEffectivePrice(a) - this.getEffectivePrice(b);
+        case SortOptions.HighToLow:
+          return this.getEffectivePrice(b) - this.getEffectivePrice(a);
+        case SortOptions.Newest:
+          return (b.date?.getTime() || 0) - (a.date?.getTime() || 0);
+        case SortOptions.Discount:
+          return (b.sale || 0) - (a.sale || 0);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  /** Calculates the effective price of a product */
   private getEffectivePrice(product: product): number {
     return product.sale
       ? product.price * (1 - product.sale / 100)
       : product.price;
   }
 
+  /** Returns the range of displayed results */
+  getDisplayedResultsRange(): string {
+    if (!this.displayedProducts.length) return 'No results found';
+    const start = (this.currentPage - 1) * this.productsPerPage + 1;
+    const end = Math.min(
+      this.currentPage * this.productsPerPage,
+      this.filteredProducts.length
+    );
+    return `Showing ${start}-${end} of ${this.filteredProducts.length} results`;
+  }
+
   /** Handles pagination */
-  goToPage(page: number): void {
+  goToPage(page: number) {
     if (page >= 1 && page <= this.pagesCount) {
       this.currentPage = page;
       this.scrollToProducts();
     }
   }
 
-  /** Smooth scroll to the products container */
+  /** Smooth scroll to product list */
   private scrollToProducts() {
     if (this.productsContainer) {
       const offset = 100;
@@ -191,7 +189,7 @@ export class ShopComponent implements OnInit {
     }
   }
 
-  /** Toggles filter panel */
+  /** Toggles the filter panel */
   toggleShowFilter(open: boolean = !this.showFilters) {
     this.showFilters = open;
     if (window.innerWidth < 1024) {
