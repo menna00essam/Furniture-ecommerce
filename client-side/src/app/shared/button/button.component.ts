@@ -18,8 +18,4 @@ export class ButtonComponent {
     | 'black-outline' = 'primary-fill';
   @Input() btnPadding: string = '10px';
   @Input() btnWidth: string = '150px';
-  @Output() click = new EventEmitter<string>();
-  clicked() {
-    this.click.emit();
-  }
 }

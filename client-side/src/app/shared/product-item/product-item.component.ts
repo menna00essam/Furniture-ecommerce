@@ -17,6 +17,8 @@ import {
   style,
   state,
 } from '@angular/animations';
+import { FavoriteService } from '../../Services/favorite.service';
+import { CartService } from '../../Services/cart.service';
 
 @Component({
   selector: 'app-product-item',
@@ -38,7 +40,11 @@ export class ProductItemComponent implements OnInit {
   isHovered = false;
   disableAnimation = false;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private favoriteService: FavoriteService,
+    private cartService: CartService
+  ) {}
 
   ngOnInit() {
     this.checkScreenSize();
@@ -60,5 +66,13 @@ export class ProductItemComponent implements OnInit {
       this.isHovered = isSmallScreen;
       this.cdr.detectChanges(); // Force UI update
     }
+  }
+
+  addToFavourites() {
+    this.favoriteService.addFavorite(1, this.product);
+  }
+
+  addToCart() {
+    this.cartService.addProduct(1, this.product);
   }
 }
