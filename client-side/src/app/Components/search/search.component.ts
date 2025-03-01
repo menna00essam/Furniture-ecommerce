@@ -50,7 +50,9 @@ export class SearchComponent {
   private filterSearchResults(): void {
     const query = this.searchValue.toLowerCase().trim();
     this.filteredItems = query
-      ? this.items.filter((item) => item.toLowerCase().includes(query))
+      ? this.items
+          .filter((item) => item.toLowerCase().includes(query))
+          .splice(0, 5)
       : [];
   }
 
