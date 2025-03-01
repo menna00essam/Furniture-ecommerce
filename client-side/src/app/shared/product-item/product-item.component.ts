@@ -75,4 +75,12 @@ export class ProductItemComponent implements OnInit {
   addToCart() {
     this.cartService.addProduct(1, this.product);
   }
+
+  isNewProduct(): boolean {
+    if (!this.product?.date) return false;
+    const productDate = new Date(this.product.date).getTime();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    return productDate > oneMonthAgo.getTime();
+  }
 }

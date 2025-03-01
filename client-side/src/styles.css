@@ -22,23 +22,25 @@
   --color-black-transparent: #00000073;
 
   --color-red-light: #e97171;
+
+  --color-green-light: #2ec1ac;
 }
 
+
+body{
+  accent-color: var(--color-primary);
+}
 ::-webkit-scrollbar {
   width: 10px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
   background: var(--color-gray-light);
 }
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: var(--color-gray-dark);
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-gray-dark);
 }
