@@ -21,18 +21,17 @@ const productRouter = require("./src/routes/product.routes");
 const postRouter = require("./src/routes/post.routes");
 const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
-//10- gallery
 const galleryRouter = require("./src/routes/gallery.routes");
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
 connectDB();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//  Hello world
 app.get("/", (req, res) => {
   res.json("Hello in nodejs-app-starter");
 });
