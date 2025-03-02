@@ -6,13 +6,10 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     phone: { type: String },
     password: { type: String, required: true },
-    // address: {
-    //   street: { type: String },
-    //   city: { type: String },
-    //   state: { type: String },
-    //   zipCode: { type: String },
-    //   country: { type: String },
-    // },
+
+    favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    // cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],   // carttt after iftar
+
     role: {
       type: String,
       enum: ["USER", "ADMIN"],

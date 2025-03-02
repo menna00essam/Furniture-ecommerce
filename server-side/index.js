@@ -3,6 +3,10 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
+/ * * * * Utils * * * * /;
+const httpStatusText = require("./src/utils/httpStatusText");
+/ * * * * End Utils * * * * /;
+
 const PORT = process.env.PORT || 5000;
 
 / * * * * DB * * * /;
@@ -10,10 +14,13 @@ const connectDB = require("./src/config/db");
 / * * * * End Db * * * * /;
 
 / * * * * Router imports * * * * /;
-///1- user router
-const signupRouter = require("./src/routes/signup.routes");
-const loginRouter = require("./src/routes/login.routes");
-//2-
+const registerationRouter = require("./src/routes/registration.routes");
+const userRouter = require("./src/routes/user.routes");
+const categoreRouter = require("./src/routes/category.routes");
+const productRouter = require("./src/routes/product.routes");
+const postRouter = require("./src/routes/post.routes");
+//10- gallery
+const galleryRouter = require("./src/routes/gallery.routes");
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
@@ -28,12 +35,32 @@ app.get("/", (req, res) => {
   res.json("Hello in nodejs-app-starter");
 });
 
-// user registeration route
-app.use("/signup", signupRouter);
-app.use("/login", loginRouter);
+/ * * * Routes * * * /;
+app.use("/register", registerationRouter);
+app.use("/user", userRouter);
+app.use("/categories", categoreRouter);
+app.use("/products", productRouter);
+app.use("/posts", postRouter);
 
-//gallary route
-const galleryRouter = require("./src/routes/gallery.routes");
 app.use("/api", galleryRouter);
 
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+/ * * * Global MiddleWare * * * /;
+// Not found routes
+app.all("*", (req, res, next) => {
+  return res.status(404).json({
+    status: httpStatusText.ERROR,
+    message: "this resource is not avilable",
+  });
+});
+// global error handlers
+app.use((error, req, res, next) => {
+  return res.status(error.statusCode || 500).json({
+    status: error.statueText || httpStatusText.ERROR,
+    error: error.message,
+    code: error.statusCode || 500,
+    data: null,
+  });
+});
+app.listen(PORT, () =>
+  console.log(`i am running on: http://localhost:${PORT}`)
+);

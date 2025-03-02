@@ -13,7 +13,8 @@ const ProductSchema = new mongoose.Schema(
       { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     ],
     productDescription: { type: String },
-    color: { type: String },
+    colors: [{ type: String }],
+    sizes: [{ type: String }],
     brand: { type: String },
 
     /// FOR COMPARISON
