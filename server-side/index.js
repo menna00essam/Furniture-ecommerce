@@ -32,4 +32,8 @@ app.get("/", (req, res) => {
 app.use("/signup", signupRouter);
 app.use("/login", loginRouter);
 
+//gallary route
+const galleryRouter = require("./src/routes/gallery.routes");
+app.use("/api", galleryRouter);
+
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
