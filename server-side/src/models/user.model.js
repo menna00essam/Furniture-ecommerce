@@ -12,11 +12,22 @@ const UserSchema = new mongoose.Schema(
   {
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    encryptedPass: { type: String, required: true },
     phone: { type: String },
-    role: { type: String, enum: ["admin", "customer"], default: "customer" },
-    favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+    password: { type: String, required: true },
+    address: {
+      street: { type: String },
+      city: { type: String },
+      state: { type: String },
+      zipCode: { type: String },
+      country: { type: String },
+    },
+    role: {
+      type: String,
+      enum: ["USER", "ADMIN"],
+      default: "USER",
+    },
   },
   { timestamps: true }
 );
+
 module.exports = mongoose.model("User", UserSchema);

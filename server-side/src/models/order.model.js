@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const OrderSchema = new mongoose.Schema(
   {
     userId: {
@@ -14,9 +15,15 @@ const OrderSchema = new mongoose.Schema(
           required: true,
         },
         quantity: { type: Number, required: true },
-        price: { type: Number, required: true },
       },
     ],
+    shippingAddress: {
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      province: { type: String, required: true },
+      zipCode: { type: String, required: true },
+      country: { type: String, required: true },
+    },
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
@@ -25,11 +32,12 @@ const OrderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["Credit Card", "PayPal", "Cash on Delivery"],
+      enum: ["Direct Bank Transfer", "Cash on Delivery"],
       required: true,
     },
     transactionId: { type: String },
   },
   { timestamps: true }
 );
+
 module.exports = mongoose.model("Order", OrderSchema);
