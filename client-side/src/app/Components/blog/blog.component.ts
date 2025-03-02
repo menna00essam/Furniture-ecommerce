@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { BlogPost } from '../../models/blog-post';
+import { BlogPost } from '../../models/blog.model';
 import { BlogService } from '../../Services/blog.service';
 import { CommonModule } from '@angular/common';
 import { HeaderBannerComponent } from '../header-banner/header-banner.component';
