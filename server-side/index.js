@@ -19,6 +19,8 @@ const userRouter = require("./src/routes/user.routes");
 const categoreRouter = require("./src/routes/category.routes");
 const productRouter = require("./src/routes/product.routes");
 const postRouter = require("./src/routes/post.routes");
+const checkoutRouter = require("./src/routes/checkout.routes");
+const cartRouter = require("./src/routes/cart.routes");
 //10- gallery
 const galleryRouter = require("./src/routes/gallery.routes");
 / * * * * End Router imports * * * * /;
@@ -41,6 +43,8 @@ app.use("/user", userRouter);
 app.use("/categories", categoreRouter);
 app.use("/products", productRouter);
 app.use("/posts", postRouter);
+app.use("/checkout", checkoutRouter);
+app.use("/cart", cartRouter);
 
 app.use("/api", galleryRouter);
 

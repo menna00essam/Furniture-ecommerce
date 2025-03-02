@@ -15,7 +15,6 @@ const CartSchema = new mongoose.Schema(
           required: true,
         },
         quantity: { type: Number, required: true, min: 1 },
-        price: { type: Number, required: true },
         subtotal: { type: Number },
       },
     ],
@@ -24,16 +23,21 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto-calculate subtotal & total price before saving   /// chat gpt ---
-CartSchema.pre("save", function (next) {
-  this.products.forEach((product) => {
-    product.subtotal = product.price * product.quantity;
-  });
-  this.totalPrice = this.products.reduce(
-    (acc, product) => acc + product.subtotal,
-    0
-  );
-  next();
+CartSchema.pre("save", async function (next) {
+  try {
+    await this.populate("products.productId");
+
+    // Compute subtotal and totalPrice
+    this.totalPrice = this.products.reduce((acc, product) => {
+      const productPrice = product.productId.price;
+      product.subtotal = product.quantity * productPrice;
+      return acc + product.subtotal;
+    }, 0);
+
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = mongoose.model("Cart", CartSchema);
