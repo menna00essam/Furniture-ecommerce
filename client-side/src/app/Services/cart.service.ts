@@ -18,4 +18,8 @@ export class CartService {
   removeProduct(userId: number, productId: number): void {
     this.cart = this.cart.filter((p) => p.id !== productId);
   }
+
+  //To be done
+  increaseQuantity(userId: number, productId: number) {}
+  deccreaseQuantity(userId: number, productId: number) {}
 }
