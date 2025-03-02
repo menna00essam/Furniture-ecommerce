@@ -16,6 +16,7 @@ export class ProductService {
       sale: 20,
       date: new Date(2021, 1, 10),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 2,
@@ -26,6 +27,7 @@ export class ProductService {
       price: 3000,
       date: new Date(2022, 1, 15),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 3,
@@ -36,6 +38,7 @@ export class ProductService {
       price: 2300,
       date: new Date(2023, 1, 20),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 4,
@@ -47,6 +50,7 @@ export class ProductService {
       sale: 35,
       date: new Date(2023, 1, 25),
       category: 'sofa',
+      quantity: 1,
     },
     {
       id: 5,
@@ -57,6 +61,7 @@ export class ProductService {
       price: 7500,
       date: new Date(2025, 1, 28),
       category: 'sofa',
+      quantity: 1,
     },
     {
       id: 6,
@@ -67,6 +72,7 @@ export class ProductService {
       price: 1500,
       date: new Date(2025, 0, 20),
       category: 'sofa',
+      quantity: 1,
     },
     {
       id: 7,
@@ -77,6 +83,7 @@ export class ProductService {
       price: 3000,
       date: new Date(2025, 0, 18),
       category: 'stool',
+      quantity: 1,
     },
     {
       id: 8,
@@ -87,6 +94,7 @@ export class ProductService {
       price: 2200,
       date: new Date(2024, 10, 22),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 9,
@@ -97,6 +105,7 @@ export class ProductService {
       price: 1700,
       date: new Date(2024, 9, 5),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 10,
@@ -107,6 +116,7 @@ export class ProductService {
       price: 4500,
       date: new Date(2025, 1, 14),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 11,
@@ -117,6 +127,7 @@ export class ProductService {
       price: 7200,
       date: new Date(2024, 10, 9),
       category: 'chair',
+      quantity: 1,
     },
     {
       id: 12,
@@ -127,6 +138,7 @@ export class ProductService {
       price: 5400,
       date: new Date(2024, 11, 27),
       category: 'desk',
+      quantity: 1,
     },
     {
       id: 13,
@@ -137,6 +149,7 @@ export class ProductService {
       price: 12500,
       date: new Date(2023, 11, 15),
       category: 'sofa',
+      quantity: 1,
     },
     {
       id: 14,
@@ -147,6 +160,7 @@ export class ProductService {
       price: 8700,
       date: new Date(2023, 10, 5),
       category: 'bed',
+      quantity: 1,
     },
     {
       id: 15,
@@ -157,6 +171,7 @@ export class ProductService {
       price: 4100,
       date: new Date(2023, 9, 20),
       category: 'bench',
+      quantity: 1,
     },
     {
       id: 16,
@@ -167,6 +182,7 @@ export class ProductService {
       price: 9500,
       date: new Date(2023, 8, 10),
       category: 'table',
+      quantity: 1,
     },
     {
       id: 17,
@@ -177,6 +193,7 @@ export class ProductService {
       price: 5600,
       date: new Date(2023, 7, 5),
       category: 'shelf',
+      quantity: 1,
     },
   ];
   getProductNames(): { id: number; value: string }[] {
@@ -185,5 +202,8 @@ export class ProductService {
 
   getProducts(): product[] {
     return this.products;
+  }
+  getProduct(productId: number): product | undefined {
+    return this.products.find((p) => (p.id = productId));
   }
 }

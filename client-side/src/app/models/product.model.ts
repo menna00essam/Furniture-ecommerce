@@ -7,4 +7,5 @@ export interface product {
   category: string;
   date: Date;
   sale?: number | false;
+  quantity: number;
 }
