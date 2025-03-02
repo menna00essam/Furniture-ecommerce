@@ -36,4 +36,8 @@ app.use("/signup", signupRouter);
 const loginRouter = require("./src/routes/login.routes");
 app.use("/login", loginRouter);
 
+//gallary route
+const galleryRouter = require("./src/routes/gallery.routes");
+app.use("/api", galleryRouter);
+
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
