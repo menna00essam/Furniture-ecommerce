@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { BlogPost } from '../../models/blog.model';
+import { BlogPost } from '../../Models/blog.model';
 import { BlogService } from '../../Services/blog.service';
 import { CommonModule } from '@angular/common';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 
 @Component({
   selector: 'app-blog',

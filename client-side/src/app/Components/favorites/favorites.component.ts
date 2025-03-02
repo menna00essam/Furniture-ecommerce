@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 
 @Component({
   selector: 'app-favorites',

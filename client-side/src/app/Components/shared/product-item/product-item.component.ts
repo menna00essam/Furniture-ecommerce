@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { product } from '../../models/product.model';
+
 import { ButtonComponent } from '../button/button.component';
 import { RouterModule } from '@angular/router';
 import {
@@ -17,8 +17,9 @@ import {
   style,
   state,
 } from '@angular/animations';
-import { FavoriteService } from '../../Services/favorite.service';
-import { CartService } from '../../Services/cart.service';
+import { FavoriteService } from '../../../Services/favorite.service';
+import { CartService } from '../../../Services/cart.service';
+import { product } from '../../../Models/product.model';
 
 @Component({
   selector: 'app-product-item',
@@ -37,6 +38,7 @@ import { CartService } from '../../Services/cart.service';
 })
 export class ProductItemComponent implements OnInit {
   @Input({ required: true }) product!: product;
+
   isHovered = false;
   disableAnimation = false;
 

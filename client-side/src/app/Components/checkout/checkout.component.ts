@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
-import { ButtonComponent } from '../../shared/button/button.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import {
   AbstractControl,
   FormBuilder,
@@ -12,6 +11,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { ButtonComponent } from '../shared/button/button.component';
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {

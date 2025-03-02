@@ -8,15 +8,15 @@ import {
 } from '@angular/core';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { DropdownComponent } from '../dropdown/dropdown.component';
-import { FilterOptionComponent } from '../filter-option/filter-option.component';
-import { ProductItemComponent } from '../../shared/product-item/product-item.component';
-import { ButtonComponent } from '../../shared/button/button.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { DropdownComponent } from '../shared/dropdown/dropdown.component';
+import { FilterOptionComponent } from './filter-option/filter-option.component';
+
 import { ProductService } from '../../Services/product.service';
-import { product } from '../../models/product.model';
-import { PaginationComponent } from '../pagination/pagination.component';
+import { product } from '../../Models/product.model';
+import { ProductItemComponent } from '../shared/product-item/product-item.component';
+import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 enum SortOptions {
   Default = 'Default',
@@ -36,7 +36,6 @@ enum SortOptions {
     DropdownComponent,
     FilterOptionComponent,
     ProductItemComponent,
-    ButtonComponent,
     PaginationComponent,
     TitleCasePipe,
   ],
@@ -116,7 +115,7 @@ export class ShopComponent implements OnInit {
   }
 
   /** Handles sorting selection */
-  onSortChange(value: string) {
+  onSortChange(value: any) {
     const sortOption = value as SortOptions;
     if (this.sortMenuItems.includes(sortOption)) {
       this.selectedSortValue = sortOption;

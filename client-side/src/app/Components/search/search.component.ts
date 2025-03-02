@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DropdownComponent } from '../dropdown/dropdown.component';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 
 @Component({
   selector: 'app-search',
@@ -19,7 +19,6 @@ import { debounceTime } from 'rxjs/operators';
         class="w-full focus:outline-none"
         [(ngModel)]="searchValue"
         (focus)="toggleDropdown(true)"
-
         (input)="onSearchInput()"
         (keydown)="handleKeyDown($event)"
       />
@@ -38,8 +37,7 @@ import { debounceTime } from 'rxjs/operators';
 })
 export class SearchComponent {
   @Input() items: { id: number; value: string }[] = [];
-  @Output() onSelect = new EventEmitter<number>(); // Lowercase event name
-
+  @Output() onSelect = new EventEmitter<number>();
 
   searchValue: string = '';
   filteredItems: { id: number; value: string }[] = [];
@@ -72,7 +70,7 @@ export class SearchComponent {
   }
 
   /** Updates input value and emits selected event */
-  updateValue(item: { id: number; value: string }): void {
+  updateValue(item: any): void {
     this.searchValue = item.value;
     this.toggleDropdown(false);
     this.onSelect.emit(item.id);

@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchComponent } from '../search/search.component';
-import { UserActionsComponent } from '../user-actions/user-actions.component';
-import { NavigationComponent } from '../navigation/navigation.component';
-import { ProductService } from '../../Services/product.service';
+import { SearchComponent } from '../../search/search.component';
+import { UserActionsComponent } from '../../user-actions/user-actions.component';
+import { NavigationComponent } from '../../navigation/navigation.component';
+import { ProductService } from '../../../Services/product.service';
 
 @Component({
   selector: 'app-header',

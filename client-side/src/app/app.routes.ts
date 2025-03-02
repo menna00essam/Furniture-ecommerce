@@ -11,8 +11,8 @@ import { BlogsComponent } from './Components/blogs/blogs.component';
 import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
 import { ComparisonComponent } from './Components/comparison/comparison.component';
-import { SignupComponent } from './Components/signup/signup.component';
-import { LoginComponent } from './Components/login/login.component';
+import { SignupComponent } from './Components/registration/signup/signup.component';
+import { LoginComponent } from './Components/registration/login/login.component';
 import { FavoritesComponent } from './Components/favorites/favorites.component';
 
 export const routes: Routes = [

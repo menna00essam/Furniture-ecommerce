@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { CartService } from '../../Services/cart.service';
-import { product } from '../../models/product.model';
+import { product } from '../../Models/product.model';
 
 @Component({
   selector: 'app-cart',

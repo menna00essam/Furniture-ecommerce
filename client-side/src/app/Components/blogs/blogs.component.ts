@@ -1,14 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { BlogPost } from '../../models/blog.model';
+import { BlogPost } from '../../Models/blog.model';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
-import { DropdownComponent } from '../dropdown/dropdown.component';
-import { ButtonComponent } from '../../shared/button/button.component';
-import { PaginationComponent } from '../pagination/pagination.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { BlogService } from '../../Services/blog.service';
+import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 @Component({
   selector: 'app-blogs',
@@ -19,7 +18,6 @@ import { BlogService } from '../../Services/blog.service';
     HeaderBannerComponent,
     FeatureBannerComponent,
     DropdownComponent,
-    ButtonComponent,
     PaginationComponent,
   ],
   templateUrl: './blogs.component.html',
@@ -95,7 +93,7 @@ export class BlogsComponent implements OnInit {
     }
   }
 
-  filterByCategory(category: string) {
+  filterByCategory(category: any) {
     this.selectedCategory = category;
     this.currentPage = 1;
     this.toggleDropdown(false);
