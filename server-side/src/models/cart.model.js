@@ -24,7 +24,7 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto-calculate subtotal & total price before saving
+// Auto-calculate subtotal & total price before saving   /// chat gpt ---
 CartSchema.pre("save", function (next) {
   this.products.forEach((product) => {
     product.subtotal = product.price * product.quantity;

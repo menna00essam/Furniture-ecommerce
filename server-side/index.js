@@ -1,39 +1,35 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
-
 const cors = require("cors");
-const PORT = process.env.PORT || 5000;
-const connectDB = require("./src/config/db");
+require("dotenv").config();
 
-console.log("PORT", process.env.PORT);
-console.log("MONGO_URI", process.env.MONGO_URI);
+const PORT = process.env.PORT || 5000;
+
+/ * * * * DB * * * /;
+const connectDB = require("./src/config/db");
+/ * * * * End Db * * * * /;
 
 / * * * * Router imports * * * * /;
+///1- user router
+const signupRouter = require("./src/routes/signup.routes");
+const loginRouter = require("./src/routes/login.routes");
+//2-
+/ * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
 connectDB();
-// {
-//   origin: "http://localhost:4200", // Allow requests from this origin
-//   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-//   credentials: true, // Allow cookies and credentials
-// }
-// Middleware
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Default Route GET (/)
+//  Hello world
 app.get("/", (req, res) => {
   res.json("Hello in nodejs-app-starter");
 });
 
-// signup Route
-const signupRouter = require("./src/routes/signup.routes");
+// user registeration route
 app.use("/signup", signupRouter);
-
-// login Route
-const loginRouter = require("./src/routes/login.routes");
 app.use("/login", loginRouter);
 
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

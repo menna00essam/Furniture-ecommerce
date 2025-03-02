@@ -3,33 +3,18 @@ const mongoose = require("mongoose");
 const ProductSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
+    productSubtitle: { type: String, required: true },
     productImages: [{ type: String }],
     productPrice: { type: Number, required: true },
     productQuantity: { type: Number, required: true },
-    productDate: { type: Date, default: Date.now }, /// is it important?
+    productDate: { type: Date, default: Date.now },
     productSale: { type: Number, default: 0 },
     productCategories: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     ],
     productDescription: { type: String },
-
-    // stockStatus: { type: String, enum: ["in stock", "out of stock"], default: "in stock" }, // better performance to be calculated in code
-
-    dimensions: { width: Number, height: Number, depth: Number },
-    material: { type: String },
-    color: { type: String }, /// Should we put fixed colors?
+    color: { type: String },
     brand: { type: String },
-
-    // eliminated for now //
-
-    // ratings: { average: Number, totalReviews: Number },
-    // reviews: [
-    //   {
-    //     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    //     review: { type: String },
-    //     rating: { type: Number },
-    //   },
-    // ],
 
     /// FOR COMPARISON
     additionalInformation: {

@@ -11,8 +11,6 @@ const Order = require("./src/models/order.model");
 const seedData = async () => {
   try {
     await connectDB();
-    console.log("URIIIIIIII", process.env);
-    console.log("PORT", process.env.PORT);
     console.log("Seeding Database...");
 
     await User.deleteMany();
@@ -36,10 +34,9 @@ const seedData = async () => {
     process.exit(0);
   } catch (error) {
     console.error("Seeding Failed ❌", error);
-    await mongoose.connection.close(); // Ensure cleanup
+    await mongoose.connection.close();
     process.exit(1);
   }
 };
 
-// Run the seeding function
 seedData();
