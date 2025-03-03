@@ -15,7 +15,10 @@ const UserSchema = new mongoose.Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
+    resetToken: String,
+    resetTokenExpiry: Date,
   },
+
   { timestamps: true }
 );
 

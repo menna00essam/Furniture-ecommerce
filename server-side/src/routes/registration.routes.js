@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const registerationController = require("../controllers/registration.controller");
 /*
 1- registratiion
 2- logn-in
@@ -9,24 +9,8 @@ const router = express.Router();
 5- reset-password
 */
 
+router.post("/signup", registerationController.signup);
+router.post("/login", registerationController.login);
+router.post("/forgot-password", registerationController.forgotPassword);
+router.post("/reset-password", registerationController.resetPassword);
 module.exports = router;
-/*
-const express = require("express");
-const router = express.Router();
-
-const signup = require("../controllers/signup.controller");
-router.post("/", signup);
-
-module.exports = router;
-
----------------------
-const express = require("express");
-const router = express.Router();
-
-const login = require("../controllers/login.controller");
-router.post("/", login);
-
-module.exports = router;
-
-
-*/
