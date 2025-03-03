@@ -14,6 +14,8 @@ import { ComparisonComponent } from './Components/comparison/comparison.componen
 import { SignupComponent } from './Components/registration/signup/signup.component';
 import { LoginComponent } from './Components/registration/login/login.component';
 import { FavoritesComponent } from './Components/favorites/favorites.component';
+import { ForgotPasswordComponent } from './Components/registration/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './Components/registration/reset-password/reset-password.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +25,8 @@ export const routes: Routes = [
       { path: '', component: LoginComponent },
       { path: 'login', component: LoginComponent },
       { path: 'signup', component: SignupComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'reset-password', component: ResetPasswordComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
