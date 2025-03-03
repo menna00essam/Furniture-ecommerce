@@ -1,70 +1,157 @@
 const userModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-// Login Route POST (/login)
-const login = async (req, res) => {
-  // get user data
-  const user = req.body;
-  // search user
-  let foundedUser = await userModel.findOne({
-    email: user.email.toLowerCase(),
-  });
-  //   if not exist
-  if (!foundedUser) {
-    return res.status(404).json({ message: "Invalid email or password" });
-  }
-  //   check the password
-  let isMatch = await bcrypt.compare(user.password, foundedUser.password);
-  //   if password is not match
-  if (!isMatch) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
-  //   create and send jwt token in header
-  const token = await jwt.sign({ isAdmin: foundedUser.isAdmin }, "furnatiaro");
-  res.header("x-auth-token", token);
-
-  res.json({ message: "Logged in successfully" });
-};
-module.exports = login;
-
-/*
 const userValidation = require("../utils/userValidation");
-const userModel = require("../models/user.model");
-const bcrypt = require("bcrypt");
+const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
+const AppError = require("../utils/appError");
+const httpStatusText = require("../utils/httpStatusText");
+const nodemailer = require("nodemailer");
 
 // User Signup Route POST (/signup)
-const signup = async (req, res) => {
-  //get user
+const signup = asyncWrapper(async (req, res, next) => {
   const user = req.body;
-  // validate user data
   if (!userValidation(user)) {
-    return res.status(400).json({ message: "Invalid user data." });
+    return next(new AppError("Invalid user data.", 400, httpStatusText.ERROR));
   }
-  // check if user already exists by email
+
   let foundedUser = await userModel.findOne({
-    email: user.email.toLowerCase(),
+    email: user.email,
   });
   if (foundedUser) {
-    return res
-      .status(400)
-      .json({ message: "User with this email already exists." });
+    return next(
+      new AppError(
+        "User with this email already exists.",
+        400,
+        httpStatusText.FAIL
+      )
+    );
   }
-  // hash password
+
   let genSalt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, genSalt);
-  // make user email letter lowerCase for checking
-  user.email = user.email.toLowerCase();
-  // save user to database
+
   userModel
     .create(user)
     .then((user) => {
-      res.status(200).json({ message: "User registered successfully.", user });
+      res.status(201).json({ status: httpStatusText.SUCCESS, data: { user } });
     })
     .catch((error) => {
-      res.status(500).json({ message: "Error registering user.", error });
+      return next(
+        error,
+        new AppError("Error registering user.", 500, httpStatusText.ERROR)
+      );
     });
-};
-module.exports = signup;
+});
+// Login Route POST (/login)
+const login = asyncWrapper(async (req, res, next) => {
+  const user = req.body;
+  let foundedUser = await userModel.findOne({
+    email: user.email,
+  });
+  if (!foundedUser) {
+    return next(
+      new AppError("Invalid email or password.", 400, httpStatusText.FAIL)
+    );
+  }
+  let isMatch = await bcrypt.compare(user.password, foundedUser.password);
+  if (!isMatch) {
+    return next(
+      new AppError("Invalid email or password.", 400, httpStatusText.FAIL)
+    );
+  }
+  const token = jwt.sign(
+    {
+      isAdmin: foundedUser.isAdmin,
+      email: foundedUser.email,
+      _id: foundedUser._id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "10m",
+    }
+  );
 
-*/
+  res
+    .header("authorization", token)
+    .json({ message: "Logged in successfully" });
+});
+//
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+const forgotPassword = asyncWrapper(async (req, res, next) => {
+  const { email } = req.body;
+  let user = await userModel.findOne({ email });
+  if (!user) {
+    return next(
+      new AppError(
+        "User with this email doesn't exist.",
+        400,
+        httpStatusText.FAIL
+      )
+    );
+  }
+  const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+    expiresIn: "10m",
+  });
+
+  user.resetToken = token;
+  user.resetTokenExpiry = Date.now() + 600000;
+
+  await user.save();
+  const resetLink = `http://localhost:5000/reset-password?token=${user.resetToken}`;
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: user.email,
+    subject: "Reset Password",
+    text: `Dear ${user.username} : 
+    Click the link to reset your password: ${resetLink}`,
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending email:", error);
+      return next(
+        new AppError("Error sending email.", 500, httpStatusText.ERROR)
+      );
+    }
+    res.status(201).json({
+      status: httpStatusText.SUCCESS,
+      data: { message: "Email sent successfully." },
+    });
+  });
+});
+const resetPassword = asyncWrapper(async (req, res, next) => {
+  const { token, password } = req.body;
+  let user = await userModel.findOne({ resetToken: token });
+  if (!user || user.resetTokenExpiry < Date.now()) {
+    return next(
+      new AppError("Invalid or expired token.", 400, httpStatusText.FAIL)
+    );
+  }
+  let genSalt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(password, genSalt);
+  user.resetToken = null;
+  user.resetTokenExpiry = null;
+  await user.save();
+  res.status(201).json({
+    status: httpStatusText.SUCCESS,
+    data: { message: "Password reset successfully." },
+  });
+});
+module.exports = {
+  login,
+  signup,
+  forgotPassword,
+  resetPassword,
+};
