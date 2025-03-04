@@ -1,5 +1,36 @@
 <app-header-banner bannerTitle="Favorites"></app-header-banner>
 
-<p>favorites works</p>
+<div class="p-10 flex flex-col lg:flex-row justify-between gap-6">
+  <div class="w-full bg-white p-6 shadow rounded-lg h-max">
+    <div *ngIf="favorites.length > 0; else emptyFav">
+      <div
+        *ngFor="let item of favorites"
+        class="grid grid-cols-2 lg:grid-cols-2 items-center text-center py-4 border-b"
+      >
+        <div class="flex items-center gap-2">
+          <img
+            [src]="item.img"
+            alt="{{ item.title }}"
+            class="w-14 h-14 sm:w-16 sm:h-16 rounded-md bg-secondary p-2"
+          />
+          <p class="text-xs sm:text-sm text-gray-dark mt-2">{{ item.title }}</p>
+        </div>
+        <div class="flex gap-2">
+          <app-button [routerLink]="['/product', item.id]">View</app-button>
+          <app-button>Add to cart</app-button>
+          <app-button type="primary-outline">Remove</app-button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyFav>
+      <div class="text-center py-10">
+        <p class="text-lg font-semibold text-gray">
+          Your don't have any favorites
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</div>
 
 <app-feature-banner></app-feature-banner>
