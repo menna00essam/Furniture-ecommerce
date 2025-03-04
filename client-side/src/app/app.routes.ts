@@ -9,7 +9,7 @@ import { CheckoutComponent } from './Components/checkout/checkout.component';
 import { ContactComponent } from './Components/contact/contact.component';
 import { BlogsComponent } from './Components/blogs/blogs.component';
 import { BlogComponent } from './Components/blog/blog.component';
-import { NotFoundComponent } from './Components/not-found/not-found.component';
+import { ErrorComponent } from './Components/error/error.component';
 import { ComparisonComponent } from './Components/comparison/comparison.component';
 import { SignupComponent } from './Components/registration/signup/signup.component';
 import { LoginComponent } from './Components/registration/login/login.component';
@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: '', component: LoginComponent },
       { path: 'login', component: LoginComponent },
       { path: 'signup', component: SignupComponent },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', component: ErrorComponent },
     ],
   },
   {
@@ -40,10 +40,8 @@ export const routes: Routes = [
       { path: 'blogs', component: BlogsComponent },
       { path: 'blog/:id', component: BlogComponent },
       { path: 'comparison', component: ComparisonComponent },
-
       { path: 'favorites', component: FavoritesComponent },
-
-      { path: '**', component: NotFoundComponent },
+      { path: '**', component: ErrorComponent },
     ],
   },
 ];
