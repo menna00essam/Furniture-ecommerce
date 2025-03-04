@@ -1,5 +1,4 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { BlogPost } from '../../Models/blog.model';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +7,7 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { BlogService } from '../../Services/blog.service';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
+import { BlogPost } from '../../Models/blog.model';
 
 @Component({
   selector: 'app-blogs',
@@ -93,8 +93,9 @@ export class BlogsComponent implements OnInit {
     }
   }
 
-  filterByCategory(category: any) {
-    this.selectedCategory = category;
+  filterByCategory(selectedItem: { id: number; value: string } | string) {
+    if (typeof selectedItem == 'string') this.selectedCategory = selectedItem;
+    else this.selectedCategory = selectedItem.value;
     this.currentPage = 1;
     this.toggleDropdown(false);
   }
