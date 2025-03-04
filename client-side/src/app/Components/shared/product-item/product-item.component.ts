@@ -71,11 +71,21 @@ export class ProductItemComponent implements OnInit {
   }
 
   addToFavourites() {
-    this.favoriteService.addFavorite(1, this.product);
+    if (this.isFavorite(this.product.id)) {
+      this.favoriteService.removeFavorite(1, this.product.id);
+    } else {
+      this.favoriteService.addFavorite(1, this.product);
+    }
+    this.cdr.detectChanges(); // Force UI update
   }
 
   addToCart() {
-    this.cartService.addProduct(1, this.product);
+    if (this.isInCart(this.product.id)) {
+      this.cartService.removeProduct(1, this.product.id);
+    } else {
+      this.cartService.addProduct(1, this.product);
+    }
+    this.cdr.detectChanges(); // Force UI update
   }
 
   isNewProduct(): boolean {
@@ -84,5 +94,12 @@ export class ProductItemComponent implements OnInit {
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
     return productDate > oneMonthAgo.getTime();
+  }
+
+  isFavorite(productID: number): boolean {
+    return this.favoriteService.getFavorites(1).some((p) => p.id === productID);
+  }
+  isInCart(productID: number): boolean {
+    return this.cartService.getCart(1).some((p) => p.id === productID);
   }
 }
