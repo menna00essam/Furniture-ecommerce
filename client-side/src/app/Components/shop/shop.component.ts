@@ -115,8 +115,10 @@ export class ShopComponent implements OnInit {
   }
 
   /** Handles sorting selection */
-  onSortChange(value: any) {
-    const sortOption = value as SortOptions;
+  onSortChange(selectedItem: { id: number; value: string }) {
+    console.log(5);
+    const sortOption = selectedItem.value as SortOptions;
+    console.log(this.sortMenuItems, sortOption);
     if (this.sortMenuItems.includes(sortOption)) {
       this.selectedSortValue = sortOption;
     }
