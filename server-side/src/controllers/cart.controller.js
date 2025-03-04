@@ -3,6 +3,7 @@ const httpStatusText = require('../utils/httpStatusText');
 const AppError = require('../utils/appError');
 const Cart = require('../models/cart.model');
 const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
+const Product = require('../models/product.model')
 
 // GET: Retrieve user cart
 const getUserCart = asyncWrapper(async (req, res, next) => {
