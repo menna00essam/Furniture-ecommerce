@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 
 / * * * Routes * * * /;
 app.use("/register", registerationRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/categories", categoreRouter);
 app.use("/products", productRouter);
 app.use("/posts", postRouter);
