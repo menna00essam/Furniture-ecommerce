@@ -48,6 +48,7 @@
   <div
     *ngIf="isActive"
     class="absolute top-[100px] right-0 flex-col w-[250px] bg-white text-center shadow md:hidden"
+    (click)="toggleMenu()"
   >
     <app-navigation></app-navigation>
     <app-user-actions></app-user-actions>
