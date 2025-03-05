@@ -47,14 +47,21 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
 });
 
 const getProductsByCategory = asyncWrapper(async (req, res, next) => {
-  let categoryId = req.params;
+  let { category_id } = req.params;
   let { limit = 16, page = 1, order = "desc" } = req.query;
+  console.log(category_id);
 
   // Ensure valid pagination inputs
   limit = Math.max(1, limit);
   page = Math.max(1, page);
 
-  if (!categoryId) {
+  if (!mongoose.isValidObjectId(category_id)) {
+    return next(
+      new AppError("Invalid Category ID format.", 400, httpStatusText.FAIL)
+    );
+  }
+
+  if (!category_id) {
     return next(
       new AppError("Category ID is required.", 400, httpStatusText.FAIL)
     );
@@ -72,10 +79,12 @@ const getProductsByCategory = asyncWrapper(async (req, res, next) => {
 
   const skip = (page - 1) * limit;
   const sortOrder = order === "asc" ? 1 : -1;
-  const totalProducts = await Product.countDocuments({ categoryId });
+  const totalProducts = await Product.countDocuments({
+    productCategories: category_id,
+  });
 
   // Fetch products with pagination and sorting
-  const products = await Product.find({ categoryId })
+  const products = await Product.find({ productCategories: category_id })
     .select(
       "_id productName productSubtitle productImages productPrice productDate productSale"
     )
@@ -100,7 +109,7 @@ const getProductById = asyncWrapper(async (req, res, next) => {
     .populate("_id");
 
   if (!product) {
-    return next(new AppError("Product not found", 404 , httpStatusText.FAIL));
+    return next(new AppError("Product not found", 404, httpStatusText.FAIL));
   }
 
   res.status(200).json({
@@ -116,7 +125,9 @@ const getProductForComparison = asyncWrapper(async (req, res, next) => {
   console.log("Fetching product for comparison with ID:", product_id);
 
   if (!product_id) {
-    return next(new AppError("Product ID is required", 400, httpStatusText.FAIL));
+    return next(
+      new AppError("Product ID is required", 400, httpStatusText.FAIL)
+    );
   }
 
   const product = await Product.findById(product_id)
@@ -144,20 +155,19 @@ const getAllProductNamesAndIds = asyncWrapper(async (req, res, next) => {
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
-    data: { 
-      products: products.map(product => ({
-        product_id: product._id, 
-        productName: product.productName
-      })) 
+    data: {
+      products: products.map((product) => ({
+        product_id: product._id,
+        productName: product.productName,
+      })),
     },
   });
 });
-
 
 module.exports = {
   getAllProducts,
   getProductsByCategory,
   getProductById,
-  getAllProductNamesAndIds ,
+  getAllProductNamesAndIds,
   getProductForComparison,
 };
