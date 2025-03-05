@@ -11,61 +11,6 @@ const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
 // - get all-products (name and id ) usred in search
 // - get all products by search -- pagination 16
 
-
-
-// get a product by id
-
-
-const getProductById = asyncWrapper(async (req, res, next) => {
-  const { product_id } = req.params;
-
-  const product = await Product.findById(product_id)
-  .select("productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand")
-  .populate(
-    "productCategories"
-  );
-
-  if (!product) {
-    return next(new AppError("Product not found", 404 , httpStatusText.FAIL));
-  }
-
-  res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: {
-      product,
-    },
-  });
-});
-
-
- /* const product = await Product.aggregate([
-  { $match: { _id: product_id } }, 
-  {
-    $lookup: {
-      from: "categories", 
-      localField: "productCategories",
-      foreignField: "_id",
-      as: "productCategories",
-    },
-  },
-  {
-    $project: {
-      productName: 1,
-      productSubtitle: 1,
-      productImages: 1,
-      productPrice: 1,
-      productQuantity: 1,
-      productDate: 1,
-      productSale: 1,
-      productCategories: 1,
-      productDescription: 1,
-      colors: 1,
-      sizes: 1,
-      brand: 1,
-    },
-  },
-]);*/
-
 const getAllProducts = asyncWrapper(async (req, res, next) => {
   let { limit = 16, page = 1, order = "desc" } = req.query;
   console.log("query", limit, page);
@@ -144,8 +89,75 @@ const getProductsByCategory = asyncWrapper(async (req, res, next) => {
   });
 });
 
+const getProductById = asyncWrapper(async (req, res, next) => {
+  const { product_id } = req.params;
+  console.log(product_id);
+
+  const product = await Product.findById(product_id)
+    .select(
+      "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand"
+    )
+    .populate("_id");
+
+  if (!product) {
+    return next(new AppError("Product not found", 404 , httpStatusText.FAIL));
+  }
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      product,
+    },
+  });
+});
+
+const getProductForComparison = asyncWrapper(async (req, res, next) => {
+  const { product_id } = req.params;
+  console.log("Fetching product for comparison with ID:", product_id);
+
+  if (!product_id) {
+    return next(new AppError("Product ID is required", 400, httpStatusText.FAIL));
+  }
+
+  const product = await Product.findById(product_id)
+    .select(
+      "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand additionalInformation"
+    )
+    .populate("_id");
+
+  if (!product) {
+    return next(new AppError("Product not found", 404));
+  }
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      product,
+    },
+  });
+});
+
+const getAllProductNamesAndIds = asyncWrapper(async (req, res, next) => {
+  const products = await Product.find().select("_id productName");
+
+  console.log("Products Found");
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { 
+      products: products.map(product => ({
+        product_id: product._id, 
+        productName: product.productName
+      })) 
+    },
+  });
+});
+
+
 module.exports = {
   getAllProducts,
   getProductsByCategory,
-  getProductById
+  getProductById,
+  getAllProductNamesAndIds ,
+  getProductForComparison,
 };
