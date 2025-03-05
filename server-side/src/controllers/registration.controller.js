@@ -9,7 +9,9 @@ const nodemailer = require("nodemailer");
 
 // User Signup Route POST (/signup)
 const signup = asyncWrapper(async (req, res, next) => {
+  console.log("singUpBack");
   const user = req.body;
+  console.log("singUpBack", user);
   if (!userValidation(user)) {
     return next(new AppError("Invalid user data.", 400, httpStatusText.ERROR));
   }
@@ -61,7 +63,7 @@ const login = asyncWrapper(async (req, res, next) => {
   }
   const token = jwt.sign(
     {
-      isAdmin: foundedUser.isAdmin,
+      role: foundedUser.role,
       email: foundedUser.email,
       _id: foundedUser._id,
     },
@@ -70,10 +72,10 @@ const login = asyncWrapper(async (req, res, next) => {
       expiresIn: "10m",
     }
   );
-
-  res
-    .header("authorization", token)
-    .json({ message: "Logged in successfully" });
+  res.status(201).json({
+    status: httpStatusText.SUCCESS,
+    data: { message: "Logged in successfully", token },
+  });
 });
 //
 const transporter = nodemailer.createTransport({
@@ -110,7 +112,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
   user.resetTokenExpiry = Date.now() + 600000;
 
   await user.save();
-  const resetLink = `http://localhost:5000/reset-password?token=${user.resetToken}`;
+  const resetLink = `http://localhost:4200/register/reset-password?token=${user.resetToken}`;
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.email,
