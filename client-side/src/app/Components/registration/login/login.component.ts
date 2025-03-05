@@ -6,9 +6,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { InputComponent } from '../../shared/input/input.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { AuthService } from '../../../Services/auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -17,28 +18,37 @@ import { AuthService } from '../../../Services/auth.service';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  errorMessage: string = '';
   form = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [
       Validators.required,
       Validators.minLength(8),
     ]),
+    agree: new FormControl(false, [Validators.requiredTrue]),
   });
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
   onSubmit() {
     this.form.controls.email.markAsTouched();
     this.form.controls.password.markAsTouched();
+    this.form.controls.agree.markAsTouched();
     if (this.form.valid) {
-      console.log(this.form.value);
       this.authService.login(this.form.value).subscribe({
         next: (res) => {
-          console.log(res);
+          this.form.reset();
+          localStorage.setItem('token', res.data.token);
+          const decoded: any = jwtDecode(res.data.token);
+          localStorage.setItem('role', decoded.role);
+          if (decoded.role === 'ADMIN') {
+            this.router.navigate(['/admin']);
+          } else {
+            this.router.navigate(['/']);
+          }
         },
         error: (err) => {
-          console.error(err.error.message);
+          this.errorMessage = err.error.error;
         },
       });
-      this.form.reset();
     } else {
       console.error('Form invalid');
     }

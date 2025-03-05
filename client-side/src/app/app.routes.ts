@@ -16,17 +16,20 @@ import { LoginComponent } from './Components/registration/login/login.component'
 import { FavoritesComponent } from './Components/favorites/favorites.component';
 import { ForgotPasswordComponent } from './Components/registration/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './Components/registration/reset-password/reset-password.component';
+import { AdminComponent } from './Components/admin/admin.component';
+import { adminGuard } from './guards/admin.guard';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'register',
     component: RegistrationComponent,
     children: [
-      { path: '', component: LoginComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'signup', component: SignupComponent },
+      { path: '', component: LoginComponent, canActivate: [authGuard] },
+      { path: 'login', component: LoginComponent, canActivate: [authGuard] },
+      { path: 'signup', component: SignupComponent, canActivate: [authGuard] },
       { path: 'forgot-password', component: ForgotPasswordComponent },
-      { path: 'reset-password/:token', component: ResetPasswordComponent },
+      { path: 'reset-password', component: ResetPasswordComponent },
       { path: '**', component: NotFoundComponent },
     ],
   },
@@ -35,6 +38,7 @@ export const routes: Routes = [
     component: RootComponent,
     children: [
       { path: '', component: HomeComponent },
+      { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
       { path: 'home', component: HomeComponent },
       { path: 'shop', component: ShopComponent },
       { path: 'product/:id', component: ProductComponent },

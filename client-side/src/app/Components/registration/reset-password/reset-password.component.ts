@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { InputComponent } from '../../shared/input/input.component';
 import { ButtonComponent } from '../../shared/button/button.component';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -31,6 +31,7 @@ export class ResetPasswordComponent {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder
   ) {
     this.token = this.route.snapshot.queryParams['token'];
@@ -62,6 +63,7 @@ export class ResetPasswordComponent {
           next: (res) => {
             this.message = 'Password reset successfully';
             this.resetForm.reset();
+            this.router.navigate(['/register/login']);
           },
           error: (err) => {
             this.message = 'Error: ' + err.error.message;

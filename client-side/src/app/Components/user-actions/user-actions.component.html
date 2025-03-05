@@ -27,11 +27,19 @@
     </div>
     }
   </li>
+  @if(isLoggedIn){
+  <li class="fa-solid fa-arrow-right-from-bracket" (click)="logout()">
+    <a routerLink="/register">
+      <img alt="" srcset="" class="w-[20px]" />
+    </a>
+  </li>
+  }@else{
   <li>
     <a routerLink="/register">
       <img src="icons/account-alert.svg" alt="" srcset="" class="w-[20px]" />
     </a>
   </li>
+  }
 </ul>
 
 <!-- Favorites Modal -->

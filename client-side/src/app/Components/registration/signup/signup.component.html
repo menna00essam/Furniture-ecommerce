@@ -17,19 +17,14 @@
       <div class="sign text-5xl font-bold font-poppins">Sign Up</div>
 
       <!-- Form -->
-      <form
-        action=""
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-        class="flex flex-col gap-4"
-      >
+      <form action="" [formGroup]="form" class="flex flex-col gap-4">
         <app-input
           placeholder="User name"
           label="Name"
           type="text"
           bgC="secondary"
           width="full"
-          [control]="form.controls['name']"
+          [control]="form.controls['username']"
         ></app-input>
         <app-input
           placeholder="test@test.com"
@@ -55,7 +50,9 @@
           width="full"
           [control]="form.controls['password']"
         ></app-input>
-        
+        @if(errorMessage){
+        <div class="text-red-500 text-center">{{ errorMessage }}</div>
+        }
         <div class="text-center mt-4">
           <span class="text-gray">Already have an account ?</span>
           <span>

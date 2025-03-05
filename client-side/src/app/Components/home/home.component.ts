@@ -9,7 +9,7 @@ import {
 
 import { CommonModule, UpperCasePipe } from '@angular/common';
 
-import { product } from '../../Models/product.model';
+import { product } from '../../models/product.model';
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
 import { ButtonComponent } from '../shared/button/button.component';
