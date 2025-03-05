@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
-// 1- getall categories
-router.route("/").post();
+const checkoutController = require("../controllers/checkout.controller");
+router.route("/").post(checkoutController.placeOrder);
 
 module.exports = router;

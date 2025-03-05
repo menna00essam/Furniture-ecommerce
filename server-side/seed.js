@@ -16,12 +16,12 @@ const seedData = async () => {
 
     // Clear existing data
 
-    // await User.deleteMany();
-    // await Product.deleteMany();
-    // await Category.deleteMany();
-    // await Cart.deleteMany();
-    // await Blog.deleteMany();
-    // await Order.deleteMany();
+    await User.deleteMany();
+    await Product.deleteMany();
+    await Category.deleteMany();
+    await Cart.deleteMany();
+    await Blog.deleteMany();
+    await Order.deleteMany();
     // await Image.deleteMany();
 
     // ======================
