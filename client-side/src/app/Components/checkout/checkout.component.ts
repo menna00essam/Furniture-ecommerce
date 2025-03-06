@@ -12,6 +12,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../shared/button/button.component';
+import { CartService } from '../../Services/cart.service';
+import { CurrencyPipe } from '@angular/common';
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -29,6 +31,7 @@ export function noNumbersValidator(): ValidatorFn {
     HeaderBannerComponent,
     FeatureBannerComponent,
     ButtonComponent,
+    CurrencyPipe,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
@@ -36,8 +39,10 @@ export function noNumbersValidator(): ValidatorFn {
 export class CheckoutComponent {
   checkoutForm: FormGroup;
   selectedPayment: string = 'bank';
+  cartItems: any[] = [];
+  subtotal: number = 0;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private cartService: CartService) {
     this.checkoutForm = this.fb.group({
       firstName: ['', [Validators.required, noNumbersValidator()]],
       lastName: ['', [Validators.required]],
@@ -50,6 +55,10 @@ export class CheckoutComponent {
       email: ['', [Validators.required, Validators.email]],
       additionalInfo: [''],
     });
+
+    this.cartItems = this.cartService.getCheckoutData();
+    this.subtotal = this.cartService.getSubtotal();
+    // console.log('Cart Items>>>>>>>>>>', this.cartItems);
   }
 
   onSubmit() {
@@ -57,6 +66,9 @@ export class CheckoutComponent {
 
     if (this.checkoutForm.valid) {
       console.log('Form Submitted', this.checkoutForm.value);
+      console.log('Cart Items:', this.cartItems);
+      console.log('Subtotal:', this.subtotal);
+      console.log('Payment Method:', this.selectedPayment);
     } else {
       console.log('Form is invalid');
     }

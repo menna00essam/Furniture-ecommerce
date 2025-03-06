@@ -33,7 +33,7 @@
         <div class="flex items-center justify-center gap-1 sm:gap-2">
           <button
             class="w-6 h-6 sm:w-8 sm:h-8 bg-gray-light rounded hover:bg-gray-medium text-xs sm:text-base"
-            (click)="decreaseQuantity(item)"
+            (click)="decreaseQuantity(item.id)"
           >
             -
           </button>
@@ -44,7 +44,7 @@
 
           <button
             class="w-6 h-6 sm:w-8 sm:h-8 bg-gray-light rounded hover:bg-gray-medium text-xs sm:text-base"
-            (click)="increaseQuantity(item)"
+            (click)="increaseQuantity(item.id)"
           >
             +
           </button>

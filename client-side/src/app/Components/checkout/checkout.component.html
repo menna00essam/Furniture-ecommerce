@@ -1,5 +1,5 @@
 <app-header-banner bannerTitle="Checkout"></app-header-banner>
-<!-- Checkout Section -->
+<!--**** Checkout Section ****-->
 <section class="flex flex-col md:flex-row p-10 gap-10">
   <div class="flex-1 p-6 shadow rounded-lg">
     <form
@@ -130,7 +130,7 @@
     </form>
   </div>
 
-  <!-- Confirming payment -->
+  <!--***** Confirming payment *****-->
   <div class="Confirming-payment shadow p-6">
     <h3>Product</h3>
     <table>
@@ -141,13 +141,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Asgard sofa x 1</td>
-          <td>Rs. 250,000.00</td>
+        <tr *ngFor="let item of cartItems">
+          <td>{{ item.title }} x {{ item.quantity }}</td>
+          <td>{{ item.price * item.quantity | currency }}</td>
         </tr>
         <tr>
           <td>Total</td>
-          <td class="total">Rs. 250,000.00</td>
+          <td class="total">{{ subtotal | currency }}</td>
         </tr>
       </tbody>
     </table>
@@ -162,7 +162,7 @@
         funds have cleared in our account.
       </p>
 
-      <!-- Payment Options -->
+      <!--***** Payment Options *****-->
       <label>
         <input
           type="radio"
