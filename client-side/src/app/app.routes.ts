@@ -14,6 +14,9 @@ import { ComparisonComponent } from './Components/comparison/comparison.componen
 import { SignupComponent } from './Components/registration/signup/signup.component';
 import { LoginComponent } from './Components/registration/login/login.component';
 import { FavoritesComponent } from './Components/favorites/favorites.component';
+import { ProfileComponent } from './Components/profile/profile.component';
+import { SettingComponent } from './Components/setting/setting.component';
+import { OrdersComponent } from './Components/orders/orders.component';
 
 export const routes: Routes = [
   {
@@ -41,6 +44,25 @@ export const routes: Routes = [
       { path: 'blog/:id', component: BlogComponent },
       { path: 'comparison', component: ComparisonComponent },
       { path: 'favorites', component: FavoritesComponent },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        children: [
+          {
+            path: '',
+            component: OrdersComponent,
+          },
+          {
+            path: 'setting',
+            component: SettingComponent,
+          },
+
+          {
+            path: 'orders',
+            component: OrdersComponent,
+          },
+        ],
+      },
       { path: '**', component: ErrorComponent },
     ],
   },
