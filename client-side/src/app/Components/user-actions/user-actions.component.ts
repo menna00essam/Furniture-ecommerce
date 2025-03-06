@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { product } from '../../Models/product.model';
+import { product } from '../../models/product.model';
 import { CurrencyPipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
+
+import { AuthService } from '../../Services/auth.service';
+
 import { UserService } from '../../Services/user.service';
+
 
 @Component({
   selector: 'app-user-actions',
@@ -35,15 +39,28 @@ export class UserActionsComponent implements OnInit {
   favoritesLength = 0; // Stores actual cart length
   favModalShow = false;
   cartModalShow = false;
+  isLoggedIn = false;
 
   constructor(
     private favoriteService: FavoriteService,
     private cartService: CartService,
+
+    private authService: AuthService,
+    private router: Router
+
     private userService: UserService
+
   ) {}
 
-  ngOnInit(): void {}
-
+  ngOnInit(): void {
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
+  }
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/register']);
+  }
   get cart(): product[] {
     const cartItems = this.cartService.getCart(1);
     this.cartLength = cartItems.length;

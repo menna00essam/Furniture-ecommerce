@@ -27,6 +27,13 @@
     </div>
     }
   </li>
+  @if(isLoggedIn){
+  <li class="fa-solid fa-arrow-right-from-bracket" (click)="logout()">
+    <a routerLink="/register">
+      <img alt="" srcset="" class="w-[20px]" />
+    </a>
+  </li>
+  }@else{
   <li>
     <a routerLink="{{ isloggedin() ? ['/profile'] : '/register' }}">
       <img
@@ -37,6 +44,7 @@
       />
     </a>
   </li>
+  }
 </ul>
 
 <!-- Favorites Modal -->

@@ -6,8 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { InputComponent } from '../../shared/input/input.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
+import { AuthService } from '../../../Services/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -15,9 +16,10 @@ import { ButtonComponent } from '../../shared/button/button.component';
   templateUrl: './signup.component.html',
 })
 export class SignupComponent {
+  errorMessage: string = '';
   form = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
-    name: new FormControl(null, [
+    username: new FormControl(null, [
       Validators.required,
       Validators.minLength(3),
       Validators.pattern('^[a-zA-Z]*$'),
@@ -32,14 +34,22 @@ export class SignupComponent {
       Validators.minLength(8),
     ]),
   });
+  constructor(private authService: AuthService, private router: Router) {}
   onSubmit() {
     this.form.controls.email.markAsTouched();
-    this.form.controls.name.markAsTouched();
+    this.form.controls.username.markAsTouched();
     this.form.controls.phone.markAsTouched();
     this.form.controls.password.markAsTouched();
     if (this.form.valid) {
-      console.log(this.form.value);
-      this.form.reset();
+      this.authService.signup(this.form.value).subscribe({
+        next: (res) => {
+          this.form.reset();
+          this.router.navigate(['/register/login']);
+        },
+        error: (err) => {
+          this.errorMessage = err.error.error;
+        },
+      });
     } else {
       console.error('Form invalid');
     }
