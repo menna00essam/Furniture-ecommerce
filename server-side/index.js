@@ -21,8 +21,10 @@ const productRouter = require("./src/routes/product.routes");
 const postRouter = require("./src/routes/post.routes");
 const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
+const categoryRoutes = require("./src/routes/category.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
-// * * * * End Router imports * * * * /;
+/ * * * * End Router imports * * * * /;
+
 
 // Connect to MongoDB
 connectDB();
@@ -38,13 +40,14 @@ app.get("/", (req, res) => {
 
 //* * * Routes * * * /;
 app.use("/register", registerationRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
+app.use("/categories", categoreRouter);
 app.use("/products", productRouter);
 app.use("/categories", categoreRouter);
 app.use("/posts", postRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/cart", cartRouter);
-
+app.use("/categories", categoryRoutes);
 app.use("/api", galleryRouter);
 
 ///* * * Global MiddleWare * * * /;
