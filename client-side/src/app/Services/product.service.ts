@@ -16,7 +16,7 @@ export class ProductService {
       sale: 20,
       date: new Date(2021, 1, 10),
       category: 'chair',
-      quantity: 1,
+      quantity: 5,
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ export class ProductService {
       price: 3000,
       date: new Date(2022, 1, 15),
       category: 'chair',
-      quantity: 1,
+      quantity: 6,
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ export class ProductService {
       price: 2300,
       date: new Date(2023, 1, 20),
       category: 'chair',
-      quantity: 1,
+      quantity: 4,
     },
     {
       id: 4,
@@ -204,6 +204,6 @@ export class ProductService {
     return this.products;
   }
   getProduct(productId: number): product | undefined {
-    return this.products.find((p) => (p.id = productId));
+    return this.products.find((p) => (p.id === productId));
   }
 }

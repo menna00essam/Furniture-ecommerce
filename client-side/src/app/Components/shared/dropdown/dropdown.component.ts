@@ -23,9 +23,10 @@ import { CommonModule } from '@angular/common';
 })
 export class DropdownComponent {
   @Input() items: { id: number; value: string }[] | string[] = [];
-  @Output() selectedValueChange = new EventEmitter<
-    { id: number; value: string } | string
-  >();
+  @Output() selectedValueChange = new EventEmitter<{
+    id: number;
+    value: string;
+  }>();
 
   get normalizedItems(): { id: number; value: string }[] {
     return this.items.map((item, index) =>
@@ -33,11 +34,7 @@ export class DropdownComponent {
     );
   }
 
-  selectItem(item: { id: number; value: string } | string) {
-    if (typeof this.items[0] === 'string') {
-      this.selectedValueChange.emit(item); // Emit string directly
-    } else {
-      this.selectedValueChange.emit(item as { id: number; value: string }); // Emit object with both id and value
-    }
+  selectItem(item: { id: number; value: string }) {
+    this.selectedValueChange.emit(item as { id: number; value: string });
   }
 }

@@ -5,9 +5,15 @@ import { user } from '../models/user.model';
   providedIn: 'root',
 })
 export class UserService {
-  private user: user = { id: 1, favorites: [], cart: [] };
+  private user: user = {
+    id: 1,
+    username: 'kamilia',
+    email: 'kamiliaahmed01@gmail.com',
+    favorites: [],
+    cart: [],
+  };
 
-  getUser(userId: number): user {
+  getUser(): user {
     return this.user;
   }
 }

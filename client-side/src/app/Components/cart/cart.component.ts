@@ -23,6 +23,9 @@ import { product } from '../../models/product.model';
 })
 export class CartComponent implements OnInit {
   cart: product[] = [];
+  // defQuantity:number=1;
+ 
+
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
@@ -30,7 +33,7 @@ export class CartComponent implements OnInit {
   }
 
   get subtotal(): number {
-    return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return this.cartService.getSubtotal();
   }
 
   updateQuantity(item: product, quantity: number) {
@@ -42,13 +45,13 @@ export class CartComponent implements OnInit {
     this.cart = this.cartService.getCart(1);
   }
 
-  increaseQuantity(item: any) {
-    item.quantity++;
+  increaseQuantity(productId: number) {
+    this.cartService.increaseQuantity(productId);
+    this.cart = this.cartService.getCart(1); 
   }
 
-  decreaseQuantity(item: any) {
-    if (item.quantity > 1) {
-      item.quantity--;
-    }
+  decreaseQuantity(productId: number) {
+    this.cartService.decreaseQuantity(productId);
+    this.cart = this.cartService.getCart(1); 
   }
 }

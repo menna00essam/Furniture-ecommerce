@@ -5,7 +5,11 @@ import { trigger, transition, animate, style } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
+
 import { AuthService } from '../../Services/auth.service';
+
+import { UserService } from '../../Services/user.service';
+
 
 @Component({
   selector: 'app-user-actions',
@@ -15,10 +19,16 @@ import { AuthService } from '../../Services/auth.service';
     trigger('slideInOut', [
       transition(':enter', [
         style({ transform: 'translateX(100%)' }),
-        animate('200ms ease-in', style({ transform: 'translateX(0%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(0%)' })
+        ),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ transform: 'translateX(100%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(100%)' })
+        ),
       ]),
     ]),
   ],
@@ -34,8 +44,12 @@ export class UserActionsComponent implements OnInit {
   constructor(
     private favoriteService: FavoriteService,
     private cartService: CartService,
+
     private authService: AuthService,
     private router: Router
+
+    private userService: UserService
+
   ) {}
 
   ngOnInit(): void {
@@ -84,5 +98,11 @@ export class UserActionsComponent implements OnInit {
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
     document.body.style.width = isOpen ? 'calc(100% - 10px)' : '';
+  }
+
+  isloggedin(): boolean {
+    if (this.userService.getUser()) {
+      return true;
+    } else return false;
   }
 }
