@@ -4,6 +4,9 @@ const router = express.Router();
 
 router.route("/").get(productController.getAllProducts);
 router.route("/all").get(productController.getAllProductNamesAndIds); // - get all-products (name and id ) usred in search
+//*** search route***/
+router.route("/search").get(productController.getSearchProducts);
+
 router.route("/:product_id").get(productController.getProductById);
 router
   .route("/category/:category_id")
@@ -11,5 +14,6 @@ router
 router
   .route("/comparison/:product_id")
   .get(productController.getProductForComparison); // - get products full data for compariosn
+
 
 module.exports = router;

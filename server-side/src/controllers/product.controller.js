@@ -164,10 +164,56 @@ const getAllProductNamesAndIds = asyncWrapper(async (req, res, next) => {
   });
 });
 
+// ****** Search Functionality ******//
+const getSearchProducts = asyncWrapper(async (req, res, next) => {
+    try {
+      const { query } = req.query;
+      if (!query) {
+        return next(
+          new AppError("please enter any keyword!", 400, httpStatusText.FAIL)
+        );
+      }
+
+      const products = await Product.find({
+        $or: [
+            //** Search by product-name **/ 
+          { productName: { $regex: query, $options: "i" } }, 
+          {
+            productCategories: {
+                //** Search by category-name **/ 
+              $in: await getCategoryIds(query), 
+            },
+          },
+        ],
+      }).populate("productCategories", "catName");
+  
+      if (!products.length) {
+        return next(new AppError("No products found.", 404, httpStatusText.FAIL));
+      }
+  
+      res.status(200).json({
+        status: httpStatusText.SUCCESS,
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  async function getCategoryIds(query) {
+    const categories = await require("../models/category.model").find({
+      catName: { $regex: query, $options: "i" },
+    });
+    return categories.map((cat) => cat._id);
+  }
+  
+
+
 module.exports = {
   getAllProducts,
   getProductsByCategory,
   getProductById,
   getAllProductNamesAndIds,
   getProductForComparison,
+  getSearchProducts,
 };
