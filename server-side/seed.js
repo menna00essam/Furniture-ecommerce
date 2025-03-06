@@ -55,6 +55,7 @@ const seedData = async () => {
     // ======================
     // 3. Create Products
     // ======================
+
     const products = await Product.insertMany([
       {
         productName: "Modern Sofa Set",
@@ -528,6 +529,7 @@ const seedData = async () => {
           },
         },
       },
+
     ]); // Keep your existing products array
 
     // ======================
