@@ -59,16 +59,16 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
       transactionId,
     });
 
-    await Promise.all([
-      order.save(),
-      ...cart.products.map((item) =>
-        Product.updateOne(
-          { _id: item.productId._id },
-          { $inc: { productQuantity: -item.quantity } }
-        )
-      ),
-    ]);
+    await order.save();
 
+    const updatePromises = cart.products.map((item) =>
+      Product.updateOne(
+        { _id: item.productId._id },
+        { $inc: { productQuantity: -item.quantity } }
+      )
+    );
+
+    await Promise.all(updatePromises);
     await Cart.findOneAndDelete({ userId });
 
     res.status(201).json({ message: "Order placed successfully!", order });
