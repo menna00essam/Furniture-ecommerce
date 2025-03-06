@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { FavoriteService } from '../../Services/favorite.service';
-import { product } from '../../Models/product.model';
+import { product } from '../../models/product.model';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../shared/button/button.component';
 import { RouterModule } from '@angular/router';

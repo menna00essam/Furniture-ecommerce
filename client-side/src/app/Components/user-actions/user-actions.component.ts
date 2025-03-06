@@ -10,7 +10,6 @@ import { AuthService } from '../../Services/auth.service';
 
 import { UserService } from '../../Services/user.service';
 
-
 @Component({
   selector: 'app-user-actions',
   imports: [CurrencyPipe, RouterModule],
@@ -46,10 +45,9 @@ export class UserActionsComponent implements OnInit {
     private cartService: CartService,
 
     private authService: AuthService,
-    private router: Router
+    private router: Router,
 
     private userService: UserService
-
   ) {}
 
   ngOnInit(): void {

@@ -204,6 +204,6 @@ export class ProductService {
     return this.products;
   }
   getProduct(productId: number): product | undefined {
-    return this.products.find((p) => (p.id === productId));
+    return this.products.find((p) => p.id === productId);
   }
 }

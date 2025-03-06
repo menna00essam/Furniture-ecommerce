@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../Services/user.service';
-import { user } from '../../Models/user.model';
+import { user } from '../../models/user.model';
 import { InputComponent } from '../shared/input/input.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { Router, RouterOutlet } from '@angular/router';

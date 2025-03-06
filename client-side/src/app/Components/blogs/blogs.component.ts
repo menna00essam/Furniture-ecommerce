@@ -7,7 +7,7 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { BlogService } from '../../Services/blog.service';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
-import { BlogPost } from '../../Models/blog.model';
+import { BlogPost } from '../../models/blog.model';
 
 @Component({
   selector: 'app-blogs',

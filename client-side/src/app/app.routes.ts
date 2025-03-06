@@ -25,25 +25,22 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/setting/setting.component';
 import { OrdersComponent } from './Components/orders/orders.component';
 
-
 export const routes: Routes = [
   {
     path: 'register',
     component: RegistrationComponent,
     children: [
-
       { path: '', component: LoginComponent, canActivate: [authGuard] },
       { path: 'login', component: LoginComponent, canActivate: [authGuard] },
       { path: 'signup', component: SignupComponent, canActivate: [authGuard] },
       { path: 'forgot-password', component: ForgotPasswordComponent },
       { path: 'reset-password', component: ResetPasswordComponent },
-      { path: '**', component: NotFoundComponent },
+      { path: '**', component: ErrorComponent },
 
       { path: '', component: LoginComponent },
       { path: 'login', component: LoginComponent },
       { path: 'signup', component: SignupComponent },
       { path: '**', component: ErrorComponent },
-
     ],
   },
   {

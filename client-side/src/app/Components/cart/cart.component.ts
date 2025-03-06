@@ -24,7 +24,6 @@ import { product } from '../../models/product.model';
 export class CartComponent implements OnInit {
   cart: product[] = [];
   // defQuantity:number=1;
- 
 
   constructor(private cartService: CartService) {}
 
@@ -47,11 +46,11 @@ export class CartComponent implements OnInit {
 
   increaseQuantity(productId: number) {
     this.cartService.increaseQuantity(productId);
-    this.cart = this.cartService.getCart(1); 
+    this.cart = this.cartService.getCart(1);
   }
 
   decreaseQuantity(productId: number) {
     this.cartService.decreaseQuantity(productId);
-    this.cart = this.cartService.getCart(1); 
+    this.cart = this.cartService.getCart(1);
   }
 }
