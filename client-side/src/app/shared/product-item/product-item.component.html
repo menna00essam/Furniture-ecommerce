@@ -2,6 +2,7 @@
   class="bg-gray-light relative overflow-hidden"
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
+  (click)="navigateToProduct()"
   aria-labelledby="product-title"
 >
   @if (product.sale) {
@@ -47,14 +48,10 @@
     </div>
   </div>
 
-  <!-- Actions -->
+  <!-- Actions (Hidden on Mobile) -->
   <div
-    class="bg-black-transparent p-3 w-full flex flex-col items-center justify-center"
-    [ngClass]="{
-      'lg:absolute lg:h-full lg:top-0 lg:left-0': !disableAnimation
-    }"
+    class="bg-black-transparent p-3 w-full flex-col items-center justify-center hidden md:flex md:absolute md:h-full md:top-0 md:left-0"
     [@slideInOut]="isHovered ? 'in' : 'out'"
-    [@.disabled]="disableAnimation"
   >
     <app-button type="plainBtn" (click)="addToCart()">Add to Cart</app-button>
     <nav
