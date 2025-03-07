@@ -64,6 +64,7 @@ const login = asyncWrapper(async (req, res, next) => {
       isAdmin: foundedUser.isAdmin,
       email: foundedUser.email,
       _id: foundedUser._id,
+      role: foundedUser.role,
     },
     process.env.JWT_SECRET,
     {
