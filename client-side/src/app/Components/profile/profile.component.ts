@@ -10,7 +10,7 @@ import { AuthService } from '../../Services/auth.service';
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
-  imports: [InputComponent, ButtonComponent, RouterOutlet],
+  imports: [RouterOutlet],
 })
 export class ProfileComponent implements OnInit {
   user!: user;
@@ -26,14 +26,16 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.userService.getUser();
   }
+
   toggleCheck() {
-    console.log(5);
     this.isChecked = !this.isChecked;
   }
+
   route(r: string) {
     this.activeComponent = r;
     this.router.navigate([`/profile/${r}`]);
   }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/register']);

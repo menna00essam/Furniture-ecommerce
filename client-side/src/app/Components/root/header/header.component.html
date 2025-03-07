@@ -2,7 +2,7 @@
   class="sticky top-0 z-[999] flex h-[100px] items-center justify-between bg-white px-[10px] shadow lg:px-[30px] gap-[10px]"
 >
   <!-- Logo -->
-  <div class="flex items-center gap-[5px]"  routerLink="/home">
+  <div class="flex items-center gap-[5px]" routerLink="/home">
     <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[50px]" />
     <div class="font-montserrat text-2xl font-bold lg:text-4xl">Furniro</div>
   </div>
@@ -45,12 +45,13 @@
   </button>
 
   <!-- Mobile Menu -->
+  @if(isActive){
   <div
-    *ngIf="isActive"
     class="absolute top-[100px] right-0 flex-col w-[250px] bg-white text-center shadow md:hidden"
     (click)="toggleMenu()"
   >
     <app-navigation></app-navigation>
     <app-user-actions></app-user-actions>
   </div>
+  }
 </nav>

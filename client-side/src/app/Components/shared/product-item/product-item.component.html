@@ -11,57 +11,59 @@
   >
     -{{ product.sale }}%
   </p>
-  }
+  } @if(isNewProduct()){
   <p
-    *ngIf="isNewProduct()"
     class="absolute w-[50px] h-[50px] right-[10px] top-[10px] p-[10px] text-white rounded-full bg-green-light flex items-center justify-center"
     aria-label="Sale discount"
   >
     New
   </p>
 
-  <div
-    class="bg-secondary h-[300px] flex justify-center items-center overflow-hidden"
-  >
-    <img
-      [src]="product.img"
-      class="w-full bg-secondary"
-      [alt]="product.title"
-      loading="lazy"
-    />
-  </div>
-
-  <!-- Info -->
-  <div class="p-3">
-    <div class="flex justify-between">
-      <h2 class="font-semibold line-clamp-1" id="product-title">
-        {{ product.title }}
-      </h2>
-    </div>
-    <p class="my-3 text-gray line-clamp-2">{{ product.description }}</p>
-
+  }
+  <div [routerLink]="['/product', product.id]" class="cursor-pointer">
     <div
-      class="flex flex-col lg:flex-row gap-1 justify-between lg:items-center overflow-hidden lg:mb-[16px]"
+      class="bg-secondary h-[300px] flex justify-center items-center overflow-hidden"
     >
-      @if (product.sale) {
-      <p class="font-semibold">
-        {{ product.price * (1 - product.sale / 100) | currency }}
-      </p>
-      <p class="line-through text-xs text-gray">
-        {{ product.price | currency }}
-      </p>
-      } @else {
-      <p class="font-semibold">{{ product.price | currency }}</p>
-      <p class="h-[16px]"></p>
-      }
+      <img
+        [src]="product.img"
+        class="w-full bg-secondary"
+        [alt]="product.title"
+        loading="lazy"
+      />
+    </div>
+
+    <!-- Info -->
+    <div class="p-3">
+      <div class="flex justify-between">
+        <h2 class="font-semibold line-clamp-1" id="product-title">
+          {{ product.title }}
+        </h2>
+      </div>
+      <p class="my-3 text-gray line-clamp-2">{{ product.description }}</p>
+
+      <div
+        class="flex flex-col lg:flex-row gap-1 justify-between lg:items-center overflow-hidden lg:mb-[16px]"
+      >
+        @if (product.sale) {
+        <p class="font-semibold">
+          {{ product.price * (1 - product.sale / 100) | currency }}
+        </p>
+        <p class="line-through text-xs text-gray">
+          {{ product.price | currency }}
+        </p>
+        } @else {
+        <p class="font-semibold">{{ product.price | currency }}</p>
+        <p class="h-[16px]"></p>
+        }
+      </div>
     </div>
   </div>
 
   <!-- Actions -->
   <div
-    class="bg-black-transparent p-3 w-full flex flex-col items-center justify-center"
+    class="hidden bg-black-transparent p-3 w-full flex flex-col items-center justify-center"
     [ngClass]="{
-      'lg:absolute lg:h-full lg:top-0 lg:left-0': !disableAnimation
+      'lg:flex lg:absolute lg:h-full lg:top-0 lg:left-0': !disableAnimation
     }"
     [@slideInOut]="isHovered ? 'in' : 'out'"
     [@.disabled]="disableAnimation"

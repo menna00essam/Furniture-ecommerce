@@ -26,11 +26,12 @@
         >
           <span class="text-gray-dark">{{ selectedSortValue }}</span>
         </button>
+        @if(showSortMenu && sortMenuItems.length > 0){
         <app-dropdown
-          *ngIf="showSortMenu && sortMenuItems.length > 0"
           [items]="sortMenuItems"
           (selectedValueChange)="onSortChange($event)"
         ></app-dropdown>
+        }
       </div>
     </div>
   </div>
@@ -41,11 +42,11 @@
   <!-- Overlay -->
   @if (showFilters) {
   <div
-    class="fixed lg:absolute top-0 left-0 w-full h-full bg-[#00000073] z-[999] lg:hidden"
+    class="fixed lg:absolute top-0 left-0 w-full h-full bg-black-transparent z-[999] lg:hidden"
     (click)="toggleShowFilter(false)"
   ></div>
   <div
-    class="fixed lg:relative top-0 left-0 w-full h-full lg:h-auto bg-white max-w-[300px] lg:max-w-auto lg:min-w-[300px] p-[25px] flex flex-col gap-[25px] z-[1000] lg:z-0 border-r border-gray-medium"
+    class="fixed lg:relative top-0 left-0 w-full h-full lg:h-auto bg-white max-w-[300px] lg:max-w-auto lg:min-w-[300px] p-[25px] lg:pl-0 lg:pt-0 flex flex-col gap-[25px] z-[1000] lg:z-0 border-r border-gray-medium"
     [@slideInOut]="showFilters ? 'in' : 'out'"
   >
     <app-filter-option title="Category">
@@ -65,6 +66,24 @@
             category | titlecase
           }}</label>
         </div>
+      </div>
+    </app-filter-option>
+    <app-filter-option title="Price Range">
+      <mat-slider min="{{ priceMin }}" max="{{ priceMax }}">
+        <input
+          [value]="minPrice"
+          matSliderStartThumb
+          (input)="priceChange($event, true)"
+        />
+        <input
+          [value]="maxPrice"
+          matSliderEndThumb
+          (input)="priceChange($event, false)"
+        />
+      </mat-slider>
+      <div class="flex justify-between">
+        <span>{{ minPrice }}</span>
+        <span>{{ maxPrice }}</span>
       </div>
     </app-filter-option>
   </div>

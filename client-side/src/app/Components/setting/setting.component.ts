@@ -19,7 +19,6 @@ export class SettingComponent {
     this.user = this.userService.getUser();
   }
   toggleCheck() {
-    console.log(5);
     this.isChecked = !this.isChecked;
   }
 }

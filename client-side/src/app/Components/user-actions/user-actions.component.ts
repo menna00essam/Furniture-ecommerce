@@ -34,8 +34,8 @@ import { UserService } from '../../Services/user.service';
 })
 export class UserActionsComponent implements OnInit {
   cartProductsTotalPrice = 0;
-  cartLength = 0; // Stores actual cart length
-  favoritesLength = 0; // Stores actual cart length
+  cartLength = 0;
+  favoritesLength = 0;
   favModalShow = false;
   cartModalShow = false;
   isLoggedIn = false;
@@ -43,11 +43,8 @@ export class UserActionsComponent implements OnInit {
   constructor(
     private favoriteService: FavoriteService,
     private cartService: CartService,
-
     private authService: AuthService,
-    private router: Router,
-
-    private userService: UserService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -55,10 +52,7 @@ export class UserActionsComponent implements OnInit {
       this.isLoggedIn = status;
     });
   }
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/register']);
-  }
+
   get cart(): product[] {
     const cartItems = this.cartService.getCart(1);
     this.cartLength = cartItems.length;
@@ -96,11 +90,5 @@ export class UserActionsComponent implements OnInit {
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
     document.body.style.width = isOpen ? 'calc(100% - 10px)' : '';
-  }
-
-  isloggedin(): boolean {
-    if (this.userService.getUser()) {
-      return true;
-    } else return false;
   }
 }

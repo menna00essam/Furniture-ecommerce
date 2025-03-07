@@ -3,7 +3,7 @@
 >
   <div class="w-full">
     <div class="flex w-full min-h-screen">
-      <aside class="py-4 pr-4 hidden md:block">
+      <aside class="py-4 pr-4 hidden md:block border-r">
         <div class="flex gap-2 items-center py-2">
           <span
             class="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8"
@@ -29,6 +29,17 @@
               <img src="/icons/orders.svg" alt="" />
             </div>
             Orders
+          </li>
+          <li
+            class="flex items-center gap-2 text-sm px-4 py-4 rounded-3xl font-medium cursor-pointer {{
+              activeComponent === 'favorites' ? 'bg-gray-light' : 'bg-transparent'
+            }} hover:bg-gray-light transition-colors duration-500"
+            (click)="route('favorites')"
+          >
+            <div class="w-5 h-5 stroke-gray-300">
+              <img src="/icons/heart.svg" alt="" />
+            </div>
+            Favorites
           </li>
 
           <li
@@ -73,6 +84,17 @@
             <img src="/icons/orders.svg" alt="" />
             <p class="text-xs sm:text-sm">Orders</p>
           </li>
+          <li
+            class="py-3 px-2 flex flex-col gap-1 sm:gap-2 items-center text-center cursor-pointer border-t-2 hover:border-black {{
+              activeComponent === 'favorites'
+                ? 'border-black'
+                : 'border-transparent'
+            }}"
+            (click)="route('favorites')"
+          >
+            <img src="/icons/heart.svg" alt="" />
+            <p class="text-xs sm:text-sm">Favorites</p>
+          </li>
 
           <li
             class="py-3 px-2 flex flex-col gap-1 sm:gap-2 items-center text-center cursor-pointer border-t-2 hover:border-black {{
@@ -86,7 +108,7 @@
             <p class="text-xs sm:text-sm">Settings</p>
           </li>
           <li
-            class="py-3 px-2 flex flex-col gap-1 sm:gap-2 items-center text-center cursor-pointer border-t-2 border-transparent hover:border-black"
+            class="py-3 px-2 flex flex-col gap-1 sm:gap-2 items-center text-center cursor-pointer border-t-2 border-transparent hover:border-black" (click)="logout()"
           >
             <img src="/icons/logout.svg" alt="" />
             <p class="text-xs sm:text-sm">Logout</p>

@@ -49,7 +49,6 @@ export class FilterOptionComponent {
   isActive: boolean = false;
 
   toggleActive() {
-    console.log(5);
     this.isActive = !this.isActive;
   }
 }

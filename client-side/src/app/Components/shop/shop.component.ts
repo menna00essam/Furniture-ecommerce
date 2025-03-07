@@ -17,13 +17,18 @@ import { ProductService } from '../../Services/product.service';
 import { product } from '../../models/product.model';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatSliderModule } from '@angular/material/slider';
 
 enum SortOptions {
   Default = 'Default',
   LowToHigh = 'Price: Low to High',
   HighToLow = 'Price: High to Low',
   Newest = 'Newest',
-  Discount = 'Discount',
+  Oldest = 'Oldest',
+  AtoZ = 'Alphabetically: A to Z',
+  ZtoA = 'Alphabetically: Z to A',
 }
 
 @Component({
@@ -31,6 +36,8 @@ enum SortOptions {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    DragDropModule,
     FeatureBannerComponent,
     HeaderBannerComponent,
     DropdownComponent,
@@ -38,6 +45,7 @@ enum SortOptions {
     ProductItemComponent,
     PaginationComponent,
     TitleCasePipe,
+    MatSliderModule,
   ],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
@@ -45,21 +53,34 @@ enum SortOptions {
     trigger('slideInOut', [
       transition(':enter', [
         style({ transform: 'translateX(-100%)' }),
-        animate('200ms ease-in', style({ transform: 'translateX(0%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(0%)' })
+        ),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ transform: 'translateX(-100%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(-100%)' })
+        ),
       ]),
     ]),
   ],
 })
 export class ShopComponent implements OnInit {
   @ViewChild('productsContainer') productsContainer!: ElementRef;
+  @ViewChild('priceSlider', { static: false }) priceSlider!: ElementRef;
 
   // UI State
   showFilters = false;
   showSortMenu = false;
   disableAnimation = false;
+
+  priceMin: number = 1500;
+  priceMax: number = 8500;
+
+  minPrice: number = this.priceMin;
+  maxPrice: number = this.priceMax;
 
   // Product Data
   products: product[] = [];
@@ -105,6 +126,18 @@ export class ShopComponent implements OnInit {
         )
       : [...this.products];
 
+    // Apply price range filtering
+    if (this.minPrice !== null) {
+      filtered = filtered.filter(
+        (p) => this.getEffectivePrice(p) >= this.minPrice
+      );
+    }
+    if (this.maxPrice !== null) {
+      filtered = filtered.filter(
+        (p) => this.getEffectivePrice(p) <= this.maxPrice
+      );
+    }
+
     return this.getSortedProducts(filtered);
   }
 
@@ -113,12 +146,18 @@ export class ShopComponent implements OnInit {
     const start = (this.currentPage - 1) * this.productsPerPage;
     return this.filteredProducts.slice(start, start + this.productsPerPage);
   }
+  priceChange(event: Event, isMin: boolean) {
+    const value = Number((event.target as HTMLInputElement).value);
+    if (isMin) {
+      this.minPrice = Math.min(value, this.maxPrice - 1); // Ensure min is always lower than max
+    } else {
+      this.maxPrice = Math.max(value, this.minPrice + 1); // Ensure max is always higher than min
+    }
+  }
 
   /** Handles sorting selection */
   onSortChange(selectedItem: { id: number; value: string }) {
-    console.log(5);
     const sortOption = selectedItem.value as SortOptions;
-    console.log(this.sortMenuItems, sortOption);
     if (this.sortMenuItems.includes(sortOption)) {
       this.selectedSortValue = sortOption;
     }
@@ -143,8 +182,12 @@ export class ShopComponent implements OnInit {
           return this.getEffectivePrice(b) - this.getEffectivePrice(a);
         case SortOptions.Newest:
           return (b.date?.getTime() || 0) - (a.date?.getTime() || 0);
-        case SortOptions.Discount:
-          return (b.sale || 0) - (a.sale || 0);
+        case SortOptions.Oldest:
+          return (a.date?.getTime() || 0) - (b.date?.getTime() || 0);
+        case SortOptions.AtoZ:
+          return a.title.localeCompare(b.title);
+        case SortOptions.ZtoA:
+          return b.title.localeCompare(a.title);
         default:
           return 0;
       }

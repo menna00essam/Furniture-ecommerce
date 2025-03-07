@@ -27,11 +27,12 @@ import { DropdownComponent } from '../shared/dropdown/dropdown.component';
       <img src="icons/search.svg" alt="Search" class="w-5" />
 
       <!-- Dropdown -->
+      @if(isMenuOpen && filteredItems.length > 0){
       <app-dropdown
-        *ngIf="isMenuOpen && filteredItems.length > 0"
         [items]="filteredItems"
         (selectedValueChange)="updateValue($event)"
       ></app-dropdown>
+      }
     </div>
   `,
 })

@@ -1,13 +1,14 @@
 <div class="flex justify-center gap-5 py-5">
   <!-- Previous Button -->
+  @if(currentPage>1){
   <app-button
-    *ngIf="currentPage > 1"
     type="secondary-fill"
     btnWidth="100px"
     (click)="goToPage(currentPage - 1)"
   >
     Previous
   </app-button>
+  }
 
   <!-- Page Numbers -->
   <app-button
@@ -20,12 +21,13 @@
   </app-button>
 
   <!-- Next Button -->
+  @if(currentPage < pagesCount){
   <app-button
-    *ngIf="currentPage < pagesCount"
     type="secondary-fill"
     btnWidth="70px"
     (click)="goToPage(currentPage + 1)"
   >
     Next
   </app-button>
+  }
 </div>
