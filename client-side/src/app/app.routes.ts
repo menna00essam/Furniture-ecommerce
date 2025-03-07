@@ -18,8 +18,8 @@ import { FavoritesComponent } from './Components/favorites/favorites.component';
 import { ForgotPasswordComponent } from './Components/registration/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './Components/registration/reset-password/reset-password.component';
 import { AdminComponent } from './Components/admin/admin.component';
-import { adminGuard } from './guards/admin.guard';
-import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './Guards/admin.guard';
+import { authGuard } from './Guards/auth.guard';
 
 import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/setting/setting.component';
