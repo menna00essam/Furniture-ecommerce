@@ -2,15 +2,12 @@ import {
   Component,
   Input,
   ChangeDetectionStrategy,
-  HostListener,
-  OnInit,
   ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { ButtonComponent } from '../button/button.component';
 import { RouterModule } from '@angular/router';
-import { Router } from '@angular/router';
 
 import {
   trigger,
@@ -19,6 +16,7 @@ import {
   style,
   state,
 } from '@angular/animations';
+
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../models/product.model';
@@ -38,7 +36,7 @@ import { product } from '../../../models/product.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductItemComponent  {
+export class ProductItemComponent {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
@@ -47,10 +45,8 @@ export class ProductItemComponent  {
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
-    private cartService: CartService,
-    private router: Router
+    private cartService: CartService
   ) {}
-
 
   onMouseEnter() {
     if (!this.disableAnimation) this.isHovered = true;
@@ -60,14 +56,13 @@ export class ProductItemComponent  {
     if (!this.disableAnimation) this.isHovered = false;
   }
 
-
   addToFavourites() {
     if (this.isFavorite(this.product.id)) {
       this.favoriteService.removeFavorite(1, this.product.id);
     } else {
       this.favoriteService.addFavorite(1, this.product);
     }
-    this.cdr.detectChanges(); // Force UI update
+    this.cdr.detectChanges();
   }
 
   addToCart() {
@@ -76,7 +71,7 @@ export class ProductItemComponent  {
     } else {
       this.cartService.addProduct(1, this.product);
     }
-    this.cdr.detectChanges(); // Force UI update
+    this.cdr.detectChanges();
   }
 
   isNewProduct(): boolean {
@@ -90,12 +85,8 @@ export class ProductItemComponent  {
   isFavorite(productID: number): boolean {
     return this.favoriteService.getFavorites(1).some((p) => p.id === productID);
   }
+
   isInCart(productID: number): boolean {
     return this.cartService.getCart(1).some((p) => p.id === productID);
-  }
-  navigateToProduct() {
-    if (window.innerWidth < 768) {
-      this.router.navigate(['/product', this.product.id]);
-    }
   }
 }
