@@ -73,7 +73,7 @@ const login = asyncWrapper(async (req, res, next) => {
 
   res
     .header("authorization", token)
-    .json({ message: "Logged in successfully" });
+    .json({ message: "Logged in successfully", token: token });
 });
 //
 const transporter = nodemailer.createTransport({

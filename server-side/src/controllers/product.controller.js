@@ -4,16 +4,13 @@ const AppError = require("../utils/appError");
 const Product = require("../models/product.model");
 const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
 
-// - get all  pagination -16 default ✔
 // - get a product by id
-// - get all products by category -- pagination 16  -- related product section in product page
 // - get products full data for compariosn
 // - get all-products (name and id ) usred in search
 // - get all products by search -- pagination 16
 
 const getAllProducts = asyncWrapper(async (req, res, next) => {
   let { limit = 16, page = 1, order = "desc" } = req.query;
-  console.log("query", limit, page);
 
   limit = Math.max(1, limit);
   page = Math.max(1, page);
@@ -38,7 +35,8 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
     )
     .limit(limit)
     .skip(skip)
-    .sort({ productDate: sortOrder });
+    .sort({ productDate: sortOrder })
+    .lean();
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -49,23 +47,18 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
 const getProductsByCategory = asyncWrapper(async (req, res, next) => {
   let { category_id } = req.params;
   let { limit = 16, page = 1, order = "desc" } = req.query;
-  console.log(category_id);
-
-  // Ensure valid pagination inputs
-  limit = Math.max(1, limit);
-  page = Math.max(1, page);
-
-  if (!mongoose.isValidObjectId(category_id)) {
-    return next(
-      new AppError("Invalid Category ID format.", 400, httpStatusText.FAIL)
-    );
-  }
-
   if (!category_id) {
     return next(
       new AppError("Category ID is required.", 400, httpStatusText.FAIL)
     );
   }
+  if (!mongoose.isValidObjectId(category_id)) {
+    return next(
+      new AppError("Invalid Category ID format.", 400, httpStatusText.FAIL)
+    );
+  }
+  limit = Math.max(1, limit);
+  page = Math.max(1, page);
 
   if (isNaN(limit) || isNaN(page)) {
     return next(
@@ -83,14 +76,14 @@ const getProductsByCategory = asyncWrapper(async (req, res, next) => {
     productCategories: category_id,
   });
 
-  // Fetch products with pagination and sorting
   const products = await Product.find({ productCategories: category_id })
     .select(
       "_id productName productSubtitle productImages productPrice productDate productSale"
     )
     .limit(limit)
     .skip(skip)
-    .sort({ productDate: sortOrder });
+    .sort({ productDate: sortOrder })
+    .lean();
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -100,13 +93,53 @@ const getProductsByCategory = asyncWrapper(async (req, res, next) => {
 
 const getProductById = asyncWrapper(async (req, res, next) => {
   const { product_id } = req.params;
-  console.log(product_id);
+  if (!product_id) {
+    return next(
+      new AppError("Product ID is required", 400, httpStatusText.FAIL)
+    );
+  }
+  if (!mongoose.isValidObjectId(product_id)) {
+    return next(
+      new AppError("Invalid Product ID format", 400, httpStatusText.FAIL)
+    );
+  }
 
   const product = await Product.findById(product_id)
     .select(
       "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand"
     )
-    .populate("_id");
+    .lean();
+
+  if (!product) {
+    return next(new AppError("Product not found", 404, httpStatusText.FAIL));
+  }
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      product,
+    },
+  });
+});
+
+const getProductForComparison = asyncWrapper(async (req, res, next) => {
+  const { product_id } = req.params;
+  if (!product_id) {
+    return next(
+      new AppError("Product ID is required", 400, httpStatusText.FAIL)
+    );
+  }
+
+  if (!mongoose.isValidObjectId(product_id)) {
+    return next(
+      new AppError("Invalid Product ID format", 400, httpStatusText.FAIL)
+    );
+  }
+
+  const product = await Product.findById(product_id)
+    .select(
+      "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand additionalInformation"
+    )
+    .lean();
 
   if (!product) {
     return next(new AppError("Product not found", 404, httpStatusText.FAIL));
@@ -120,94 +153,54 @@ const getProductById = asyncWrapper(async (req, res, next) => {
   });
 });
 
-const getProductForComparison = asyncWrapper(async (req, res, next) => {
-  const { product_id } = req.params;
-  console.log("Fetching product for comparison with ID:", product_id);
+const getAllProductNamesAndIds = asyncWrapper(async (req, res, next) => {
+  const products = await Product.find()
+    .select({ _id: 1, productName: 1 })
+    .lean();
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      products,
+    },
+  });
+});
 
-  if (!product_id) {
+const getSearchProducts = asyncWrapper(async (req, res, next) => {
+  const { query } = req.query;
+  if (!query) {
     return next(
-      new AppError("Product ID is required", 400, httpStatusText.FAIL)
+      new AppError("Please enter a search keyword!", 400, httpStatusText.FAIL)
     );
   }
 
-  const product = await Product.findById(product_id)
-    .select(
-      "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand additionalInformation"
-    )
-    .populate("_id");
+  const categoryIds = await getCategoryIds(query);
 
-  if (!product) {
-    return next(new AppError("Product not found", 404));
+  const products = await Product.find({
+    $or: [
+      { productName: { $regex: query, $options: "i" } },
+      { productCategories: { $in: categoryIds } },
+    ],
+  })
+    .populate("productCategories", "catName")
+    .lean();
+
+  if (!products.length) {
+    return next(new AppError("No products found.", 404, httpStatusText.FAIL));
   }
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
-    data: {
-      product,
-    },
+    data: products,
   });
 });
 
-const getAllProductNamesAndIds = asyncWrapper(async (req, res, next) => {
-  const products = await Product.find().select("_id productName");
-
-  console.log("Products Found");
-
-  res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: {
-      products: products.map((product) => ({
-        product_id: product._id,
-        productName: product.productName,
-      })),
-    },
-  });
-});
-
-// ****** Search Functionality ******//
-const getSearchProducts = asyncWrapper(async (req, res, next) => {
-    try {
-      const { query } = req.query;
-      if (!query) {
-        return next(
-          new AppError("please enter any keyword!", 400, httpStatusText.FAIL)
-        );
-      }
-
-      const products = await Product.find({
-        $or: [
-            //** Search by product-name **/ 
-          { productName: { $regex: query, $options: "i" } }, 
-          {
-            productCategories: {
-                //** Search by category-name **/ 
-              $in: await getCategoryIds(query), 
-            },
-          },
-        ],
-      }).populate("productCategories", "catName");
-  
-      if (!products.length) {
-        return next(new AppError("No products found.", 404, httpStatusText.FAIL));
-      }
-  
-      res.status(200).json({
-        status: httpStatusText.SUCCESS,
-        data: products,
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-  
-  async function getCategoryIds(query) {
-    const categories = await require("../models/category.model").find({
-      catName: { $regex: query, $options: "i" },
-    });
-    return categories.map((cat) => cat._id);
-  }
-  
-
+async function getCategoryIds(query) {
+  const categories = await require("../models/category.model")
+    .find({ catName: { $regex: query, $options: "i" } })
+    .select("_id")
+    .lean();
+  return categories.map((cat) => cat._id);
+}
 
 module.exports = {
   getAllProducts,
