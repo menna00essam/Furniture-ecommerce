@@ -24,6 +24,7 @@ import { authGuard } from './guards/auth.guard';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/setting/setting.component';
 import { OrdersComponent } from './Components/orders/orders.component';
+import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
 
 export const routes: Routes = [
   {
@@ -68,13 +69,16 @@ export const routes: Routes = [
             component: OrdersComponent,
           },
           {
-            path: 'setting',
-            component: SettingComponent,
-          },
-
-          {
             path: 'orders',
             component: OrdersComponent,
+          },
+          {
+            path: 'favorites',
+            component: FavoritesItemsComponent,
+          },
+          {
+            path: 'setting',
+            component: SettingComponent,
           },
         ],
       },
