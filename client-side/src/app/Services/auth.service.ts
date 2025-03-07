@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import jwtDecode from 'jwt-decode';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -12,7 +11,8 @@ export class AuthService {
   private isLoggedInSubject: BehaviorSubject<boolean>;
   isLoggedIn$: Observable<boolean>;
   constructor(private http: HttpClient, private router: Router) {
-    const tokenExists = !!localStorage.getItem('token');
+    const tokenExists =
+      !!sessionStorage.getItem('token') || !!localStorage.getItem('token');
     this.isLoggedInSubject = new BehaviorSubject<boolean>(tokenExists);
     this.isLoggedIn$ = this.isLoggedInSubject.asObservable();
   }

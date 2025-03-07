@@ -4,6 +4,7 @@ import { user } from '../../models/user.model';
 import { InputComponent } from '../shared/input/input.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { Router, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,7 +17,11 @@ export class ProfileComponent implements OnInit {
   isChecked: boolean = false;
   activeComponent: string = 'orders';
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.user = this.userService.getUser();
@@ -28,5 +33,9 @@ export class ProfileComponent implements OnInit {
   route(r: string) {
     this.activeComponent = r;
     this.router.navigate([`/profile/${r}`]);
+  }
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/register']);
   }
 }
