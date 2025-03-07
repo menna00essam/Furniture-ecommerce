@@ -9,11 +9,9 @@ const nodemailer = require("nodemailer");
 
 // User Signup Route POST (/signup)
 const signup = asyncWrapper(async (req, res, next) => {
-  console.log("singUpBack");
   const user = req.body;
-  console.log("singUpBack", user);
   if (!userValidation(user)) {
-    return next(new AppError("Invalid user data.", 400, httpStatusText.ERROR));
+    return next(new AppError("Invalid user data.", 400, httpStatusText.FAIL));
   }
 
   let foundedUser = await userModel.findOne({
@@ -35,7 +33,10 @@ const signup = asyncWrapper(async (req, res, next) => {
   userModel
     .create(user)
     .then((user) => {
-      res.status(201).json({ status: httpStatusText.SUCCESS, data: { user } });
+      res.status(201).json({
+        status: httpStatusText.SUCCESS,
+        message: "User signed up successfully",
+      });
     })
     .catch((error) => {
       return next(
@@ -69,12 +70,13 @@ const login = asyncWrapper(async (req, res, next) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "10m",
+      expiresIn: "1h",
     }
   );
   res.status(201).json({
     status: httpStatusText.SUCCESS,
-    data: { message: "Logged in successfully", token },
+    message: "Logged in successfully",
+    data: { token },
   });
 });
 //
@@ -129,7 +131,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
     }
     res.status(201).json({
       status: httpStatusText.SUCCESS,
-      data: { message: "Email sent successfully." },
+      message: "Email sent successfully.",
     });
   });
 });
@@ -148,7 +150,7 @@ const resetPassword = asyncWrapper(async (req, res, next) => {
   await user.save();
   res.status(201).json({
     status: httpStatusText.SUCCESS,
-    data: { message: "Password reset successfully." },
+    message: "Password reset successfully.",
   });
 });
 module.exports = {
