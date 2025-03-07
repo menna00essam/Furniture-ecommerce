@@ -21,8 +21,3 @@ button.active .hamburgerMenu .menuSign:nth-child(3) {
   -ms-transform: rotate(-45deg) translate(6px, -5px);
   -o-transform: rotate(-45deg) translate(6px, -5px);
 }
-@media (width <= 48rem) {
-  button.active + .mobileMenu {
-    display: flex;
-  }
-}

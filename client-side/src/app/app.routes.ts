@@ -7,10 +7,25 @@ import { ProductComponent } from './Components/product/product.component';
 import { CartComponent } from './Components/cart/cart.component';
 import { CheckoutComponent } from './Components/checkout/checkout.component';
 import { ContactComponent } from './Components/contact/contact.component';
+import { BlogsComponent } from './Components/blogs/blogs.component';
 import { BlogComponent } from './Components/blog/blog.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
+import { ComparisonComponent } from './Components/comparison/comparison.component';
+import { SignupComponent } from './Components/signup/signup.component';
+import { LoginComponent } from './Components/login/login.component';
+import { FavoritesComponent } from './Components/favorites/favorites.component';
 
 export const routes: Routes = [
+  {
+    path: 'register',
+    component: RegistrationComponent,
+    children: [
+      { path: '', component: LoginComponent },
+      { path: 'login', component: LoginComponent },
+      { path: 'signup', component: SignupComponent },
+      { path: '**', component: NotFoundComponent },
+    ],
+  },
   {
     path: '',
     component: RootComponent,
@@ -18,17 +33,17 @@ export const routes: Routes = [
       { path: '', component: HomeComponent },
       { path: 'home', component: HomeComponent },
       { path: 'shop', component: ShopComponent },
-      { path: 'product', component: ProductComponent },
+      { path: 'product/:id', component: ProductComponent },
       { path: 'cart', component: CartComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
-      { path: 'blog', component: BlogComponent },
+      { path: 'blogs', component: BlogsComponent },
       { path: 'blog/:id', component: BlogComponent },
+      { path: 'comparison', component: ComparisonComponent },
+
+      { path: 'favorites', component: FavoritesComponent },
+
       { path: '**', component: NotFoundComponent },
     ],
-  },
-  {
-    path: 'register',
-    component: RegistrationComponent,
   },
 ];

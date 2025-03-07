@@ -1,0 +1,57 @@
+<div class="flex flex-row">
+  <div
+    class="flex-1 flex flex-col justify-center items-center min-h-screen py-5"
+  >
+    <div
+      class="flex flex-col gap-4 shadow w-[90%] lg:w-[70%] p-10 rounded-xl h-fit"
+    >
+      <!-- Logo -->
+      <div class="flex items-center gap-[5px] w-full">
+        <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[40px]" />
+        <div class="font-montserrat text-2xl font-bold lg:text-2xl">
+          Furniro
+        </div>
+      </div>
+      <!-- Form Label -->
+      <div class="sign text-5xl font-bold font-poppins">Sign In</div>
+
+      <!-- Form -->
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4"
+      >
+        <app-input
+          placeholder="Email"
+          label="Email"
+          type="email"
+          bgC="secondary"
+          width="90%"
+          [control]="form.controls['email']"
+        ></app-input>
+        <app-input
+          placeholder="Password"
+          label="Password"
+          type="password"
+          bgC="secondary"
+          width="90%"
+          [control]="form.controls['password']"
+        ></app-input>
+        <div class="text-center mt-4">
+          <span class="text-gray">Don't have an account?</span>
+          <span>
+            <a class="text-primary opacity-100" routerLink="/register/signup">
+              Sign Up</a
+            >
+          </span>
+        </div>
+        <div class="flex justify-center">
+          <app-button (click)="onSubmit()">Sign In</app-button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="bg-secondary w-[600px] hidden lg:flex items-end py-4">
+    <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
+  </div>
+</div>

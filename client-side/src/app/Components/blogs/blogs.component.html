@@ -1,0 +1,122 @@
+<app-header-banner bannerTitle="Blogs"></app-header-banner>
+
+<section
+  class="flex flex-col gap-5 my-0 mx-auto max-w-[1240px] p-5"
+  #blogsContainer
+>
+  <!-- categories dropdown small screen -->
+  <div class="md:hidden flex flex-col gap-5">
+    <p class="text-lg font-semibold text-gray-dark md:hidden">Categories</p>
+    <div class="relative">
+      <button
+        class="bg-white h-14 flex items-center px-5 cursor-pointer w-full min-w-48 border border-gray-medium rounded-md focus:outline-none"
+        (click)="toggleDropdown(true)"
+      >
+        <span class="text-gray-dark">{{ selectedCategory }}</span>
+      </button>
+      <app-dropdown
+        *ngIf="isMenuOpen && categories.length > 0"
+        [items]="categories"
+        (selectedValueChange)="filterByCategory($event)"
+      ></app-dropdown>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-20">
+    <!-- Posts -->
+    @if(filteredPosts.length === 0){
+    <!-- No posts Found -->
+    <p class="text-gray text-center">No Posts found.</p>
+    } @else {
+    <div class="flex flex-col gap-[50px]">
+      <div
+        *ngFor="let post of currentPosts"
+        class="bg-white flex flex-col items-start gap-3"
+      >
+        <!-- Post Image -->
+        <img
+          [src]="post.image"
+          alt="{{ post.title }}"
+          class="w-full max-w-[810px] rounded"
+        />
+
+        <!-- Post Info -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex gap-2">
+            <img src="/icons/profile.svg " alt="profile" />
+            <p class="text-gray text-sm flex items-center">
+              {{ post.users }}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <img src="/icons/calender.svg " alt="date" />
+            <p class="text-gray text-sm flex items-center">
+              {{ post.date }}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <img src="/icons/tag.svg" alt="category" />
+            <p class="text-gray text-sm flex items-center">
+              {{ post.category }}
+            </p>
+          </div>
+        </div>
+
+        <h2 class="text-xl md:text-xl font-semibold max-w-2xl">
+          {{ post.title }}
+        </h2>
+
+        <p
+          class="text-gray-dark text-sm md:text-base max-w-2xl leading-relaxedmax-w-2xl leading-relaxed"
+        >
+          {{ post.excerpt }}
+        </p>
+
+        <a
+          [routerLink]="['/blog', post.id]"
+          class="text-black border-b border-gray-dark cursor-pointer"
+        >
+          Read More
+        </a>
+      </div>
+    </div>
+    }
+
+    <!-- Categories List -->
+    <div class="hidden md:block flex-1 min-w-[200px]">
+      <div class="flex flex-col gap-[40px]">
+        <h1 class="text-black font-semibold text-[25px]">Categories</h1>
+
+        <ul class="flex flex-col gap-[40px] ml-5">
+          <li
+            *ngFor="let category of categories"
+            (click)="filterByCategory(category)"
+            class="cursor-pointer text-gray"
+          >
+            {{ category }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <app-pagination
+    [currentPage]="currentPage"
+    [pagesCount]="totalPages"
+    (currentPageChange)="goToPage($event)"
+  ></app-pagination>
+
+  <!-- Search Input -->
+  <!-- <div class="flex items-center gap-4 mb-6">
+    <input
+    type="text"
+    [(ngModel)]="searchQuery"
+    placeholder="Search posts..."
+    class="border p-2 w-full rounded-lg"
+    />
+    <img class="absolute" src="/icons/search.svg" alt="search">
+  </div> -->
+</section>
+
+<app-feature-banner></app-feature-banner>

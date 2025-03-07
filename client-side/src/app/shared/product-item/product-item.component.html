@@ -1,48 +1,87 @@
-<div class="bg-(--light-gray) relative">
-  <div
-    class="overlay p-3 absolute w-full h-full top-0 left-0 flex flex-col items-center justify-center opacity-0 hover:opacity-100 transition"
+<div
+  class="bg-gray-light relative overflow-hidden"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (click)="navigateToProduct()"
+  aria-labelledby="product-title"
+>
+  @if (product.sale) {
+  <p
+    class="absolute w-[50px] h-[50px] right-[10px] top-[10px] p-[10px] text-white rounded-full bg-red-light flex items-center justify-center"
+    aria-label="Sale discount"
   >
-    <app-button type="plainBtn">add to cart</app-button>
-    <div class="flex flex-row flex-wrap justify-center gap-4 text-white mt-3">
-      <p class="flex gap-1 cursor-pointer">
-        <img src="/icons/view.svg" />view
-      </p>
-      <p class="flex gap-1 cursor-pointer">
-        <img src="/icons/share.svg" />share
-      </p>
-      <p class="flex gap-1 cursor-pointer">
-        <img src="/icons/compare.svg" />compare
-      </p>
-      <p class="flex gap-1 cursor-pointer">
-        <img src="/icons/wHeart.svg" /> like
-      </p>
-    </div>
-  </div>
-  @if(product.sale){
-  <p class="saleIcon bg-(--sale-icon)">-{{ product.sale }}%</p>
-
+    -{{ product.sale }}%
+  </p>
   }
-  <img [src]="product.img" class="w-full" alt="prduct" />
+  <div
+    class="bg-secondary h-[300px] flex justify-center items-center overflow-hidden"
+  >
+    <img
+      [src]="product.img"
+      class="w-full bg-secondary"
+      [alt]="product.title"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Info -->
   <div class="p-3">
     <div class="flex justify-between">
-      <h3 class="font-semibold">{{ product.title }}</h3>
-      <a routerLink="" class="sm:block md:hidden">View</a>
+      <h2 class="font-semibold" id="product-title">{{ product.title }}</h2>
     </div>
-    <p class="my-3 text-(--product-gray)">{{ product.discription }}</p>
-    @if (product.sale) {
+    <p class="my-3 text-gray">{{ product.description }}</p>
+
     <div
-      class="flex flex-col lg:flex-row gap-1 justify-between overflow-hidden lg:mb-[16px]"
+      class="flex flex-col lg:flex-row gap-1 justify-between lg:items-center overflow-hidden lg:mb-[16px]"
     >
+      @if (product.sale) {
       <p class="font-semibold">
         {{ (product.sale * product.price) / 100 | currency }}
       </p>
-      <p class="line-through text-xs text-(--product-gray) ">
+      <p class="line-through text-xs text-gray">
         {{ product.price | currency }}
       </p>
+      } @else {
+      <p class="font-semibold">{{ product.price | currency }}</p>
+      <p class="h-[16px]"></p>
+      }
     </div>
-    }@else {
-    <p class="font-semibold">{{ product.price | currency }}</p>
-    <p class="h-[16px]"></p>
-    }
+  </div>
+
+  <!-- Actions (Hidden on Mobile) -->
+  <div
+    class="bg-black-transparent p-3 w-full flex-col items-center justify-center hidden md:flex md:absolute md:h-full md:top-0 md:left-0"
+    [@slideInOut]="isHovered ? 'in' : 'out'"
+  >
+    <app-button type="plainBtn" (click)="addToCart()">Add to Cart</app-button>
+    <nav
+      class="flex flex-row flex-wrap justify-center gap-5 text-white mt-3"
+      aria-label="Product actions"
+    >
+      <a
+        class="flex gap-1 cursor-pointer"
+        [routerLink]="['/product', product.id]"
+        aria-label="View product details"
+      >
+        <img src="/icons/view.svg" class="w-[16px]" alt="View icon" />
+        <span>View</span>
+      </a>
+      <a
+        class="flex gap-1 cursor-pointer"
+        [routerLink]="['/comparison']"
+        aria-label="Compare products"
+      >
+        <img src="/icons/compare.svg" class="w-[16px]" alt="Compare icon" />
+        <span>Compare</span>
+      </a>
+      <button
+        class="flex gap-1 cursor-pointer"
+        aria-label="Add to wishlist"
+        (click)="addToFavourites()"
+      >
+        <img src="/icons/heart-white.svg" class="w-[16px]" alt="Like icon" />
+        <span>Like</span>
+      </button>
+    </nav>
   </div>
 </div>

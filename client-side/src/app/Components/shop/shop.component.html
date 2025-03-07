@@ -1,7 +1,6 @@
-<!-- shop.component.html -->
 <app-header-banner bannerTitle="Shop"></app-header-banner>
 
-<div class="bg-light px-5">
+<div class="bg-secondary px-5">
   <div
     class="h-[100px] flex items-center justify-between max-w-[1240px] m-auto"
   >
@@ -11,73 +10,78 @@
         <img src="icons/filter.svg" alt="Filter Icon" />
         <p>Filter</p>
       </div>
-
-      <div class="hidden sm:block border border-gray-300 self-stretch"></div>
-
+      <div class="hidden sm:block border border-gray-medium self-stretch"></div>
       <p class="hidden text-sm sm:block">Showing 1-16 of 40 Results</p>
     </div>
 
     <!-- Right Section: Sorting Dropdown -->
     <div class="flex items-center gap-4">
       <p>Sort By</p>
-      <app-dropdown
-        [items]="menuItems"
-        [selectedValue]="searchValue"
-        (selectedValueChange)="onSortChange($event)"
-      ></app-dropdown>
+      <div class="relative">
+        <button
+          class="bg-white h-14 flex items-center px-5 cursor-pointer w-full min-w-48 border border-gray-medium rounded-md focus:outline-none"
+          (click)="toggleDropdown(true)"
+        >
+          <span class="text-gray-dark">{{ searchValue }}</span>
+        </button>
+        <app-dropdown
+          *ngIf="isMenuOpen && menuItems.length > 0"
+          [items]="menuItems"
+          (selectedValueChange)="onSortChange($event)"
+        ></app-dropdown>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Content -->
-<div class="p-5 grid grid-cols-12 gap-6 relative">
-  <!-- overlay -->
+<div #productsContainer class="p-5 flex relative gap-5">
+  <!-- Overlay -->
+  @if (showFilters) {
   <div
-    class="absolute top-0 left-0 h-full z-1 w-full backdrop-brightness-50 lg:col-span-3 lg:flex-col lg:static lg:w-auto lg:p-0"
-    *ngIf="showFilters"
+    class="fixed lg:absolute top-0 left-0 w-full h-full bg-[#00000073] z-[999] lg:hidden"
+    (click)="toggleShowFilter(false)"
+  ></div>
+  <div
+    class="fixed lg:relative top-0 left-0 w-full h-full lg:h-auto bg-white max-w-[300px] p-[25px] flex flex-col gap-[25px] z-[1000] lg:z-0"
+    [@slideInOut]="showFilters ? 'in' : 'out'"
+    [@.disabled]="disableAnimation"
   >
-    <div
-      class="w-[300px] bg-white h-full p-4 lg:p-0 lg:w-full flex flex-col gap-3"
-    >
-      <app-filter-option title="Rating">
-        <div>
-          <input type="checkbox" name="rating5" id="rating5" />
-          <label for="rating5">5</label>
-        </div>
-        <div>
-          <input type="checkbox" name="rating4" id="rating4" />
-          <label for="rating4">4</label>
-        </div>
-        <div>
-          <input type="checkbox" name="rating3" id="rating3" />
-          <label for="rating3">3</label>
-        </div>
-      </app-filter-option>
-      <app-filter-option title="Another Filter">
-        <!-- Add more filter options here -->
-      </app-filter-option>
-      <div class="self-center lg:hidden">
-        <app-button (click)="toggleShowFilter()">Apply</app-button>
+    <app-filter-option title="Rating">
+      <div *ngFor="let rating of [5, 4, 3]">
+        <input
+          type="checkbox"
+          [id]="'rating' + rating"
+          [name]="'rating' + rating"
+        />
+        <label [for]="'rating' + rating">{{ rating }}</label>
       </div>
-    </div>
+    </app-filter-option>
+    <app-filter-option title="Another Filter"></app-filter-option>
   </div>
+  }
+
+  <!-- Product Grid -->
   <div
-    class="bg-white grid col-span-12"
-    [ngClass]="{
-      'lg:col-span-9 ': showFilters
-    }"
+    class="col-span-12 flex flex-col gap-5 items-center"
+    [ngClass]="{ 'lg:col-span-9': showFilters }"
   >
     <div
-      class="grid gap-6 w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+      class="grid gap-6 w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4"
+      [ngClass]="{
+        'lg:grid-cols-4': showFilters,
+        'lg:grid-cols-5': !showFilters
+      }"
     >
-      @for (item of products; track item.id) {
-      <app-product-item [product]="item"> </app-product-item>
+      @for (item of displayedProducts; track item.id) {
+      <app-product-item [product]="item"></app-product-item>
       }
     </div>
-
-    <div>
-      <app-button class="rounded-5" btnWidth="60px">1</app-button>
-    </div>
+    <app-pagination
+      [currentPage]="currentPage"
+      [pagesCount]="pagesCount"
+      (currentPageChange)="goToPage($event)"
+    ></app-pagination>
   </div>
 </div>
 

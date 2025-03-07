@@ -1,20 +1,33 @@
-// filter-option.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import {
+  trigger,
+  transition,
+  animate,
+  style,
+  state,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-filter-option',
   imports: [CommonModule],
+  animations: [
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in')),
+    ]),
+  ],
   template: `
-    <div class="border-t border-gray-light">
+    <div class="border-t border-gray-medium z-3 overflow-hidden">
       <div
-        class="filterOption flex items-center justify-between py-3 cursor-pointer"
+        class="flex items-center justify-between py-3 cursor-pointer"
         (click)="toggleActive()"
       >
         <div>
           <span class="text-lg font-bold">{{ title }}</span>
         </div>
-        <div>
+        <div class="w-[15px]">
           <img
             src="icons/arrow.svg"
             class="rotate-[90deg] duration-300 ease"
@@ -23,8 +36,10 @@ import { Component, Input } from '@angular/core';
           />
         </div>
       </div>
-      <div class="optionsMenu" [class.hidden]="!isActive">
-        <ng-content></ng-content>
+      <div class="overflow-hidden" [@slideUpDown]="isActive ? 'in' : 'out'">
+        <div class="optionsMenu">
+          <ng-content></ng-content>
+        </div>
       </div>
     </div>
   `,
@@ -34,6 +49,7 @@ export class FilterOptionComponent {
   isActive: boolean = false;
 
   toggleActive() {
+    console.log(5);
     this.isActive = !this.isActive;
   }
 }

@@ -1,157 +1,52 @@
-<div
-  class="sticky flex justify-between items-center h-[100px] lg:px-[30px] px-[10px] z-[999]"
-  style="box-shadow: 0 0 10px #0000004d"
+<header
+  class="sticky top-0 z-[999] flex h-[100px] items-center justify-between bg-white px-[10px] shadow lg:px-[30px] gap-[10px]"
 >
+  <!-- Logo -->
   <div class="flex items-center gap-[5px]">
-    <img src="images/logo.png" alt="" class="w-[50px]" />
-    <div class="text-[34px] font-bold font-montserrat">Furniro</div>
-  </div>
-  <div class="hidden md:flex items-center flex-1 justify-center">
-    <ul class="flex gap-[30px] lg:gap-[40px]">
-      <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
-      >
-        <a routerLink="/" class="text-[16px] font-medium font-poppins">Home</a>
-      </li>
-      <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
-      >
-        <a routerLink="/shop" class="text-[16px] font-medium font-poppins"
-          >Shop</a
-        >
-      </li>
-      <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
-      >
-        <a routerLink="/blog" class="text-[16px] font-medium font-poppins"
-          >Blogs</a
-        >
-      </li>
-      <li
-        class="px-[10px] leading-[40px] hover:bg-gray-light duration-300 ease"
-      >
-        <a routerLink="/contact" class="text-[16px] font-medium font-poppins"
-          >Contact</a
-        >
-      </li>
-    </ul>
+    <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[50px]" />
+    <div class="font-montserrat text-2xl font-bold lg:text-4xl">Furniro</div>
   </div>
 
-  <div class="hidden md:flex">
-    <ul class="flex gap-[15px]">
-      <li>
-        <a routerLink="">
-          <img
-            src="icons/account-alert.svg"
-            alt=""
-            srcset=""
-            class="w-[20px]"
-          />
-        </a>
-      </li>
-      <li>
-        <a routerLink="">
-          <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
-        </a>
-      </li>
-      <li>
-        <a routerLink="">
-          <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
-        </a>
-      </li>
-      <li>
-        <a routerLink="">
-          <img
-            src="icons/shopping-cart.svg"
-            alt=""
-            srcset=""
-            class="w-[20px]"
-          />
-        </a>
-      </li>
-    </ul>
+  <!-- Navigation Links -->
+  <div class="hidden flex-1 md:block">
+    <app-navigation></app-navigation>
   </div>
+
+  <!-- Search Input -->
+  <app-search [items]="productsNames"></app-search>
+
+  <!-- Actions -->
+  <div class="hidden md:block">
+    <app-user-actions></app-user-actions>
+  </div>
+
+  <!-- Menu Button -->
   <button
     (click)="toggleMenu()"
     class="cursor-pointer"
-    [class.active]="isActive"
+    [ngClass]="{ active: isActive }"
   >
     <div
-      class="hamburgerMenu md:hidden flex flex-col justify-evenly items-center w-[40px] h-[40px]"
+      class="hamburgerMenu flex h-[40px] w-[40px] flex-col items-center justify-evenly md:hidden"
     >
       <span
-        class="menuSign border border-[2px] rounded-[5px] w-[60%] duration-300 ease"
+        class="menuSign w-[60%] border-2 rounded-[5px] duration-300 ease"
       ></span>
       <span
-        class="menuSign border border-[2px] rounded-[5px] w-[90%] duration-300 ease"
+        class="menuSign w-[90%] border-2 rounded-[5px] duration-300 ease"
       ></span>
       <span
-        class="menuSign border border-[2px] rounded-[5px] w-[60%] duration-300 ease"
+        class="menuSign w-[60%] border-2 rounded-[5px] duration-300 ease"
       ></span>
     </div>
   </button>
 
+  <!-- Mobile Menu -->
   <div
-    class="mobileMenu hidden flex-col absolute top-[100px] right-0 w-[250px] text-center bg-white"
-    style="box-shadow: 0 0 10px #0000004d"
+    *ngIf="isActive"
+    class="absolute top-[100px] right-0 flex-col w-[250px] bg-white text-center shadow md:hidden"
   >
-    <div>
-      <ul>
-        <li
-          class="flex justify-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
-        >
-          <a class="w-100 py-[10px]" routerLink="/home"> Home </a>
-        </li>
-        <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
-        >
-          <a class="w-100 py-[10px]" routerLink="/shop"> Shop </a>
-        </li>
-        <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
-        >
-          <a class="w-100 py-[10px]" routerLink="/blog"> Blogs </a>
-        </li>
-        <li
-          class="flex justify-center items-center border-b border-gray-medium hover:bg-gray-light duration-300 ease"
-        >
-          <a class="w-100 py-[10px]" routerLink="/contact"> Contact </a>
-        </li>
-        <li class="flex justify-center items-center border-b border-gray">
-          <ul class="flex gap-[15px] py-[10px]">
-            <li>
-              <a routerLink="">
-                <img
-                  src="icons/account-alert.svg"
-                  alt=""
-                  srcset=""
-                  class="w-[20px]"
-                />
-              </a>
-            </li>
-            <li>
-              <a routerLink="">
-                <img src="icons/search.svg" alt="" srcset="" class="w-[20px]" />
-              </a>
-            </li>
-            <li>
-              <a routerLink="">
-                <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
-              </a>
-            </li>
-            <li>
-              <a routerLink="">
-                <img
-                  src="icons/shopping-cart.svg"
-                  alt=""
-                  srcset=""
-                  class="w-[20px]"
-                />
-              </a>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+    <app-navigation></app-navigation>
+    <app-user-actions></app-user-actions>
   </div>
-</div>
+</header>
