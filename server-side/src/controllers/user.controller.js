@@ -4,10 +4,6 @@ const AppError = require("../utils/appError");
 const User = require("../models/user.model");
 const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
 
-// 1- user API
-// -----1- get User   --only admin --user   ---(jwt)
-// -----2- delete User --only admin --user   ---(jwt)
-// -----3- edit User --only admin --user   ---(jwt)
 const getAllUsers = asyncWrapper(async (req, res, next) => {
   let { limit = 10, page = 1 } = req.query;
   console.log("query", limit, page);
@@ -27,7 +23,8 @@ const getAllUsers = asyncWrapper(async (req, res, next) => {
   const users = await User.find()
     .select("_id username email favourites role")
     .limit(limit)
-    .skip(skip);
+    .skip(skip)
+    .lean();
   res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: { totalUsers, users },
@@ -82,7 +79,7 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
 });
 
 const editUser = asyncWrapper(async (req, res, next) => {
-  const { userId } = req.params;
+  const userId = req.params.userId;
   const { username, email, favourites, role } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(userId)) {
