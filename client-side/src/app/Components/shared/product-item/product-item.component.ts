@@ -10,6 +10,8 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { ButtonComponent } from '../button/button.component';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+
 import {
   trigger,
   transition,
@@ -36,7 +38,7 @@ import { product } from '../../../models/product.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductItemComponent implements OnInit {
+export class ProductItemComponent  {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
@@ -45,12 +47,10 @@ export class ProductItemComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
-    private cartService: CartService
+    private cartService: CartService,
+    private router: Router
   ) {}
 
-  ngOnInit() {
-    this.checkScreenSize();
-  }
 
   onMouseEnter() {
     if (!this.disableAnimation) this.isHovered = true;
@@ -60,15 +60,6 @@ export class ProductItemComponent implements OnInit {
     if (!this.disableAnimation) this.isHovered = false;
   }
 
-  @HostListener('window:resize')
-  checkScreenSize() {
-    const isSmallScreen = window.innerWidth < 1024;
-    if (this.disableAnimation !== isSmallScreen) {
-      this.disableAnimation = isSmallScreen;
-      this.isHovered = isSmallScreen;
-      this.cdr.detectChanges(); // Force UI update
-    }
-  }
 
   addToFavourites() {
     if (this.isFavorite(this.product.id)) {
@@ -101,5 +92,10 @@ export class ProductItemComponent implements OnInit {
   }
   isInCart(productID: number): boolean {
     return this.cartService.getCart(1).some((p) => p.id === productID);
+  }
+  navigateToProduct() {
+    if (window.innerWidth < 768) {
+      this.router.navigate(['/product', this.product.id]);
+    }
   }
 }
