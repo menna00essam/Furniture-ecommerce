@@ -2,9 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { product } from '../../models/product.model';
 import { CurrencyPipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
+
+import { AuthService } from '../../Services/auth.service';
+
+import { UserService } from '../../Services/user.service';
 
 @Component({
   selector: 'app-user-actions',
@@ -14,27 +18,40 @@ import { CartService } from '../../Services/cart.service';
     trigger('slideInOut', [
       transition(':enter', [
         style({ transform: 'translateX(100%)' }),
-        animate('200ms ease-in', style({ transform: 'translateX(0%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(0%)' })
+        ),
       ]),
       transition(':leave', [
-        animate('200ms ease-in', style({ transform: 'translateX(100%)' })),
+        animate(
+          '0.5s cubic-bezier(.4,0,.2,1)',
+          style({ transform: 'translateX(100%)' })
+        ),
       ]),
     ]),
   ],
 })
 export class UserActionsComponent implements OnInit {
   cartProductsTotalPrice = 0;
-  cartLength = 0; // Stores actual cart length
-  favoritesLength = 0; // Stores actual cart length
+  cartLength = 0;
+  favoritesLength = 0;
   favModalShow = false;
   cartModalShow = false;
+  isLoggedIn = false;
 
   constructor(
     private favoriteService: FavoriteService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
+  }
 
   get cart(): product[] {
     const cartItems = this.cartService.getCart(1);

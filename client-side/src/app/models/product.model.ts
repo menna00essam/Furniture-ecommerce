@@ -4,7 +4,8 @@ export interface product {
   title: string;
   description: string;
   price: number;
-  category?: string;
-  date?: string;
+  category: string;
+  date: Date;
   sale?: number | false;
+  quantity: number;
 }

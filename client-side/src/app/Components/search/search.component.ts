@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DropdownComponent } from '../dropdown/dropdown.component';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 
 @Component({
   selector: 'app-search',
@@ -18,50 +20,90 @@ import { DropdownComponent } from '../dropdown/dropdown.component';
         [(ngModel)]="searchValue"
         (focus)="toggleDropdown(true)"
         (input)="onSearchInput()"
+        (keydown)="handleKeyDown($event)"
       />
 
       <!-- Search Icon -->
       <img src="icons/search.svg" alt="Search" class="w-5" />
 
-      <!-- Dropdown (only appears when menu is open and filtered items exist) -->
+      <!-- Dropdown -->
+      @if(isMenuOpen && filteredItems.length > 0){
       <app-dropdown
-        *ngIf="isMenuOpen && filteredItems.length > 0"
         [items]="filteredItems"
         (selectedValueChange)="updateValue($event)"
       ></app-dropdown>
+      }
     </div>
   `,
 })
 export class SearchComponent {
-  @Input() items: string[] = [];
+  @Input() items: { id: number; value: string }[] = [];
+  @Output() onSelect = new EventEmitter<number>();
 
   searchValue: string = '';
-  filteredItems: string[] = [];
+  filteredItems: { id: number; value: string }[] = [];
   isMenuOpen: boolean = false;
-  private timeout: ReturnType<typeof setTimeout> | null = null;
 
-  /** Handles input debounce and triggers filtering */
-  onSearchInput(): void {
-    if (this.timeout) clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => this.filterSearchResults(), 300);
+  private searchSubject = new Subject<string>();
+  private selectedIndex: number = -1;
+
+  constructor() {
+    // Debounce search input
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.filterSearchResults();
+    });
   }
 
-  /** Filters search results based on user input */
+  /** Handles search input with debounce */
+  onSearchInput(): void {
+    this.searchSubject.next(this.searchValue);
+  }
+
+  /** Filters search results based on input */
   private filterSearchResults(): void {
     const query = this.searchValue.toLowerCase().trim();
     this.filteredItems = query
-      ? this.items.filter((item) => item.toLowerCase().includes(query))
+      ? this.items
+          .filter((item) => item.value.toLowerCase().includes(query))
+          .slice(0, 5)
       : [];
+    this.selectedIndex = -1;
   }
 
-  /** Updates input value and closes dropdown */
-  updateValue(value: string): void {
-    this.searchValue = value;
+  /** Updates input value and emits selected event */
+  updateValue(item: any): void {
+    this.searchValue = item.value;
     this.toggleDropdown(false);
+    this.onSelect.emit(item.id);
   }
 
   /** Toggles dropdown visibility */
   toggleDropdown(open: boolean): void {
     this.isMenuOpen = open;
+  }
+
+  /** Handles arrow key navigation */
+  handleKeyDown(event: KeyboardEvent): void {
+    if (!this.isMenuOpen || this.filteredItems.length === 0) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        this.selectedIndex =
+          (this.selectedIndex + 1) % this.filteredItems.length;
+        break;
+      case 'ArrowUp':
+        this.selectedIndex =
+          (this.selectedIndex - 1 + this.filteredItems.length) %
+          this.filteredItems.length;
+        break;
+      case 'Enter':
+        if (this.selectedIndex >= 0) {
+          this.updateValue(this.filteredItems[this.selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        this.toggleDropdown(false);
+        break;
+    }
   }
 }

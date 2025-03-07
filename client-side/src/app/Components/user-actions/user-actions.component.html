@@ -27,9 +27,15 @@
     </div>
     }
   </li>
+
   <li>
-    <a routerLink="/register">
-      <img src="icons/account-alert.svg" alt="" srcset="" class="w-[20px]" />
+    <a routerLink="{{ isLoggedIn ? ['/profile'] : '/register' }}">
+      <img
+        src="{{ isLoggedIn ? 'images/user.png' : 'icons/account-alert.svg' }}"
+        alt=""
+        srcset=""
+        class="w-[20px]"
+      />
     </a>
   </li>
 </ul>

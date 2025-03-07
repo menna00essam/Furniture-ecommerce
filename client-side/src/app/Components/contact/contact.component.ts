@@ -6,9 +6,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HeaderBannerComponent } from '../header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../feature-banner/feature-banner.component';
-import { ButtonComponent } from '../../shared/button/button.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-contact',

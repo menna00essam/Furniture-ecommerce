@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
+import { HeaderComponent } from '../root/header/header.component';
 import { ProductNavigationComponent } from '../products-components/product-navigation/product-navigation.component';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';

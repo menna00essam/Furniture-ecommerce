@@ -1,7 +1,7 @@
 <app-header-banner bannerTitle="Checkout"></app-header-banner>
-<!-- Checkout Section -->
+<!--**** Checkout Section ****-->
 <section class="flex flex-col md:flex-row p-10 gap-10">
-  <div class="checkout-container">
+  <div class="flex-1 p-6 shadow rounded-lg">
     <form
       [formGroup]="checkoutForm"
       (ngSubmit)="onSubmit()"
@@ -11,33 +11,29 @@
 
       <label for="first-name">First Name *</label>
       <input type="text" id="first-name" formControlName="firstName" />
-      <div
-        *ngIf="checkoutForm.get('firstName')?.errors?.['required'] && checkoutForm.get('firstName')?.touched"
-        class="error"
-      >
-        First Name is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('firstName')?.errors?.['hasNumber'] && checkoutForm.get('firstName')?.touched"
-        class="error"
-      >
-        First Name cannot contain numbers.
-      </div>
+      @if (checkoutForm.get('firstName')?.errors?.['required'] && checkoutForm.get('firstName')?.touched) {
+        <div class="error">
+          First Name is required.
+        </div>
+      }
+      @if (checkoutForm.get('firstName')?.errors?.['hasNumber'] && checkoutForm.get('firstName')?.touched) {
+        <div class="error">
+          First Name cannot contain numbers.
+        </div>
+      }
 
       <label for="last-name">Last Name *</label>
       <input type="text" id="last-name" formControlName="lastName" />
-      <div
-        *ngIf="checkoutForm.get('lastName')?.errors?.['required'] && checkoutForm.get('lastName')?.touched"
-        class="error"
-      >
-        Last Name is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('lastName')?.errors?.['hasNumber'] && checkoutForm.get('lastName')?.touched"
-        class="error"
-      >
-        Last Name cannot contain numbers.
-      </div>
+      @if (checkoutForm.get('lastName')?.errors?.['required'] && checkoutForm.get('lastName')?.touched) {
+        <div class="error">
+          Last Name is required.
+        </div>
+      }
+      @if (checkoutForm.get('lastName')?.errors?.['hasNumber'] && checkoutForm.get('lastName')?.touched) {
+        <div class="error">
+          Last Name cannot contain numbers.
+        </div>
+      }
 
       <label for="company-name">Company Name (Optional)</label>
       <input type="text" id="company-name" formControlName="companyName" />
@@ -49,89 +45,79 @@
         <option value="uk">United Kingdom</option>
         <option value="qatart">Qatar</option>
       </select>
-      <div
-        *ngIf="checkoutForm.get('country')?.errors?.['required'] && checkoutForm.get('country')?.touched"
-        class="error"
-      >
-        Country is required.
-      </div>
+      @if (checkoutForm.get('country')?.errors?.['required'] && checkoutForm.get('country')?.touched) {
+        <div class="error">
+          Country is required.
+        </div>
+      }
 
       <label for="address">Street Address *</label>
       <input type="text" id="address" formControlName="address" />
-      <div
-        *ngIf="checkoutForm.get('address')?.errors?.['required'] && checkoutForm.get('address')?.touched"
-        class="error"
-      >
-        Address is required.
-      </div>
+      @if (checkoutForm.get('address')?.errors?.['required'] && checkoutForm.get('address')?.touched) {
+        <div class="error">
+          Address is required.
+        </div>
+      }
 
       <label for="city">Town / City *</label>
       <input type="text" id="city" formControlName="city" />
-      <div
-        *ngIf="checkoutForm.get('city')?.errors?.['required'] && checkoutForm.get('city')?.touched"
-        class="error"
-      >
-        City is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('city')?.errors?.['hasNumber'] && checkoutForm.get('city')?.touched"
-        class="error"
-      >
-        City cannot contain numbers.
-      </div>
+      @if (checkoutForm.get('city')?.errors?.['required'] && checkoutForm.get('city')?.touched) {
+        <div class="error">
+          City is required.
+        </div>
+      }
+      @if (checkoutForm.get('city')?.errors?.['hasNumber'] && checkoutForm.get('city')?.touched) {
+        <div class="error">
+          City cannot contain numbers.
+        </div>
+      }
 
       <label for="zip">Zip Code *</label>
       <input type="text" id="zip" formControlName="zip" />
-      <div
-        *ngIf="checkoutForm.get('zip')?.errors?.['required'] && checkoutForm.get('zip')?.touched"
-        class="error"
-      >
-        Zip Code is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('zip')?.errors?.['pattern'] && checkoutForm.get('zip')?.touched"
-        class="error"
-      >
-        Zip Code must contain only numbers.
-      </div>
+      @if (checkoutForm.get('zip')?.errors?.['required'] && checkoutForm.get('zip')?.touched) {
+        <div class="error">
+          Zip Code is required.
+        </div>
+      }
+      @if (checkoutForm.get('zip')?.errors?.['pattern'] && checkoutForm.get('zip')?.touched) {
+        <div class="error">
+          Zip Code must contain only numbers.
+        </div>
+      }
 
       <label for="phone">Phone *</label>
       <input type="tel" id="phone" formControlName="phone" />
-      <div
-        *ngIf="checkoutForm.get('phone')?.errors?.['required'] && checkoutForm.get('phone')?.touched"
-        class="error"
-      >
-        Phone is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('phone')?.errors?.['pattern'] && checkoutForm.get('phone')?.touched"
-        class="error"
-      >
-        Phone must contain only numbers.
-      </div>
+      @if (checkoutForm.get('phone')?.errors?.['required'] && checkoutForm.get('phone')?.touched) {
+        <div class="error">
+          Phone is required.
+        </div>
+      }
+      @if (checkoutForm.get('phone')?.errors?.['pattern'] && checkoutForm.get('phone')?.touched) {
+        <div class="error">
+          Phone must contain only numbers.
+        </div>
+      }
 
       <label for="email">Email Address *</label>
       <input type="email" id="email" formControlName="email" />
-      <div
-        *ngIf="checkoutForm.get('email')?.errors?.['required'] && checkoutForm.get('email')?.touched"
-        class="error"
-      >
-        Email is required.
-      </div>
-      <div
-        *ngIf="checkoutForm.get('email')?.errors?.['email'] && checkoutForm.get('email')?.touched"
-        class="error"
-      >
-        Please enter a valid email address.
-      </div>
+      @if (checkoutForm.get('email')?.errors?.['required'] && checkoutForm.get('email')?.touched) {
+        <div class="error">
+          Email is required.
+        </div>
+      }
+      @if (checkoutForm.get('email')?.errors?.['email'] && checkoutForm.get('email')?.touched) {
+        <div class="error">
+          Please enter a valid email address.
+        </div>
+      }
 
       <label for="additional-info">Additional Information</label>
       <textarea id="additional-info" rows="4"></textarea>
     </form>
   </div>
 
-  <!-- Confirming payment -->
-  <div class="Confirming-payment">
+  <!--***** Confirming payment *****-->
+  <div class="Confirming-payment shadow p-6">
     <h3>Product</h3>
     <table>
       <thead>
@@ -141,28 +127,34 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Asgard sofa x 1</td>
-          <td>Rs. 250,000.00</td>
-        </tr>
+        @for (item of cartItems; track item) {
+          <tr>
+            <td>{{ item.title }} x {{ item.quantity }}</td>
+            <td>{{ item.price * item.quantity | currency }}</td>
+          </tr>
+        }
         <tr>
           <td>Total</td>
-          <td class="total">Rs. 250,000.00</td>
+          <td class="total">{{ subtotal | currency }}</td>
         </tr>
       </tbody>
     </table>
     <div class="payment-method">
-      <p *ngIf="selectedPayment === 'cod'">
-        You can make your payment when you receive the order at your doorstep.
-        Please keep exact change ready to avoid any inconvenience.
-      </p>
-      <p *ngIf="selectedPayment === 'bank'">
-        Make your payment directly into our bank account. Please use your Order
-        ID as the payment reference. Your order will not be shipped until the
-        funds have cleared in our account.
-      </p>
+      @if (selectedPayment === 'cod') {
+        <p>
+          You can make your payment when you receive the order at your doorstep.
+          Please keep exact change ready to avoid any inconvenience.
+        </p>
+      }
+      @if (selectedPayment === 'bank') {
+        <p>
+          Make your payment directly into our bank account. Please use your Order
+          ID as the payment reference. Your order will not be shipped until the
+          funds have cleared in our account.
+        </p>
+      }
 
-      <!-- Payment Options -->
+      <!--***** Payment Options *****-->
       <label>
         <input
           type="radio"

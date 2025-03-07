@@ -10,7 +10,7 @@ export class FavoriteService {
   getFavorites(id: number): product[] {
     return this.favorites;
   }
-  
+
   addFavorite(id: number, product: product) {
     if (this.favorites.every((p) => p.id != product.id))
       this.favorites.push(product);
