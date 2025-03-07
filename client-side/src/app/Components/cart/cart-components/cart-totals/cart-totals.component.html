@@ -8,12 +8,12 @@
     <span>Total:</span>
     <span> {{ subtotal | currency }}</span>
   </div>
-
+  @if(subtotal>0){
   <app-button
-    *ngIf="subtotal > 0"
     class="flex justify-center items-center mx-auto mt-8"
     type="primary-fill"
     (click)="goToCheckout()"
     >Check Out</app-button
   >
+  }
 </div>

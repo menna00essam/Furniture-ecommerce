@@ -14,11 +14,12 @@
       >
         <span class="text-gray-dark">{{ selectedCategory }}</span>
       </button>
+      @if(isMenuOpen && categories.length > 0){
       <app-dropdown
-        *ngIf="isMenuOpen && categories.length > 0"
         [items]="categories"
         (selectedValueChange)="filterByCategory($event)"
       ></app-dropdown>
+      }
     </div>
   </div>
 

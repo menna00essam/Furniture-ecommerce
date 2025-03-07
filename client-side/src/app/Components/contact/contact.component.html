@@ -67,14 +67,10 @@
           placeholder="Enter Your Name"
           required
         />
-        <p
-          *ngIf="
-            contactForm.get('name')?.invalid && contactForm.get('name')?.touched
-          "
-          class="text-red-light text-sm"
-        >
-          Name is required.
-        </p>
+        @if (contactForm.get('name')?.invalid &&
+        contactForm.get('name')?.touched) {
+        <p class="text-red-light text-sm">Name is required.</p>
+        }
 
         <!-- Email Field -->
         <label for="email" class="text-base font-medium">Your Email</label>
@@ -86,15 +82,10 @@
           placeholder="Enter Your Email"
           required
         />
-        <p
-          *ngIf="
-            contactForm.get('email')?.invalid &&
-            contactForm.get('email')?.touched
-          "
-          class="text-red-light text-sm"
-        >
-          Please enter a valid email.
-        </p>
+        @if (contactForm.get('email')?.invalid &&
+        contactForm.get('email')?.touched) {
+        <p class="text-red-light text-sm">Please enter a valid email.</p>
+        }
 
         <!-- Subject Field -->
         <label for="subject" class="text-base font-medium"
@@ -117,23 +108,18 @@
           placeholder="Write Your Message"
           required
         ></textarea>
-        <p
-          *ngIf="
-            contactForm.get('message')?.invalid &&
-            contactForm.get('message')?.touched
-          "
-          class="text-red-light text-sm"
-        >
-          Message cannot be empty.
-        </p>
+        @if (contactForm.get('message')?.invalid &&
+        contactForm.get('message')?.touched) {
+        <p class="text-red-light text-sm">Message cannot be empty.</p>
+        }
 
         <!-- Submit Button -->
         <app-button type="primary-fill">Submit</app-button>
       </form>
 
       <!-- Submission Message -->
+      @if (message) {
       <p
-        *ngIf="message"
         [ngClass]="{
           'text-green-500': isSuccess,
           'text-red-light': !isSuccess
@@ -142,6 +128,7 @@
       >
         {{ message }}
       </p>
+      }
     </div>
   </div>
 </section>

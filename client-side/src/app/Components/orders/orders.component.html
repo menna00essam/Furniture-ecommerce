@@ -1,4 +1,4 @@
-<section class="w-full h-full md:px-4 py-4 md:border-l flex flex-col gap-4">
+<section class="w-full h-full md:px-4 py-4 flex flex-col gap-4">
   <h3 class="text-lg font-medium">Orders</h3>
 
   <!-- Orders Status Filters -->
@@ -40,9 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="displayedOrders.length === 0">
-            <td class="p-4 text-center h-24" colspan="4">No data available</td>
-          </tr>
+          @if(displayedOrders.length){
           <tr
             *ngFor="let order of displayedOrders"
             class="border-b last:border-none"
@@ -52,6 +50,11 @@
             <td class="px-4 py-2">{{ order.total | currency }}</td>
             <td class="px-4 py-2">{{ order.createdAt | date }}</td>
           </tr>
+          } @else{
+          <tr>
+            <td class="p-4 text-center h-24" colspan="4">No data available</td>
+          </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -59,12 +62,11 @@
 
   <!-- Pagination -->
   <div
-    class="flex items-center justify-between px-4 py-3 bg-white shadow-md rounded-lg"
+    class="flex items-center justify-center px-4 py-3 bg-white shadow-md rounded-lg"
   >
     <!-- Per Page Selection -->
     <div class="flex items-center space-x-2">
       <p class="text-sm font-medium text-gray-700">Per page</p>
- 
 
       <div class="relative">
         <button
@@ -73,16 +75,17 @@
         >
           <span class="text-gray-dark">{{ itemsPerPage }}</span>
         </button>
+        @if(pageSizesMenuOpen && pageSizes.length > 0){
         <app-dropdown
-          *ngIf="pageSizesMenuOpen && pageSizes.length > 0"
           [items]="pageSizes"
           (selectedValueChange)="updatePageSize($event)"
         ></app-dropdown>
+        }
       </div>
     </div>
 
     <!-- Page Info -->
-    <div class="text-sm font-medium text-gray-700">
+    <div class="flex-1 text-sm font-medium text-gray-700 text-center">
       Page {{ currentPage }} of {{ totalPages }}
     </div>
 
