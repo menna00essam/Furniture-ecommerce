@@ -65,12 +65,10 @@ const login = asyncWrapper(async (req, res, next) => {
     {
       role: foundedUser.role,
       email: foundedUser.email,
+      username: foundedUser.username,
       _id: foundedUser._id,
     },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "10m",
-    }
+    process.env.JWT_SECRET
   );
   res.status(201).json({
     status: httpStatusText.SUCCESS,
