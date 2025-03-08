@@ -1,5 +1,5 @@
 <div class="flex flex-row">
-  <div class="bg-secondary w-[600px] hidden lg:flex items-end py-4">
+   <div class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-start py-4">
     <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
   </div>
   <div class="flex-1 flex flex-col items-center min-h-screen py-5">
@@ -34,14 +34,14 @@
           width="full"
           [control]="form.controls['email']"
         ></app-input>
-        <app-input
+        <!-- <app-input
           placeholder="Phone"
           bgC="secondary"
           label="Phone"
           type="text"
           width="full"
           [control]="form.controls['phone']"
-        ></app-input>
+        ></app-input> -->
         <app-input
           placeholder="Password"
           label="Password"
@@ -50,6 +50,30 @@
           width="full"
           [control]="form.controls['password']"
         ></app-input>
+        <div class="flex items-center gap-2 mt-4">
+          <input
+            type="checkbox"
+            id="agree"
+            formControlName="agree"
+            class="w-4 h-4"
+          />
+          <label for="agree" class="text-sm text-gray-600">
+            I agree to the
+            <a class="text-primary cursor-pointer hover:underline"
+              >Terms of Service</a
+            >
+            and
+            <a class="text-primary cursor-pointer hover:underline"
+              >Privacy Policy</a
+            >.
+          </label>
+        </div>
+        @if (!form.controls['agree'].value
+        &&this.form.controls['agree'].touched) {
+        <div class="text-red-500 text-sm">
+          You must agree to the terms before signing in.
+        </div>
+        }
         @if(errorMessage){
         <div class="text-red-500 text-center">{{ errorMessage }}</div>
         }
