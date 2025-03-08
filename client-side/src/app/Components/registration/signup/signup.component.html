@@ -1,0 +1,70 @@
+<div class="flex flex-row">
+  <div class="bg-secondary w-[600px] hidden lg:flex items-end py-4">
+    <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
+  </div>
+  <div class="flex-1 flex flex-col items-center min-h-screen py-5">
+    <div
+      class="flex flex-col gap-4 shadow w-[90%] lg:w-[70%] p-10 rounded-xl h-fit"
+    >
+      <!-- Logo -->
+      <div class="flex items-center gap-[5px] w-full">
+        <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[40px]" />
+        <div class="font-montserrat text-2xl font-bold lg:text-2xl">
+          Furniro
+        </div>
+      </div>
+      <!-- Form Label -->
+      <div class="sign text-5xl font-bold font-poppins">Sign Up</div>
+
+      <!-- Form -->
+      <form action="" [formGroup]="form" class="flex flex-col gap-4">
+        <app-input
+          placeholder="User name"
+          label="Name"
+          type="text"
+          bgC="secondary"
+          width="full"
+          [control]="form.controls['username']"
+        ></app-input>
+        <app-input
+          placeholder="test@test.com"
+          label="Email"
+          type="email"
+          bgC="secondary"
+          width="full"
+          [control]="form.controls['email']"
+        ></app-input>
+        <app-input
+          placeholder="Phone"
+          bgC="secondary"
+          label="Phone"
+          type="text"
+          width="full"
+          [control]="form.controls['phone']"
+        ></app-input>
+        <app-input
+          placeholder="Password"
+          label="Password"
+          type="password"
+          bgC="secondary"
+          width="full"
+          [control]="form.controls['password']"
+        ></app-input>
+        @if(errorMessage){
+        <div class="text-red-500 text-center">{{ errorMessage }}</div>
+        }
+        <div class="text-center mt-4">
+          <span class="text-gray">Already have an account ?</span>
+          <span>
+            <a class="text-primary opacity-100" routerLink="/register/login">
+              Sign In</a
+            >
+          </span>
+        </div>
+        <div class="flex justify-center">
+          <app-button (click)="onSubmit()">Sign Up</app-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
