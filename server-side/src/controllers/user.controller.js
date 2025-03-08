@@ -123,10 +123,60 @@ const editUser = asyncWrapper(async (req, res, next) => {
   });
 });
 
+const toggleFavourite = asyncWrapper(async (req, res, next) => {
+  const userId = req.user._id;
+  const productId = req.body.productId;
+  if (!mongoose.Types.ObjectId.isValid(productId)) {
+    return next(new AppError("Invalid product ID", 400));
+  }
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new AppError("User Not found", 404, httpStatusText.NOT_FOUND));
+  }
+  const index = user.favourites.indexOf(productId);
+  let isFavourite;
+  if (index !== -1) {
+    isFavourite = false;
+    user.favourites.splice(index, 1);
+  } else {
+    isFavourite = true;
+    user.favourites.push(productId);
+  }
+  await user.save();
+  res.status(200).json({
+    status: "success",
+    message: isFavourite
+      ? "Product added to favourites"
+      : "Product removed from favourites",
+    data: { favourites: user.favourites },
+  });
+});
+
+const getFavourites = asyncWrapper(async (req, res, next) => {
+  const userId = req.user._id;
+  console.log("user id", userId);
+  console.log("hers is get favourites", userId);
+
+  const user = await User.findById(userId)
+    .populate("favourites", "_id productName productImages productPrice")
+    .lean();
+
+  if (!user) {
+    return next(
+      new AppError("User not found with", 404, httpStatusText.NOT_FOUND)
+    );
+  }
+  res.status(200).json({
+    status: "success",
+    data: { favourites: user.favourites },
+  });
+});
+
 module.exports = {
   getAllUsers,
   getUser,
   deleteUser,
   editUser,
+  toggleFavourite,
+  getFavourites,
 };
-
