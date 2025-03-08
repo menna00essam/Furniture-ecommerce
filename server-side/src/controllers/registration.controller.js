@@ -11,7 +11,7 @@ const nodemailer = require("nodemailer");
 const signup = asyncWrapper(async (req, res, next) => {
   const user = req.body;
   if (!userValidation(user)) {
-    return next(new AppError("Invalid user data.", 400, httpStatusText.ERROR));
+    return next(new AppError("Invalid user data.", 400, httpStatusText.FAIL));
   }
 
   let foundedUser = await userModel.findOne({
@@ -33,7 +33,10 @@ const signup = asyncWrapper(async (req, res, next) => {
   userModel
     .create(user)
     .then((user) => {
-      res.status(201).json({ status: httpStatusText.SUCCESS, data: { user } });
+      res.status(201).json({
+        status: httpStatusText.SUCCESS,
+        message: "User signed up successfully",
+      });
     })
     .catch((error) => {
       return next(
@@ -61,19 +64,23 @@ const login = asyncWrapper(async (req, res, next) => {
   }
   const token = jwt.sign(
     {
-      isAdmin: foundedUser.isAdmin,
+      role: foundedUser.role,
       email: foundedUser.email,
+      username: foundedUser.username,
       _id: foundedUser._id,
+      role: foundedUser.role,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "10m",
+      expiresIn: "1h",
     }
   );
 
-  res
-    .header("authorization", token)
-    .json({ message: "Logged in successfully" });
+  res.status(201).json({
+    status: httpStatusText.SUCCESS,
+    message: "Logged in successfully",
+    data: { token },
+  });
 });
 //
 const transporter = nodemailer.createTransport({
@@ -110,7 +117,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
   user.resetTokenExpiry = Date.now() + 600000;
 
   await user.save();
-  const resetLink = `http://localhost:5000/reset-password?token=${user.resetToken}`;
+  const resetLink = `http://localhost:4200/register/reset-password?token=${user.resetToken}`;
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.email,
@@ -127,7 +134,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
     }
     res.status(201).json({
       status: httpStatusText.SUCCESS,
-      data: { message: "Email sent successfully." },
+      message: "Email sent successfully.",
     });
   });
 });
@@ -146,7 +153,7 @@ const resetPassword = asyncWrapper(async (req, res, next) => {
   await user.save();
   res.status(201).json({
     status: httpStatusText.SUCCESS,
-    data: { message: "Password reset successfully." },
+    message: "Password reset successfully.",
   });
 });
 module.exports = {
