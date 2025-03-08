@@ -47,14 +47,7 @@
             class="w-4 h-4"
           />
           <label for="agree" class="text-sm text-gray-600">
-            I agree to the
-            <a class="text-primary cursor-pointer hover:underline"
-              >Terms of Service</a
-            >
-            and
-            <a class="text-primary cursor-pointer hover:underline"
-              >Privacy Policy</a
-            >.
+           Remember me
           </label>
         </div>
         @if (!form.controls['agree'].value
@@ -62,7 +55,8 @@
         <div class="text-red-500 text-sm">
           You must agree to the terms before signing in.
         </div>
-        } @if(errorMessage) {
+        } 
+        @if(errorMessage) {
         <div class="text-red-500 text-center">{{ errorMessage }}</div>
         }
 
@@ -83,7 +77,7 @@
     </div>
   </div>
 
-  <div class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-end py-4">
+  <div class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-start py-4">
     <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
   </div>
 </div>

@@ -33,13 +33,15 @@ export class SignupComponent {
       Validators.required,
       Validators.minLength(8),
     ]),
+    agree: new FormControl(false, [Validators.requiredTrue]),
   });
   constructor(private authService: AuthService, private router: Router) {}
   onSubmit() {
     this.form.controls.email.markAsTouched();
     this.form.controls.username.markAsTouched();
-    this.form.controls.phone.markAsTouched();
+    // this.form.controls.phone.markAsTouched();
     this.form.controls.password.markAsTouched();
+
     if (this.form.valid) {
       this.authService.signup(this.form.value).subscribe({
         next: (res) => {
