@@ -9,11 +9,25 @@ import { InputComponent } from '../../shared/input/input.component';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { AuthService } from '../../../Services/auth.service';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-signup',
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule],
   templateUrl: './signup.component.html',
+  animations: [
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in-out')),
+    ]),
+  ],
 })
 export class SignupComponent {
   errorMessage: string = '';
@@ -39,8 +53,8 @@ export class SignupComponent {
   onSubmit() {
     this.form.controls.email.markAsTouched();
     this.form.controls.username.markAsTouched();
-    // this.form.controls.phone.markAsTouched();
     this.form.controls.password.markAsTouched();
+    this.form.controls.agree.markAsTouched();
 
     if (this.form.valid) {
       this.authService.signup(this.form.value).subscribe({
