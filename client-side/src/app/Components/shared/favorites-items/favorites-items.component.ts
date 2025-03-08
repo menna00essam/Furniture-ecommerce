@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { product } from '../../../Models/product.model';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../../Services/cart.service';
