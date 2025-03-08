@@ -8,7 +8,6 @@ const UserSchema = new mongoose.Schema(
     password: { type: String, required: true },
 
     favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-    // cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],   // carttt after iftar
 
     role: {
       type: String,

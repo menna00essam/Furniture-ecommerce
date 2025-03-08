@@ -1,5 +1,3 @@
-// get posts -- paggination -- 4  --
-// get related posts by tag
 const mongoose = require("mongoose");
 const httpStatusText = require("../utils/httpStatusText");
 const AppError = require("../utils/appError");
