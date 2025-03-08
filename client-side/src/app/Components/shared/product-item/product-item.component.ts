@@ -35,6 +35,7 @@ import { product } from '../../../models/product.model';
     ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class ProductItemComponent {
   @Input({ required: true }) product!: product;
