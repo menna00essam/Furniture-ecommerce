@@ -1,8 +1,6 @@
 <div class="flex flex-col lg:flex-row min-h-screen">
   <div class="flex-1 flex flex-col justify-center items-center py-5">
-    <div
-      class="flex flex-col gap-4 shadow w-[90%] lg:w-[70%] max-w-lg p-10 rounded-xl"
-    >
+    <div class="flex flex-col gap-4 shadow w-[90%] lg:w-[70%] p-10 rounded-xl">
       <div class="flex items-center gap-2 w-full">
         <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[40px]" />
         <div class="font-montserrat text-2xl font-bold">Furniro</div>
@@ -46,19 +44,15 @@
             formControlName="agree"
             class="w-4 h-4"
           />
-          <label for="agree" class="text-sm text-gray-600">
-           Remember me
-          </label>
+          <label for="agree" class="text-sm text-gray-600"> Remember me </label>
         </div>
-        @if (!form.controls['agree'].value
-        &&this.form.controls['agree'].touched) {
-        <div class="text-red-500 text-sm">
-          You must agree to the terms before signing in.
+
+        <div
+          class="text-red-500 text-center"
+          [@slideUpDown]="errorMessage ? 'in' : 'out'"
+        >
+          {{ errorMessage }}
         </div>
-        } 
-        @if(errorMessage) {
-        <div class="text-red-500 text-center">{{ errorMessage }}</div>
-        }
 
         <div class="text-center mt-4">
           <span class="text-gray">Don't have an account?</span>
@@ -77,7 +71,9 @@
     </div>
   </div>
 
-  <div class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-start py-4">
+  <div
+    class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-start py-4"
+  >
     <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
   </div>
 </div>

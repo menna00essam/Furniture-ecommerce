@@ -10,12 +10,25 @@ import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { AuthService } from '../../../Services/auth.service';
 import { jwtDecode } from 'jwt-decode';
-
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state,
+} from '@angular/animations';
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, InputComponent, RouterModule, ButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
+  animations: [
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in-out')),
+    ]),
+  ],
 })
 export class LoginComponent {
   errorMessage: string = '';

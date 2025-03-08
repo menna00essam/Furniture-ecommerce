@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -47,8 +54,7 @@ export class SearchComponent {
   private searchSubject = new Subject<string>();
   private selectedIndex: number = -1;
 
-  constructor() {
-    // Debounce search input
+  constructor(private elementRef: ElementRef) {
     this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
       this.filterSearchResults();
     });
@@ -104,6 +110,16 @@ export class SearchComponent {
       case 'Escape':
         this.toggleDropdown(false);
         break;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (
+      this.isMenuOpen &&
+      !this.elementRef.nativeElement.contains(event.target)
+    ) {
+      this.isMenuOpen = false;
     }
   }
 }

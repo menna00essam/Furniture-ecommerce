@@ -19,7 +19,7 @@
     <!-- Right Section: Sorting Dropdown -->
     <div class="flex items-center gap-4">
       <p>Sort By</p>
-      <div class="relative">
+      <div class="relative" #sortMenu>
         <button
           class="bg-white h-14 flex items-center px-5 cursor-pointer w-full min-w-48 border border-gray-medium rounded-md focus:outline-none"
           (click)="toggleDropdown(true)"
@@ -73,12 +73,12 @@
         <input
           [value]="minPrice"
           matSliderStartThumb
-          (input)="priceChange($event, true)"
+          (change)="priceChange($event, true)"
         />
         <input
           [value]="maxPrice"
           matSliderEndThumb
-          (input)="priceChange($event, false)"
+          (change)="priceChange($event, false)"
         />
       </mat-slider>
       <div class="flex justify-between">
@@ -91,11 +91,12 @@
 
   <!-- Product Grid -->
   <div
-    class="w-full col-span-12 flex flex-col gap-5 items-center"
+    class="w-full col-span-12 flex flex-col gap-5 justify-center"
     [ngClass]="{ 'lg:col-span-9': showFilters }"
   >
+    @if (displayedProducts.length > 0) {
     <div
-      class="grid gap-6 w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+      class="grid gap-6 w-full h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
       [ngClass]="{
         'lg:grid-cols-3': showFilters,
         'lg:grid-cols-5': !showFilters
@@ -110,6 +111,14 @@
       [pagesCount]="pagesCount"
       (currentPageChange)="goToPage($event)"
     ></app-pagination>
+
+    } @else {
+    <div
+      class="w-full h-full flex justify-center items-center text-center text-gray"
+    >
+      No products found.
+    </div>
+    }
   </div>
 </div>
 

@@ -25,6 +25,9 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/setting/setting.component';
 import { OrdersComponent } from './Components/orders/orders.component';
 import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
+import { PrivacyPolicyComponent } from './Components/privacy-policy/privacy-policy.component';
+import { ReturnsComponent } from './Components/returns/returns.component';
+import { PaymentComponent } from './Components/payment/payment.component';
 
 export const routes: Routes = [
   {
@@ -60,6 +63,11 @@ export const routes: Routes = [
       { path: 'blog/:id', component: BlogComponent },
       { path: 'comparison', component: ComparisonComponent },
       { path: 'favorites', component: FavoritesComponent },
+      { path: 'privacypolicy', component: PrivacyPolicyComponent },
+      { path: 'returns', component: ReturnsComponent },
+      { path: 'payment', component: PaymentComponent },
+
+
       {
         path: 'profile',
         component: ProfileComponent,

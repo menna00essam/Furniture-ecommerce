@@ -10,23 +10,21 @@
   </div>
   <!-- Error Messages -->
 
-  @if(control.invalid && control.touched){
-  <div class="text-red-light text-sm mt-1">
+  <div
+    class="text-red-light text-sm mt-1 h-4"
+    [@slideUpDown]="control.invalid && control.touched ? 'in' : 'out'"
+  >
     @if(control.errors?.['required']){
-
     <span>This field is required.</span>
     }@else if (control.errors?.['email']) {
-
     <span>Invalid email format.</span>
     }@else if (control.errors?.['pattern'] ) {
     <span>Please Enter A valid {{ label }}.</span>
     }@else if(control.errors?.['minlength']) {
-
     <span
       >Minimum length is
       {{ control.errors?.['minlength'].requiredLength }}.</span
     >
     }
   </div>
-  }
 </div>
