@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.json("Hello in nodejs-app-starter");
+  res.json("You need furniture? Here’s Furniro!");
 });
 
 / * * * Routes * * * /;

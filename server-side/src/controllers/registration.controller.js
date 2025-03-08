@@ -64,16 +64,12 @@ const login = asyncWrapper(async (req, res, next) => {
   }
   const token = jwt.sign(
     {
-      role: foundedUser.role,
       email: foundedUser.email,
       username: foundedUser.username,
       _id: foundedUser._id,
       role: foundedUser.role,
     },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1h",
-    }
+    process.env.JWT_SECRET
   );
 
   res.status(201).json({

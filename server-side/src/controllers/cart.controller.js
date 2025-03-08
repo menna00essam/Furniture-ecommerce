@@ -60,12 +60,17 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     cart = new Cart({ userId, products: [] });
   }
 
-  items.forEach(({ productId, quantity }) => {
+  items.forEach(async ({ productId, quantity }) => {
     const existingProduct = cart.products.find(
       (p) => p.productId.toString() === productId
     );
     if (existingProduct) {
       existingProduct.quantity += quantity;
+      const product = await Product.findById(productId);
+      existingProduct.quantity = Math.min(
+        product.quantity,
+        existingProduct.quantity + quantity
+      );
     } else {
       cart.products.push({ productId, quantity });
     }
@@ -137,4 +142,3 @@ module.exports = {
   addToCart,
   updateCart,
 };
-
