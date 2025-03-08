@@ -5,7 +5,7 @@ import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.c
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { CartService } from '../../Services/cart.service';
-import { product } from '../../models/product.model';
+import { product } from '../../Models/product.model';
 
 @Component({
   selector: 'app-cart',

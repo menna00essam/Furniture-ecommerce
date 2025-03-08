@@ -19,7 +19,7 @@ import {
 
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
-import { product } from '../../../models/product.model';
+import { product } from '../../../Models/product.model';
 
 @Component({
   selector: 'app-product-item',
@@ -35,7 +35,6 @@ import { product } from '../../../models/product.model';
     ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  
 })
 export class ProductItemComponent {
   @Input({ required: true }) product!: product;

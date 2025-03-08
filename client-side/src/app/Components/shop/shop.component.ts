@@ -14,7 +14,7 @@ import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { FilterOptionComponent } from './filter-option/filter-option.component';
 
 import { ProductService } from '../../Services/product.service';
-import { product } from '../../models/product.model';
+import { product } from '../../Models/product.model';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { FormsModule } from '@angular/forms';
