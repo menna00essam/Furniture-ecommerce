@@ -31,11 +31,12 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
 
   const products = await Product.find()
     .select(
-      "_id productName productSubtitle productImages productPrice productDate productSale"
+      "_id productName productSubtitle productImages productPrice productDate productSale productCategories productQuantity"
     )
     .limit(limit)
     .skip(skip)
     .sort({ productDate: sortOrder })
+    .populate("productCategories", "catName")
     .lean();
 
   res.status(200).json({
@@ -78,11 +79,12 @@ const getProductsByCategory = asyncWrapper(async (req, res, next) => {
 
   const products = await Product.find({ productCategories: category_id })
     .select(
-      "_id productName productSubtitle productImages productPrice productDate productSale"
+      "_id productName productSubtitle productImages productPrice productDate productSale productCategories productQuantity"
     )
     .limit(limit)
     .skip(skip)
     .sort({ productDate: sortOrder })
+    .populate("productCategories", "catName")
     .lean();
 
   res.status(200).json({
@@ -108,6 +110,7 @@ const getProductById = asyncWrapper(async (req, res, next) => {
     .select(
       "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand"
     )
+    .populate("productCategories", "catName")
     .lean();
 
   if (!product) {
@@ -139,6 +142,7 @@ const getProductForComparison = asyncWrapper(async (req, res, next) => {
     .select(
       "_id productName productSubtitle productImages productPrice productQuantity productDate productSale productCategories productDescription colors sizes brand additionalInformation"
     )
+    .populate("productCategories", "catName")
     .lean();
 
   if (!product) {
