@@ -70,6 +70,7 @@ enum SortOptions {
 export class ShopComponent implements OnInit {
   @ViewChild('productsContainer') productsContainer!: ElementRef;
   @ViewChild('priceSlider', { static: false }) priceSlider!: ElementRef;
+  @ViewChild('sortMenu', { static: false }) sortMenuRef!: ElementRef;
 
   // UI State
   showFilters = false;
@@ -105,7 +106,8 @@ export class ShopComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit() {
@@ -250,5 +252,17 @@ export class ShopComponent implements OnInit {
   @HostListener('window:resize')
   checkScreenSize() {
     this.disableAnimation = window.innerWidth >= 1024;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (this.showSortMenu && this.sortMenuRef) {
+      const clickedInsideMenu = this.sortMenuRef.nativeElement.contains(
+        event.target
+      );
+      if (!clickedInsideMenu) {
+        this.showSortMenu = false;
+      }
+    }
   }
 }

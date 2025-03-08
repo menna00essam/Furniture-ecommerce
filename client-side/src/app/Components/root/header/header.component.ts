@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ElementRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -25,7 +25,11 @@ export class HeaderComponent {
   isActive = false;
   productsNames: { id: number; value: string }[];
 
-  constructor(private productService: ProductService, private router: Router) {
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private elementRef: ElementRef
+  ) {
     this.productsNames = this.productService.getProductNames();
   }
 
@@ -35,5 +39,15 @@ export class HeaderComponent {
 
   goToProduct(id: number) {
     this.router.navigate([`/product/${id}`]);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (
+      this.isActive &&
+      !this.elementRef.nativeElement.contains(event.target)
+    ) {
+      this.isActive = false;
+    }
   }
 }
