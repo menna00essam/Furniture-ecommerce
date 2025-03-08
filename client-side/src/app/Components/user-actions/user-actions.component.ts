@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { product } from '../../models/product.model';
+import { product } from '../../Models/product.model';
 import { CurrencyPipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
 import { Router, RouterModule } from '@angular/router';

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { product } from '../../../models/product.model';
+import { product } from '../../../Models/product.model';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../../Services/cart.service';
 import { RouterModule } from '@angular/router';

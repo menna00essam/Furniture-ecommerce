@@ -13,7 +13,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
 import { ButtonComponent } from '../shared/button/button.component';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
-import { product } from '../../models/product.model';
+import { product } from '../../Models/product.model';
 @Component({
   selector: 'app-home',
   imports: [
