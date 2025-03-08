@@ -10,8 +10,8 @@
             src="/images/user.png"
         /></span>
         <div class="flex flex-col">
-          <p class="text-sm">Kamilia Ahmed</p>
-          <p class="text-xs">kamiliaahmed01</p>
+          <p class="text-sm">{{ user.username }}</p>
+          <p class="text-xs">{{ user.email }}</p>
         </div>
       </div>
       <div role="none" class="shrink-0 bg-border h-[1px] w-full mt-4"></div>
@@ -43,11 +43,53 @@
             id=":r14:-form-item"
             aria-describedby=":r14:-form-item-description"
             aria-invalid="false"
-            value="Kamilia Ahmed"
+            value="{{ user.username }}"
             name="name"
           />
         </div>
-
+        <div class="space-y-2">
+          <label
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            for=":r15:-form-item"
+            >Avatar</label
+          >
+          <div class="flex items-center gap-2">
+            <img
+              alt="User image"
+              loading="lazy"
+              width="42"
+              height="42"
+              decoding="async"
+              data-nimg="1"
+              class="rounded-full"
+              src="/images/user.png"
+              style="color: transparent"
+            />
+            <div
+              class="flex flex-col items-center justify-center gap-1 scale-75 ut-button:ring-primary ut-button:bg-primary/75 hover:ut-button:bg-primary ut-button:transition-all ut-button:duration-500 ut-label:hidden ut-allowed-content:hidden"
+              data-state="ready"
+            >
+              <app-button>Change Avatar</app-button>
+              <div
+                class="h-[1.25rem] text-xs leading-5 text-gray-600"
+                data-state="ready"
+                data-ut-element="allowed-content"
+              >
+                Image (2MB)
+              </div>
+            </div>
+          </div>
+          <input
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            placeholder="User image"
+            id=":r15:-form-item"
+            aria-describedby=":r15:-form-item-description"
+            aria-invalid="false"
+            type="hidden"
+            value="https://lh3.googleusercontent.com/a/ACg8ocKAU3ajTghP9ndEoE7JvmOp5AfvzSm2ECb_jcJgcVwJ46rGanFM=s96-c"
+            name="image"
+          />
+        </div>
         <button data-state="closed">
           <div class="space-y-2 flex flex-col">
             <label
