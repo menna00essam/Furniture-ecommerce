@@ -29,6 +29,23 @@ import { product } from '../../Models/product.model';
 export class HomeComponent implements AfterViewInit {
   constructor(private router: Router, private productService: ProductService) {
     this.products = this.productService.getProducts().slice(0, 10);
+    productService.getX().subscribe({
+      next: (data) => {
+        const prods = data.data.products;
+        let {
+          _id: id,
+          productName: name,
+          productSubtitle: subTitle,
+          productPrice: price,
+          productQuantity: quantity,
+          productCategory: category,
+        } = prods[0];
+        console.log(id, name, subTitle, price, quantity, category);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
   @ViewChild('swiperRef', { static: false }) swiperRef!: ElementRef;
   @ViewChild('imageSwiper', { static: false }) imageSwiper!: ElementRef;

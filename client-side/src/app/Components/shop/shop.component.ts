@@ -187,9 +187,9 @@ export class ShopComponent implements OnInit {
         case SortOptions.Oldest:
           return (a.date?.getTime() || 0) - (b.date?.getTime() || 0);
         case SortOptions.AtoZ:
-          return a.title.localeCompare(b.title);
+          return a.name.localeCompare(b.name);
         case SortOptions.ZtoA:
-          return b.title.localeCompare(a.title);
+          return b.name.localeCompare(a.name);
         default:
           return 0;
       }
