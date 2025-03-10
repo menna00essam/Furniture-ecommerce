@@ -6,7 +6,7 @@ import { user } from '../Models/user.model';
 })
 export class UserService {
   private user: user = {
-    id: 1,
+    id: '1',
     username: 'kamilia',
     email: 'kamiliaahmed01@gmail.com',
     favorites: [],

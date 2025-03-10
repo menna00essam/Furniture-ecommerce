@@ -15,12 +15,12 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './product.component.html',
 })
 export class ProductComponent {
-  productId: number | null = null;
+  productId: string | null = null;
 
   constructor(private readonly route: ActivatedRoute) {}
 
   ngOnInit() {
     const idParam = this.route.snapshot.paramMap.get('id');
-    this.productId = idParam ? Number(idParam) : null;
+    this.productId = idParam ? idParam : null;
   }
 }

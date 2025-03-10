@@ -35,9 +35,9 @@ export class BlogComponent implements OnInit {
     }
   }
 
-  get blogID(): number | null {
+  get blogID(): string | null {
     const idParam = this.route.snapshot.paramMap.get('id');
-    return idParam ? Number(idParam) : null;
+    return idParam ? idParam : null;
   }
 
   get blog(): BlogPost | undefined {

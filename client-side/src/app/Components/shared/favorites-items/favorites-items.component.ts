@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { product } from '../../../Models/product.model';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../../Services/cart.service';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-favorites-items',
@@ -11,23 +12,30 @@ import { ButtonComponent } from '../button/button.component';
   templateUrl: './favorites-items.component.html',
   styleUrl: './favorites-items.component.css',
 })
-export class FavoritesItemsComponent {
+export class FavoritesItemsComponent implements OnInit {
   favorites: product[] = [];
+  cart$!: Observable<product[]>;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private cartService: CartService
   ) {}
 
-  addToCart(product: product) {
-    if (this.isInCart(product.id)) {
-      this.cartService.removeProduct(1, product.id);
-    } else {
-      this.cartService.addProduct(1, product);
-    }
-    this.cdr.detectChanges();
+  ngOnInit(): void {
+    this.cart$ = this.cartService.cart$;
+    this.cartService.getCart().subscribe();
   }
 
-  isInCart(productID: number): boolean {
-    return this.cartService.getCart(1).some((p) => p.id === productID);
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
+  }
+
+  addToCart(product: product) {
+    if (this.isInCart(product.id)) {
+      this.cartService.removeProduct(product.id);
+    } else {
+      this.cartService.addProduct(product);
+    }
+    this.cdr.detectChanges();
   }
 }

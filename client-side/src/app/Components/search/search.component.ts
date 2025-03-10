@@ -44,11 +44,11 @@ import { DropdownComponent } from '../shared/dropdown/dropdown.component';
   `,
 })
 export class SearchComponent {
-  @Input() items: { id: number; value: string }[] = [];
-  @Output() onSelect = new EventEmitter<number>();
+  @Input() items: { id: string; value: string }[] = [];
+  @Output() onSelect = new EventEmitter<string>();
 
   searchValue: string = '';
-  filteredItems: { id: number; value: string }[] = [];
+  filteredItems: { id: string; value: string }[] = [];
   isMenuOpen: boolean = false;
 
   private searchSubject = new Subject<string>();

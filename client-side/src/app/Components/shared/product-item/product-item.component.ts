@@ -3,6 +3,7 @@ import {
   Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  OnInit,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
@@ -20,6 +21,7 @@ import {
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-product-item',
@@ -36,17 +38,23 @@ import { product } from '../../../Models/product.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductItemComponent {
+export class ProductItemComponent implements OnInit {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
   disableAnimation = false;
+
+  cart$!: Observable<product[]>;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
     private cartService: CartService
   ) {}
+  ngOnInit(): void {
+    this.cart$ = this.cartService.cart$;
+    this.cartService.getCart().subscribe();
+  }
 
   onMouseEnter() {
     if (!this.disableAnimation) this.isHovered = true;
@@ -57,19 +65,20 @@ export class ProductItemComponent {
   }
 
   addToFavourites() {
+    let userID = '1';
     if (this.isFavorite(this.product.id)) {
-      this.favoriteService.removeFavorite(1, this.product.id);
+      this.favoriteService.removeFavorite(userID, this.product.id);
     } else {
-      this.favoriteService.addFavorite(1, this.product);
+      this.favoriteService.addFavorite(userID, this.product);
     }
     this.cdr.detectChanges();
   }
 
   addToCart() {
-    if (this.isInCart(this.product.id)) {
-      this.cartService.removeProduct(1, this.product.id);
+    if (this.cartService.isInCart(this.product.id)) {
+      this.cartService.removeProduct(this.product.id);
     } else {
-      this.cartService.addProduct(1, this.product);
+      this.cartService.addProduct(this.product);
     }
     this.cdr.detectChanges();
   }
@@ -82,11 +91,18 @@ export class ProductItemComponent {
     return productDate > oneMonthAgo.getTime();
   }
 
-  isFavorite(productID: number): boolean {
-    return this.favoriteService.getFavorites(1).some((p) => p.id === productID);
+  isFavorite(productId: string): boolean {
+    let userID = '1';
+    return this.favoriteService
+      .getFavorites(userID)
+      .some((p) => p.id === productId);
   }
 
-  isInCart(productID: number): boolean {
-    return this.cartService.getCart(1).some((p) => p.id === productID);
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
+  }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = '/images/products/1.png';
   }
 }

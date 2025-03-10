@@ -93,7 +93,7 @@ export class BlogsComponent implements OnInit {
     }
   }
 
-  filterByCategory(selectedItem: { id: number; value: string } | string) {
+  filterByCategory(selectedItem: { id: string; value: string } | string) {
     if (typeof selectedItem == 'string') this.selectedCategory = selectedItem;
     else this.selectedCategory = selectedItem.value;
     this.currentPage = 1;

@@ -22,19 +22,19 @@ import { CommonModule } from '@angular/common';
   `,
 })
 export class DropdownComponent {
-  @Input() items: { id: number; value: string }[] | string[] = [];
+  @Input() items: { id: string; value: string }[] | string[] = [];
   @Output() selectedValueChange = new EventEmitter<{
-    id: number;
+    id: string;
     value: string;
   }>();
 
-  get normalizedItems(): { id: number; value: string }[] {
+  get normalizedItems(): { id: string; value: string }[] {
     return this.items.map((item, index) =>
-      typeof item === 'string' ? { id: index, value: item } : item
+      typeof item === 'string' ? { id: String(index), value: item } : item
     );
   }
 
-  selectItem(item: { id: number; value: string }) {
-    this.selectedValueChange.emit(item as { id: number; value: string });
+  selectItem(item: { id: string; value: string }) {
+    this.selectedValueChange.emit(item as { id: string; value: string });
   }
 }
