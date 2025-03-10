@@ -33,7 +33,7 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
   isLoggedIn(): boolean {
-    this.isLoggedInSubject.next(false);
+    // this.isLoggedInSubject.next(false);
     return !!localStorage.getItem('token');
   }
   getRole(): string | null {

@@ -7,7 +7,7 @@ import { BlogPost } from '../Models/blog.model';
 export class BlogService {
   private blogs: BlogPost[] = [
     {
-      id: 1,
+      id: '1',
       title: 'Transform Your Living Room with Elegant Furniture',
       excerpt:
         'Discover how to refresh your living space with stylish and comfortable furniture choices.',
@@ -19,7 +19,7 @@ export class BlogService {
       users: 'InteriorDesignPro',
     },
     {
-      id: 2,
+      id: '2',
       title: 'Dining Room Makeover: The Perfect Table & Chairs',
       excerpt:
         'Your dining space is more than just a place to eat; it’s a hub for connection and style. Learn how to choose the perfect furniture.',
@@ -31,7 +31,7 @@ export class BlogService {
       users: 'InteriorDesignPro',
     },
     {
-      id: 3,
+      id: '3',
       title: 'Bedroom Bliss: Designing a Cozy and Stylish Retreat',
       excerpt:
         'Your bedroom should be a sanctuary of comfort and relaxation. Explore tips for selecting the right furniture and decor.',
@@ -43,7 +43,7 @@ export class BlogService {
       users: 'DiningRoomGuru',
     },
     {
-      id: 4,
+      id: '4',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -55,7 +55,7 @@ export class BlogService {
       users: 'SleepWellDesigner',
     },
     {
-      id: 5,
+      id: '5',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -67,7 +67,7 @@ export class BlogService {
       users: 'SleepWellDesigner',
     },
     {
-      id: 6,
+      id: '6',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -79,7 +79,7 @@ export class BlogService {
       users: 'SleepWellDesigner',
     },
     {
-      id: 7,
+      id: '7',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -91,7 +91,7 @@ export class BlogService {
       users: 'SleepWellDesigner',
     },
     {
-      id: 8,
+      id: '8',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -103,7 +103,7 @@ export class BlogService {
       users: 'SleepWellDesigner',
     },
     {
-      id: 9,
+      id: '9',
       title: 'The Magic of Lighting: Enhance Your Home Ambience',
       excerpt:
         'Lighting can transform your space. Learn how to use floor lamps, pendant lights, and smart lighting solutions to set the mood.',
@@ -120,7 +120,7 @@ export class BlogService {
     return this.blogs;
   }
 
-  getBlog(id: number): BlogPost | undefined {
+  getBlog(id: string): BlogPost | undefined {
     return this.blogs.find((blog) => blog.id == id);
   }
 }
