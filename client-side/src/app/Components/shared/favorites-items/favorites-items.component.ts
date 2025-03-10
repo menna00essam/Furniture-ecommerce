@@ -15,13 +15,19 @@ import { Observable, map } from 'rxjs';
 export class FavoritesItemsComponent implements OnInit {
   favorites: product[] = [];
   cart$!: Observable<product[]>;
+
   constructor(
     private cdr: ChangeDetectorRef,
     private cartService: CartService
   ) {}
+
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
     this.cartService.getCart().subscribe();
+  }
+
+  isInCart(productId: string): boolean {
+    return this.cartService.isInCart(productId);
   }
 
   addToCart(product: product) {
@@ -31,11 +37,5 @@ export class FavoritesItemsComponent implements OnInit {
       this.cartService.addProduct(product);
     }
     this.cdr.detectChanges();
-  }
-
-  isInCart(productId: string): Observable<boolean> {
-    return this.cartService.cart$.pipe(
-      map((cart) => cart.some((p) => p.id === productId))
-    );
   }
 }

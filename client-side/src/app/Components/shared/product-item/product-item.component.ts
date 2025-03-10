@@ -75,7 +75,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   addToCart() {
-    if (this.isInCart(this.product.id)) {
+    if (this.cartService.isInCart(this.product.id)) {
       this.cartService.removeProduct(this.product.id);
     } else {
       this.cartService.addProduct(this.product);
@@ -99,8 +99,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   isInCart(productId: string): boolean {
-    const cart = this.cartService['cartSubject'].getValue();
-    return cart.some((p) => p.id === productId);
+    return this.cartService.isInCart(productId);
   }
 
   onImageError(event: Event) {

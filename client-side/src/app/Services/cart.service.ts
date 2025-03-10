@@ -148,7 +148,7 @@ export class CartService implements OnInit {
           )
           .subscribe();
       } else {
-        this.saveGuestCart(cart); // ✅ Save guest cart
+        this.saveGuestCart(cart);
       }
     }
   }
@@ -173,5 +173,9 @@ export class CartService implements OnInit {
 
   getCheckoutData(): product[] {
     return this.checkoutSubject.getValue();
+  }
+
+  isInCart(productId: string): boolean {
+    return this.cartSubject.getValue().some((p) => p.id === productId);
   }
 }
