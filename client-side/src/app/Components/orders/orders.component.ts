@@ -65,7 +65,7 @@ export class OrdersComponent implements OnInit {
     this.updateDisplayedOrders();
   }
 
-  updatePageSize(pageSize: { id: number; value: string }): void {
+  updatePageSize(pageSize: { id: string; value: string }): void {
     this.currentPage = 1;
     this.itemsPerPage = pageSize.value;
     this.pageSizesMenuOpen = false;

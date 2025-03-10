@@ -20,6 +20,9 @@ import { PaginationComponent } from '../shared/pagination/pagination.component';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatSliderModule } from '@angular/material/slider';
+import { map } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { CategoriesService } from '../../Services/categories.service';
 
 enum SortOptions {
   Default = 'Default',
@@ -71,20 +74,21 @@ export class ShopComponent implements OnInit {
   @ViewChild('productsContainer') productsContainer!: ElementRef;
   @ViewChild('priceSlider', { static: false }) priceSlider!: ElementRef;
   @ViewChild('sortMenu', { static: false }) sortMenuRef!: ElementRef;
+  @ViewChild('price', { static: false }) priceRef!: ElementRef;
 
   // UI State
   showFilters = false;
   showSortMenu = false;
   disableAnimation = false;
 
-  priceMin: number = 1500;
-  priceMax: number = 8500;
+  priceMin$!: Observable<number>;
+  priceMax$!: Observable<number>;
 
-  minPrice: number = this.priceMin;
-  maxPrice: number = this.priceMax;
+  minPrice!: number;
+  maxPrice!: number;
 
   // Product Data
-  products: product[] = [];
+  products$!: Observable<product[]>;
   selectedSortValue: SortOptions = SortOptions.Default;
   selectedCategories: string[] = [];
 
@@ -93,72 +97,91 @@ export class ShopComponent implements OnInit {
   currentPage = 1;
 
   sortMenuItems = Object.values(SortOptions);
-  categories = [
-    'chair',
-    'sofa',
-    'stool',
-    'desk',
-    'bed',
-    'bench',
-    'table',
-    'shelf',
-  ];
+  categories$!: Observable<string[]>;
 
   constructor(
     private productService: ProductService,
-    private renderer: Renderer2,
-    private elementRef: ElementRef
+    private categoriesService: CategoriesService,
+    private renderer: Renderer2
   ) {}
 
-  ngOnInit() {
-    this.products = this.productService.getProducts();
+  ngOnInit(): void {
+    this.products$ = this.productService.products$;
+    this.productService.getProducts().subscribe();
+    this.priceMin$ = this.productService.getMinPrice();
+    this.priceMax$ = this.productService.getMaxPrice();
+
+    combineLatest([this.priceMin$, this.priceMax$]).subscribe(([min, max]) => {
+      this.minPrice = min;
+      this.maxPrice = max;
+    });
+
+    this.categories$ = this.categoriesService.categories$;
+    this.categoriesService.getCategories().subscribe();
     this.checkScreenSize();
   }
 
   /** Returns the total number of pages */
-  get pagesCount(): number {
-    return Math.ceil(this.filteredProducts.length / this.productsPerPage);
+  get pagesCount$(): Observable<number> {
+    return this.filteredProducts$.pipe(
+      map((filteredProducts) =>
+        Math.ceil(filteredProducts.length / this.productsPerPage)
+      )
+    );
   }
 
   /** Returns products after filtering and sorting */
-  get filteredProducts(): product[] {
-    let filtered = this.selectedCategories.length
-      ? this.products.filter((p) =>
-          this.selectedCategories.includes(p.category)
-        )
-      : [...this.products];
 
-    // Apply price range filtering
-    if (this.minPrice !== null) {
-      filtered = filtered.filter(
-        (p) => this.getEffectivePrice(p) >= this.minPrice
-      );
-    }
-    if (this.maxPrice !== null) {
-      filtered = filtered.filter(
-        (p) => this.getEffectivePrice(p) <= this.maxPrice
-      );
-    }
+  get filteredProducts$(): Observable<product[]> {
+    return this.products$.pipe(
+      map((products: product[]) => {
+        let filtered = this.selectedCategories.length
+          ? products.filter((p: product) =>
+              Array.isArray(p.categories)
+                ? p.categories.some((cat) =>
+                    this.selectedCategories.includes(cat)
+                  )
+                : this.selectedCategories.includes(p.categories)
+            )
+          : [...products];
 
-    return this.getSortedProducts(filtered);
+        if (this.minPrice !== null) {
+          filtered = filtered.filter(
+            (p) => this.getEffectivePrice(p) >= this.minPrice
+          );
+        }
+        if (this.maxPrice !== null) {
+          filtered = filtered.filter(
+            (p) => this.getEffectivePrice(p) <= this.maxPrice
+          );
+        }
+
+        return this.getSortedProducts(filtered);
+      })
+    );
   }
 
   /** Returns the paginated products */
-  get displayedProducts(): product[] {
-    const start = (this.currentPage - 1) * this.productsPerPage;
-    return this.filteredProducts.slice(start, start + this.productsPerPage);
+  get displayedProducts$(): Observable<product[]> {
+    return this.filteredProducts$.pipe(
+      map((filteredProducts) => {
+        const start = (this.currentPage - 1) * this.productsPerPage;
+        return filteredProducts.slice(start, start + this.productsPerPage);
+      })
+    );
   }
+
   priceChange(event: Event, isMin: boolean) {
     const value = Number((event.target as HTMLInputElement).value);
     if (isMin) {
-      this.minPrice = Math.min(value, this.maxPrice - 1); // Ensure min is always lower than max
+      this.minPrice = Math.min(value, this.maxPrice - 1);
     } else {
-      this.maxPrice = Math.max(value, this.minPrice + 1); // Ensure max is always higher than min
+      this.maxPrice = Math.max(value, this.minPrice + 1);
     }
   }
 
   /** Handles sorting selection */
-  onSortChange(selectedItem: { id: number; value: string }) {
+  onSortChange(selectedItem: { id: string; value: string }) {
     const sortOption = selectedItem.value as SortOptions;
     if (this.sortMenuItems.includes(sortOption)) {
       this.selectedSortValue = sortOption;
@@ -204,22 +227,28 @@ export class ShopComponent implements OnInit {
   }
 
   /** Returns the range of displayed results */
-  getDisplayedResultsRange(): string {
-    if (!this.displayedProducts.length) return 'No results found';
-    const start = (this.currentPage - 1) * this.productsPerPage + 1;
-    const end = Math.min(
-      this.currentPage * this.productsPerPage,
-      this.filteredProducts.length
+  getDisplayedResultsRange(): Observable<string> {
+    return this.filteredProducts$.pipe(
+      map((filteredProducts) => {
+        if (filteredProducts.length === 0) return 'No results found';
+        const start = (this.currentPage - 1) * this.productsPerPage + 1;
+        const end = Math.min(
+          this.currentPage * this.productsPerPage,
+          filteredProducts.length
+        );
+        return `Showing ${start}-${end} of ${filteredProducts.length} results`;
+      })
     );
-    return `Showing ${start}-${end} of ${this.filteredProducts.length} results`;
   }
 
   /** Handles pagination */
   goToPage(page: number) {
-    if (page >= 1 && page <= this.pagesCount) {
-      this.currentPage = page;
-      this.scrollToProducts();
-    }
+    this.pagesCount$.subscribe((pagesCount) => {
+      if (page >= 1 && page <= pagesCount) {
+        this.currentPage = page;
+        this.scrollToProducts();
+      }
+    });
   }
 
   /** Smooth scroll to product list */

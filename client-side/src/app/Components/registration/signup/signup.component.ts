@@ -54,6 +54,7 @@ export class SignupComponent {
     this.form.controls.email.markAsTouched();
     this.form.controls.username.markAsTouched();
     this.form.controls.password.markAsTouched();
+    this.form.controls.phone.markAsTouched();
     this.form.controls.agree.markAsTouched();
 
     if (this.form.valid) {

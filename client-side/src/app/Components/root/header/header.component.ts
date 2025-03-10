@@ -23,21 +23,21 @@ import { ProductService } from '../../../Services/product.service';
 })
 export class HeaderComponent {
   isActive = false;
-  productsNames: { id: number; value: string }[];
+  productsNames: { id: string; value: string }[];
 
   constructor(
     private productService: ProductService,
     private router: Router,
     private elementRef: ElementRef
   ) {
-    this.productsNames = this.productService.getProductNames();
+    this.productsNames = [];
   }
 
   toggleMenu() {
     this.isActive = !this.isActive;
   }
 
-  goToProduct(id: number) {
+  goToProduct(id: string) {
     this.router.navigate([`/product/${id}`]);
   }
 

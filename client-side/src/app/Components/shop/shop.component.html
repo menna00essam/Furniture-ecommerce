@@ -1,3 +1,5 @@
+@let displayedProducts = (displayedProducts$ | async) ?? [];
+
 <app-header-banner bannerTitle="Shop"></app-header-banner>
 
 <div class="bg-secondary px-5">
@@ -12,7 +14,7 @@
       </div>
       <div class="hidden sm:block border border-gray-medium self-stretch"></div>
       <p class="hidden text-sm sm:block">
-        {{ getDisplayedResultsRange() }}
+        {{ getDisplayedResultsRange() | async }}
       </p>
     </div>
 
@@ -52,7 +54,7 @@
     <app-filter-option title="Category">
       <div class="flex flex-col gap-2">
         <div
-          *ngFor="let category of categories"
+          *ngFor="let category of categories$ | async"
           class="flex gap-2 items-center"
         >
           <input
@@ -68,8 +70,9 @@
         </div>
       </div>
     </app-filter-option>
+
     <app-filter-option title="Price Range">
-      <mat-slider min="{{ priceMin }}" max="{{ priceMax }}">
+      <mat-slider min="{{ priceMin$ | async }}" max="{{ priceMax$ | async }}">
         <input
           [value]="minPrice"
           matSliderStartThumb
@@ -94,7 +97,7 @@
     class="w-full col-span-12 flex flex-col gap-5 justify-center"
     [ngClass]="{ 'lg:col-span-9': showFilters }"
   >
-    @if (displayedProducts.length > 0) {
+    @if (displayedProducts.length>0) {
     <div
       class="grid gap-6 w-full h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
       [ngClass]="{
@@ -102,16 +105,16 @@
         'lg:grid-cols-5': !showFilters
       }"
     >
-      @for (item of displayedProducts; track item.id) {
+      @for (item of (displayedProducts$ | async) ?? []; track item?.id) {
       <app-product-item [product]="item"></app-product-item>
       }
     </div>
+
     <app-pagination
       [currentPage]="currentPage"
-      [pagesCount]="pagesCount"
+      [pagesCount]="(pagesCount$ | async) ?? 1"
       (currentPageChange)="goToPage($event)"
     ></app-pagination>
-
     } @else {
     <div
       class="w-full h-full flex justify-center items-center text-center text-gray"

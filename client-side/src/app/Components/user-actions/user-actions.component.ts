@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { product } from '../../Models/product.model';
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
-
 import { AuthService } from '../../Services/auth.service';
-
-import { UserService } from '../../Services/user.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-actions',
-  imports: [CurrencyPipe, RouterModule],
+  imports: [CurrencyPipe, RouterModule, CommonModule],
   templateUrl: './user-actions.component.html',
   animations: [
     trigger('slideInOut', [
@@ -34,7 +33,8 @@ import { UserService } from '../../Services/user.service';
 })
 export class UserActionsComponent implements OnInit {
   cartProductsTotalPrice = 0;
-  cartLength = 0;
+  cartLength$!: Observable<number>;
+  cart$!: Observable<product[]>;
   favoritesLength = 0;
   favModalShow = false;
   cartModalShow = false;
@@ -43,38 +43,34 @@ export class UserActionsComponent implements OnInit {
   constructor(
     private favoriteService: FavoriteService,
     private cartService: CartService,
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
+      console.log(status);
     });
-  }
 
-  get cart(): product[] {
-    const cartItems = this.cartService.getCart(1);
-    this.cartLength = cartItems.length;
-    this.cartProductsTotalPrice = cartItems.reduce(
-      (total, item) => total + item.price,
-      0
-    );
-    return cartItems.slice(0, 4);
+    this.cart$ = this.cartService.cart$;
+    this.cartService.getCart().subscribe();
+    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
   }
 
   get favorites(): product[] {
-    const favoritesItems = this.favoriteService.getFavorites(1);
+    let userID = '1';
+    const favoritesItems = this.favoriteService.getFavorites(userID);
     this.favoritesLength = favoritesItems.length;
     return favoritesItems.slice(0, 4);
   }
 
-  deleteFavorite(id: number): void {
-    this.favoriteService.removeFavorite(1, id);
+  deleteFavorite(id: string): void {
+    let userID = '1';
+    this.favoriteService.removeFavorite(userID, id);
   }
 
-  deleteCartProduct(id: number): void {
-    this.cartService.removeProduct(1, id);
+  deleteCartProduct(id: string): void {
+    this.cartService.removeProduct(id);
   }
 
   toggleFavModal(open: boolean): void {

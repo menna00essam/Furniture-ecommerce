@@ -6,6 +6,7 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { CartService } from '../../Services/cart.service';
 import { product } from '../../Models/product.model';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -22,13 +23,14 @@ import { product } from '../../Models/product.model';
   ],
 })
 export class CartComponent implements OnInit {
-  cart: product[] = [];
-  // defQuantity:number=1;
-
+  cart$!: Observable<product[]>;
+  cartLength$!: Observable<number>;
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.cart = this.cartService.getCart(1);
+    this.cart$ = this.cartService.cart$;
+    this.cartService.getCart().subscribe();
+    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
   }
 
   get subtotal(): number {
@@ -39,18 +41,15 @@ export class CartComponent implements OnInit {
     item.quantity = quantity;
   }
 
-  removeItem(itemId: number) {
-    this.cartService.removeProduct(1, itemId);
-    this.cart = this.cartService.getCart(1);
+  removeItem(itemId: string) {
+    this.cartService.removeProduct(itemId);
   }
 
-  increaseQuantity(productId: number) {
+  increaseQuantity(productId: string) {
     this.cartService.increaseQuantity(productId);
-    this.cart = this.cartService.getCart(1);
   }
 
-  decreaseQuantity(productId: number) {
+  decreaseQuantity(productId: string) {
     this.cartService.decreaseQuantity(productId);
-    this.cart = this.cartService.getCart(1);
   }
 }

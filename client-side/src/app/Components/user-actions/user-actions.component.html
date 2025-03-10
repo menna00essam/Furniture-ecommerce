@@ -1,3 +1,5 @@
+@let cartLength = (cartLength$|async)??10;
+
 <ul class="flex gap-[15px] py-[15px] w-full justify-center">
   <li class="relative h-[20px]">
     <button class="cursor-pointer" (click)="toggleFavModal(true)">
@@ -17,12 +19,12 @@
     <button class="cursor-pointer" (click)="toggleCartModal(true)">
       <img src="icons/shopping-cart.svg" alt="" srcset="" class="w-[20px]" />
     </button>
-    @if(cart.length){
+    @if(cartLength$|async){
     <div
       class="absolute top-0 right-0 bg-primary text-white w-[20px] h-[20px] rounded-[50px] text-xs flex justify-center items-center translate-x-[50%] translate-y-[-50%]"
     >
-      @if(cartLength<10){
-      {{ cartLength }}
+      @if((cartLength$|async)&&cartLength<10){
+      {{ cartLength$ | async }}
       } @else{ 9+ }
     </div>
     }
@@ -66,7 +68,7 @@
         [routerLink]="['/product', item.id]"
       >
         <img
-          src="{{ item.img }}"
+          src="{{ item.images[0] }}"
           alt="{{ item.name }}"
           class="w-[80px] rounded-[10px]"
         />
@@ -116,8 +118,9 @@
     class="border-y border-gray flex-1 flex flex-col gap-[25px] py-[25px] justify-between"
   >
     <div class="flex flex-col gap-[25px] flex-1">
-      @if (cart.length) { @for (item of cart; track item.id) {
+      @if (cartLength$|async) {
       <div
+        *ngFor="let item of cart$ | async"
         class="flex items-center shadow-sm px-2 rounded hover:shadow-xl duration-300 ease"
       >
         <div
@@ -125,8 +128,8 @@
           [routerLink]="['/product', item.id]"
         >
           <img
-            src="{{ item.img }}"
-            alt="{{ item.name }}"
+            [src]="item.images[0]"
+            [alt]="item.name"
             class="w-[80px] rounded-[10px]"
           />
           <div class="flex flex-col">
@@ -144,7 +147,7 @@
           <img src="icons/close-filled.svg" alt="Remove" />
         </div>
       </div>
-      } } @else {
+      } @else {
       <p class="text-center text-gray text-xl m-auto">
         Your shopping cart is empty. Start adding products to your cart to see
         them here.

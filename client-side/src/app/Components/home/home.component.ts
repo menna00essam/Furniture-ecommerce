@@ -1,4 +1,10 @@
-import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+  OnInit,
+} from '@angular/core';
 import Swiper from 'swiper';
 import {
   Autoplay,
@@ -8,12 +14,13 @@ import {
 } from 'swiper/modules';
 
 import { CommonModule, UpperCasePipe } from '@angular/common';
-
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
 import { ButtonComponent } from '../shared/button/button.component';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
+import { Observable } from 'rxjs';
 import { product } from '../../Models/product.model';
+
 @Component({
   selector: 'app-home',
   imports: [
@@ -26,33 +33,25 @@ import { product } from '../../Models/product.model';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements AfterViewInit {
-  constructor(private router: Router, private productService: ProductService) {
-    this.products = this.productService.getProducts().slice(0, 10);
-    productService.getX().subscribe({
-      next: (data) => {
-        const prods = data.data.products;
-        let {
-          _id: id,
-          productName: name,
-          productSubtitle: subTitle,
-          productPrice: price,
-          productQuantity: quantity,
-          productCategory: category,
-        } = prods[0];
-        console.log(id, name, subTitle, price, quantity, category);
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
-  }
+export class HomeComponent implements OnInit, AfterViewInit {
+  products$!: Observable<product[]>;
+
   @ViewChild('swiperRef', { static: false }) swiperRef!: ElementRef;
   @ViewChild('imageSwiper', { static: false }) imageSwiper!: ElementRef;
   @ViewChild('imageSwiper2', { static: false }) imageSwiper2!: ElementRef;
 
-  products: product[] = [];
+  constructor(private router: Router, private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.products$ = this.productService.products$;
+    this.productService.getProducts().subscribe();
+  }
+
   ngAfterViewInit() {
+    this.initSwipers();
+  }
+
+  private initSwipers(): void {
     new Swiper(this.swiperRef.nativeElement, {
       modules: [Navigation, EffectCoverflow, Pagination],
       effect: 'coverflow',
@@ -76,6 +75,7 @@ export class HomeComponent implements AfterViewInit {
         prevEl: '.swiper-button-prev',
       },
     });
+
     new Swiper(this.imageSwiper.nativeElement, {
       modules: [Pagination, Autoplay],
       slidesPerView: 5,
@@ -90,6 +90,7 @@ export class HomeComponent implements AfterViewInit {
       },
       loop: true,
     });
+
     new Swiper(this.imageSwiper2.nativeElement, {
       modules: [Pagination, Autoplay],
       slidesPerView: 5,
