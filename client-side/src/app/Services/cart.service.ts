@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
@@ -8,8 +8,9 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class CartService {
+export class CartService implements OnInit {
   private apiUrl = 'http://localhost:5000/cart';
+  isLoggedIn = false;
 
   private cartSubject = new BehaviorSubject<product[]>([]);
   cart$ = this.cartSubject.asObservable();
@@ -18,6 +19,13 @@ export class CartService {
   checkoutData$ = this.checkoutSubject.asObservable();
 
   constructor(private http: HttpClient, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+      console.log(status);
+    });
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -45,7 +53,7 @@ export class CartService {
   }
 
   getCart(): Observable<product[]> {
-    if (this.authService.isLoggedIn()) {
+    if (this.isLoggedIn) {
       return this.http.get<{ data: { products: any[] } }>(this.apiUrl).pipe(
         map(({ data }) =>
           data.products.map((p) => ({
@@ -98,14 +106,14 @@ export class CartService {
       cart.push({ ...product, quantity: 1 });
       this.updateCart(cart);
 
-      if (this.authService.isLoggedIn()) {
+      if (this.isLoggedIn) {
         this.http
           .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
             headers: this.getAuthHeaders(),
           })
           .subscribe();
       } else {
-        this.saveGuestCart(cart); 
+        this.saveGuestCart(cart);
       }
     }
   }
@@ -117,8 +125,8 @@ export class CartService {
 
     if (updatedCart.length !== this.cartSubject.getValue().length) {
       this.updateCart(updatedCart);
-      if (!this.authService.isLoggedIn()) {
-        this.saveGuestCart(updatedCart); // ✅ Save guest cart
+      if (!this.isLoggedIn) {
+        this.saveGuestCart(updatedCart);
       }
     }
   }
@@ -131,7 +139,7 @@ export class CartService {
       product.quantity = Math.max(1, product.quantity + change);
       this.updateCart(cart);
 
-      if (this.authService.isLoggedIn()) {
+      if (this.isLoggedIn) {
         this.http
           .patch(
             this.apiUrl,

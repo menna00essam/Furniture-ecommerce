@@ -38,7 +38,7 @@ export class LoginComponent {
       Validators.required,
       Validators.minLength(8),
     ]),
-    agree: new FormControl(false, [Validators.requiredTrue]),
+    agree: new FormControl(false),
   });
   constructor(private authService: AuthService, private router: Router) {}
   onSubmit() {
