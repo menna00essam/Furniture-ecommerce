@@ -65,11 +65,10 @@ export class ProductItemComponent implements OnInit {
   }
 
   addToFavourites() {
-    let userID = '1';
     if (this.isFavorite(this.product.id)) {
-      this.favoriteService.removeFavorite(userID, this.product.id);
+      this.favoriteService.removeFavorite(this.product.id);
     } else {
-      this.favoriteService.addFavorite(userID, this.product);
+      this.favoriteService.addFavorite(this.product);
     }
     this.cdr.detectChanges();
   }
@@ -92,10 +91,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   isFavorite(productId: string): boolean {
-    let userID = '1';
-    return this.favoriteService
-      .getFavorites(userID)
-      .some((p) => p.id === productId);
+    return this.favoriteService.getFavorites().some((p) => p.id === productId);
   }
 
   isInCart(productId: string): boolean {
