@@ -61,7 +61,6 @@ section {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 15px;
-  /* color: var(--color-gray-dark); */
 }
 
 table {
@@ -84,8 +83,7 @@ th {
   font-weight: bold;
 }
 .payment-method p {
-  margin-top: 10px;
-  color: rgba(0, 0, 0, 0.452);
+  color: var(--color-black-transparent);
 }
 
 div:nth-child(2) label {
@@ -94,7 +92,7 @@ div:nth-child(2) label {
   margin: 15px 0;
   font-weight: bold;
   cursor: pointer;
-  color: rgba(0, 0, 0, 0.76);
+  color: var(--color-black-transparent);
 }
 
 input[type="radio"] {
@@ -118,7 +116,7 @@ input[type="radio"] {
   cursor: pointer;
 }
 .error {
-  color: red;
+  color: var(--color-red-light);
   font-size: 14px;
   margin-top: 5px;
 }
