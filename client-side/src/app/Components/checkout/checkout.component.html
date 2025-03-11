@@ -149,22 +149,29 @@
           <img src="/icons/depit-card.svg" alt="depit-card" />
         </span>
       </label>
-      @if (selectedPayment === 'cod') {
-      <p @fadeInOut>
-        You can make your payment when you receive the order at your doorstep.
-        Please keep exact change ready to avoid any inconvenience.
-      </p>
-      } @if (selectedPayment === 'bank') {
-
+      <div
+        [@slideUpDown]="selectedPayment === 'bank' ? 'in' : 'out'"
+        class="overflow-hidden"
+      >
+        <app-payment></app-payment>
+      </div>
+      <div
+        [@slideUpDown]="selectedPayment === 'cod' ? 'in' : 'out'"
+        class="overflow-hidden"
+      >
+        <p>
+          You can make your payment when you receive the order at your doorstep.
+          Please keep exact change ready to avoid any inconvenience.
+        </p>
+      </div>
       <!--*** Payment-Method ***-->
-      <app-payment @fadeInOut></app-payment>
-      }
     </div>
 
     <p>
       Your personal data will be used to support your experience throughout this
       website, to manage access to your account, and for other purposes
-      described in our <span class="policy">privacy policy</span>.
+      described in our
+      <a class="font-bold" [routerLink]="['/privacypolicy']">privacy policy</a>.
     </p>
     <app-button
       (click)="onSubmit()"

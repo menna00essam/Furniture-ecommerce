@@ -23,7 +23,9 @@ import { CartService } from '../../Services/cart.service';
 import { CurrencyPipe } from '@angular/common';
 import { PaymentComponent } from '../payment/payment.component';
 import { CheckoutService } from '../../Services/checkout.service';
+
 import { StepperComponent } from '../shared/stepper/stepper.component';
+
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -37,6 +39,7 @@ export function noNumbersValidator(): ValidatorFn {
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     ReactiveFormsModule,
     HeaderBannerComponent,
     FeatureBannerComponent,
@@ -48,10 +51,10 @@ export function noNumbersValidator(): ValidatorFn {
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
   animations: [
-    trigger('fadeInOut', [
-      state('void', style({ opacity: 0, height: '0' })),
-      state('*', style({ opacity: 1, height: '*' })),
-      transition('void <=> *', animate('0.5s ease-in-out')),
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in-out')),
     ]),
   ],
 })
@@ -102,8 +105,11 @@ export class CheckoutComponent {
       errors: [],
     };
 
-    if ((this.selectedPayment === 'bank'||this.selectedPayment === 'cod') && this.paymentComponent) {
-      this.paymentComponent.paymentForm.markAllAsTouched(); 
+    if (
+      (this.selectedPayment === 'bank' || this.selectedPayment === 'cod') &&
+      this.paymentComponent
+    ) {
+      this.paymentComponent.paymentForm.markAllAsTouched();
       paymentValidation = this.checkoutService.validatePaymentForm(
         this.paymentComponent.paymentForm.value
       );
