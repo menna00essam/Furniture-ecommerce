@@ -88,17 +88,21 @@
       <div class="error">Email is required.</div>
       } @if (checkoutForm.get('email')?.errors?.['email'] &&
       checkoutForm.get('email')?.touched) {
-      <div class="error">Please enter a valid email address.</div>
+      <div class="error">Please enter a valid email</div>
       }
 
       <label for="additional-info">Additional Information</label>
-      <textarea id="additional-info" rows="4"></textarea>
+      <textarea
+        id="additional-info"
+        rows="4"
+        formControlName="additionalInfo"
+      ></textarea>
     </form>
   </div>
 
   <!--***** Confirming payment *****-->
   <div class="Confirming-payment shadow p-6">
-    <h3>Product</h3>
+    <h3>Payment Method</h3>
     <table>
       <thead>
         <tr>
@@ -120,30 +124,7 @@
       </tbody>
     </table>
     <div class="payment-method">
-      @if (selectedPayment === 'cod') {
-      <p>
-        You can make your payment when you receive the order at your doorstep.
-        Please keep exact change ready to avoid any inconvenience.
-      </p>
-      } @if (selectedPayment === 'bank') {
-      <p>
-        Make your payment directly into our bank account. Please use your Order
-        ID as the payment reference. Your order will not be shipped until the
-        funds have cleared in our account.
-      </p>
-      }
-
       <!--***** Payment Options *****-->
-      <label>
-        <input
-          type="radio"
-          name="payment"
-          [(ngModel)]="selectedPayment"
-          value="bank"
-          checked
-        />
-        Direct Bank Transfer
-      </label>
       <label>
         <input
           type="radio"
@@ -153,6 +134,30 @@
         />
         Cash On Delivery
       </label>
+      <label>
+        <input
+          type="radio"
+          name="payment"
+          [(ngModel)]="selectedPayment"
+          value="bank"
+        />
+        Credit Card
+        <span class="payment-icons">
+          <img src="/icons/mastercard.svg" alt="mastercard" />
+          <img src="/icons/visa-card.svg" alt="visa-card" />
+          <img src="/icons/depit-card.svg" alt="depit-card" />
+        </span>
+      </label>
+      @if (selectedPayment === 'cod') {
+      <p @fadeInOut>
+        You can make your payment when you receive the order at your doorstep.
+        Please keep exact change ready to avoid any inconvenience.
+      </p>
+      } @if (selectedPayment === 'bank') {
+
+      <!--*** Payment-Method ***-->
+      <app-payment @fadeInOut></app-payment>
+      }
     </div>
 
     <p>
