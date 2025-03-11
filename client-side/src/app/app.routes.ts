@@ -27,7 +27,8 @@ import { OrdersComponent } from './Components/orders/orders.component';
 import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
 import { PrivacyPolicyComponent } from './Components/privacy-policy/privacy-policy.component';
 import { ReturnsComponent } from './Components/returns/returns.component';
-import { PaymentComponent } from './Components/payment/payment.component';
+// import { PaymentComponent } from './Components/payment/payment.component';
+import { StepperComponent } from './Components/shared/stepper/stepper.component';
 
 export const routes: Routes = [
   {
@@ -65,8 +66,17 @@ export const routes: Routes = [
       { path: 'favorites', component: FavoritesComponent },
       { path: 'privacypolicy', component: PrivacyPolicyComponent },
       { path: 'returns', component: ReturnsComponent },
-      { path: 'payment', component: PaymentComponent },
-
+      // { path: 'payment', component: PaymentComponent },
+      {
+        path: '',
+        component: StepperComponent,
+        children: [
+          { path: 'cart', component: CartComponent },
+          { path: 'checkout', component: CheckoutComponent },
+          { path: 'order-complete', component: OrdersComponent },
+          { path: '**', component: ErrorComponent },
+        ],
+      },
 
       {
         path: 'profile',
