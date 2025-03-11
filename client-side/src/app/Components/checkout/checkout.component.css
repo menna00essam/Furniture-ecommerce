@@ -61,7 +61,7 @@ section {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 15px;
-  color: var(--color-gray-dark);
+  /* color: var(--color-gray-dark); */
 }
 
 table {
@@ -99,6 +99,25 @@ div:nth-child(2) label {
 input[type="radio"] {
   margin-right: 10px;
 }
+.payment-icons {
+  margin-left: 10px;
+  display: inline-flex;
+  gap: 8px;
+  font-size: 24px; 
+}
+
+.master-icon {
+  color: #940d0d; 
+}
+
+.credit-card-icon {
+  color: #127a15; 
+}
+
+.visa-icon {
+  color: #350c77; 
+}
+
 .policy {
   font-weight: bold;
   cursor: pointer;
@@ -109,7 +128,6 @@ input[type="radio"] {
   margin-top: 5px;
 }
 
-/* Responsive Design */
 @media (min-width: 768px) {
   section {
     flex-direction: row;

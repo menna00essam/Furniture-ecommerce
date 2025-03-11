@@ -1,7 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 import {
   AbstractControl,
   FormBuilder,
@@ -14,6 +21,8 @@ import {
 import { ButtonComponent } from '../shared/button/button.component';
 import { CartService } from '../../Services/cart.service';
 import { CurrencyPipe } from '@angular/common';
+import { PaymentComponent } from '../payment/payment.component';
+import { CheckoutService } from '../../Services/checkout.service';
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -30,19 +39,32 @@ export function noNumbersValidator(): ValidatorFn {
     ReactiveFormsModule,
     HeaderBannerComponent,
     FeatureBannerComponent,
+    PaymentComponent,
     ButtonComponent,
     CurrencyPipe,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      state('void', style({ opacity: 0, height: '0' })),
+      state('*', style({ opacity: 1, height: '*' })),
+      transition('void <=> *', animate('0.5s ease-in-out')),
+    ]),
+  ],
 })
 export class CheckoutComponent {
   checkoutForm: FormGroup;
-  selectedPayment: string = 'bank';
+  selectedPayment: string = '';
   cartItems: any[] = [];
   subtotal: number = 0;
+  @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
 
-  constructor(private fb: FormBuilder, private cartService: CartService) {
+  constructor(
+    private fb: FormBuilder,
+    private checkoutService: CheckoutService,
+    private cartService: CartService
+  ) {
     this.checkoutForm = this.fb.group({
       firstName: ['', [Validators.required, noNumbersValidator()]],
       lastName: ['', [Validators.required]],
@@ -54,6 +76,7 @@ export class CheckoutComponent {
       phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       email: ['', [Validators.required, Validators.email]],
       additionalInfo: [''],
+      paymentMethod: ['', Validators.required],
     });
 
     this.cartItems = this.cartService.getCheckoutData();
@@ -63,14 +86,50 @@ export class CheckoutComponent {
 
   onSubmit() {
     this.checkoutForm.markAllAsTouched();
+    this.checkoutForm.patchValue({
+      paymentMethod: this.selectedPayment,
+    });
 
-    if (this.checkoutForm.valid) {
-      console.log('Form Submitted', this.checkoutForm.value);
-      console.log('Cart Items:', this.cartItems);
-      console.log('Subtotal:', this.subtotal);
-      console.log('Payment Method:', this.selectedPayment);
-    } else {
-      console.log('Form is invalid');
+    const checkoutValidation = this.checkoutService.validateCheckoutForm(
+      this.checkoutForm.value
+    );
+    // console.log('Checkout Validation>>>>>', checkoutValidation);
+
+    let paymentValidation: { isValid: boolean; errors: string[] } = {
+      isValid: true,
+      errors: [],
+    };
+
+    if ((this.selectedPayment === 'bank'||this.selectedPayment === 'cod') && this.paymentComponent) {
+      this.paymentComponent.paymentForm.markAllAsTouched(); 
+      paymentValidation = this.checkoutService.validatePaymentForm(
+        this.paymentComponent.paymentForm.value
+      );
+      // console.log('Payment Validation>>>>>', paymentValidation);
     }
+
+    if (
+      !checkoutValidation.isValid ||
+      (this.selectedPayment === 'bank' && !paymentValidation.isValid)
+    ) {
+      console.log('Form is invalid>>> Errors:', [
+        ...checkoutValidation.errors,
+        ...paymentValidation.errors,
+      ]);
+      return;
+    }
+
+    console.log('Checkout successfully!', this.checkoutForm.value);
+    this.checkoutForm.reset();
+    this.checkoutForm.markAsPristine();
+    this.checkoutForm.markAsUntouched();
+
+    if (this.selectedPayment === 'bank' && this.paymentComponent) {
+      this.paymentComponent.paymentForm.reset();
+      this.paymentComponent.paymentForm.markAsPristine();
+      this.paymentComponent.paymentForm.markAsUntouched();
+    }
+
+    this.selectedPayment = '';
   }
 }
