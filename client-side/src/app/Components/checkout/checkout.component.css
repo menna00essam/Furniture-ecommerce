@@ -89,8 +89,9 @@ th {
 }
 
 div:nth-child(2) label {
-  display: block;
-  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
   font-weight: bold;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.76);
@@ -100,23 +101,17 @@ input[type="radio"] {
   margin-right: 10px;
 }
 .payment-icons {
-  margin-left: 10px;
   display: inline-flex;
-  gap: 8px;
-  font-size: 24px; 
+  align-items: center;
+  margin-left: 10px;
 }
 
-.master-icon {
-  color: #940d0d; 
+.payment-icons img {
+  width: 40px;
+  transition: transform 0.2s;
+  padding: 3px;
 }
 
-.credit-card-icon {
-  color: #127a15; 
-}
-
-.visa-icon {
-  color: #350c77; 
-}
 
 .policy {
   font-weight: bold;
