@@ -59,7 +59,6 @@ export class SearchComponent {
       )
       .subscribe((results) => {
         this.filteredItems = results;
-        console.log(this.filteredItems);
         this.selectedIndex = -1;
       });
   }
