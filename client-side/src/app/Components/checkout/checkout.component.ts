@@ -23,7 +23,10 @@ import { CartService } from '../../Services/cart.service';
 import { CurrencyPipe } from '@angular/common';
 import { PaymentComponent } from '../payment/payment.component';
 import { CheckoutService } from '../../Services/checkout.service';
+
+import { StepperComponent } from '../shared/stepper/stepper.component';
 import { RouterModule } from '@angular/router';
+
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -44,6 +47,7 @@ export function noNumbersValidator(): ValidatorFn {
     PaymentComponent,
     ButtonComponent,
     CurrencyPipe,
+    StepperComponent,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
