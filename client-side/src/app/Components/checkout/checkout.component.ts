@@ -25,6 +25,7 @@ import { PaymentComponent } from '../payment/payment.component';
 import { CheckoutService } from '../../Services/checkout.service';
 
 import { StepperComponent } from '../shared/stepper/stepper.component';
+import { RouterModule } from '@angular/router';
 
 
 export function noNumbersValidator(): ValidatorFn {
