@@ -58,15 +58,13 @@ export class UserActionsComponent implements OnInit {
   }
 
   get favorites(): product[] {
-    let userID = '1';
-    const favoritesItems = this.favoriteService.getFavorites(userID);
+    const favoritesItems = this.favoriteService.getFavorites();
     this.favoritesLength = favoritesItems.length;
     return favoritesItems.slice(0, 4);
   }
 
   deleteFavorite(id: string): void {
-    let userID = '1';
-    this.favoriteService.removeFavorite(userID, id);
+    this.favoriteService.removeFavorite(id);
   }
 
   deleteCartProduct(id: string): void {

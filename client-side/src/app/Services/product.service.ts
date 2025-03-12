@@ -14,9 +14,11 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   // Fetch products from API and update state
-  getProducts(): Observable<any> {
+  getProducts(page: number = 1, limit: number = 16): Observable<any> {
     return this.http
-      .get<{ data: { products: any[] } }>('http://localhost:5000/products')
+      .get<{ data: { totalProducts: number; products: any[] } }>(
+        `http://localhost:5000/products?page=${page}&limit=${limit}`
+      )
       .pipe(
         tap((response) => {
           const apiProducts = response.data.products.map((p) => ({
@@ -38,7 +40,7 @@ export class ProductService {
         }),
         catchError((error) => {
           console.error('Error fetching products:', error);
-          return of([]); // Return empty array if API fails
+          return of([]);
         })
       );
   }
