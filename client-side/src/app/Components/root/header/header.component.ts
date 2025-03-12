@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../../search/search.component';
 import { UserActionsComponent } from '../../user-actions/user-actions.component';
 import { NavigationComponent } from '../../navigation/navigation.component';
-import { ProductService } from '../../../Services/product.service';
 
 @Component({
   selector: 'app-header',
@@ -23,15 +22,8 @@ import { ProductService } from '../../../Services/product.service';
 })
 export class HeaderComponent {
   isActive = false;
-  productsNames: { id: string; value: string }[];
 
-  constructor(
-    private productService: ProductService,
-    private router: Router,
-    private elementRef: ElementRef
-  ) {
-    this.productsNames = [];
-  }
+  constructor(private router: Router, private elementRef: ElementRef) {}
 
   toggleMenu() {
     this.isActive = !this.isActive;
