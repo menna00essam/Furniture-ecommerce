@@ -3,17 +3,17 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-/ * * * * Utils * * * * /;
+// * * * * Utils * * * * /;
 const httpStatusText = require("./src/utils/httpStatusText");
-/ * * * * End Utils * * * * /;
+// * * * * End Utils * * * * /;
 
 const PORT = process.env.PORT || 5000;
 
-/ * * * * DB * * * /;
+// * * * * DB * * * /;
 const connectDB = require("./src/config/db");
-/ * * * * End Db * * * * /;
+// * * * * End Db * * * * /;
 
-/ * * * * Router imports * * * * /;
+// * * * * Router imports * * * * /;
 const registerationRouter = require("./src/routes/registration.routes");
 const userRouter = require("./src/routes/user.routes");
 const categoreRouter = require("./src/routes/category.routes");
@@ -21,8 +21,10 @@ const productRouter = require("./src/routes/product.routes");
 const postRouter = require("./src/routes/post.routes");
 const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
+const categoryRoutes = require("./src/routes/category.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
 / * * * * End Router imports * * * * /;
+
 
 // Connect to MongoDB
 connectDB();
@@ -36,18 +38,19 @@ app.get("/", (req, res) => {
   res.json("Hello in nodejs-app-starter");
 });
 
-/ * * * Routes * * * /;
+//* * * Routes * * * /;
 app.use("/register", registerationRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
+app.use("/categories", categoreRouter);
 app.use("/products", productRouter);
 app.use("/categories", categoreRouter);
 app.use("/posts", postRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/cart", cartRouter);
-
+app.use("/categories", categoryRoutes);
 app.use("/api", galleryRouter);
 
-/ * * * Global MiddleWare * * * /;
+///* * * Global MiddleWare * * * /;
 // Not found routes
 app.all("*", (req, res, next) => {
   return res.status(404).json({

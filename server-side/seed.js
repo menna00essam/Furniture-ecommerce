@@ -7,26 +7,55 @@ const Category = require("./src/models/category.model");
 const Cart = require("./src/models/cart.model");
 const Blog = require("./src/models/blog.model");
 const Order = require("./src/models/order.model");
+// const Image = require("./src/models/image.model");
 
 const seedData = async () => {
   try {
     await connectDB();
     console.log("Seeding Database...");
 
-    await Product.deleteMany();
-    await Category.deleteMany();
-    await Cart.deleteMany();
-    await Blog.deleteMany();
-    await Order.deleteMany();
+    // Clear existing data
 
-    // Insert Sample Categories
+    // await User.deleteMany();
+    // await Product.deleteMany();
+    // await Category.deleteMany();
+    // await Cart.deleteMany();
+    // await Blog.deleteMany();
+    // await Order.deleteMany();
+    // await Image.deleteMany();
+
+    // ======================
+    // 1. Create Users
+    // ======================
+    const users = await User.insertMany([
+      {
+        username: "Haleem",
+        email: "Haleemo777@example.com",
+        password: "haleemo236!",
+        role: "ADMIN",
+        phone: "01126105400",
+      },
+      {
+        username: "Mohamed",
+        email: "Mohamed236236@gmail.com",
+        password: "hiiiii263!",
+        phone: "01126105400",
+      },
+    ]);
+
+    // ======================
+    // 2. Create Categories
+    // ======================
     const categories = await Category.insertMany([
       { catName: "Living Room", description: "Furniture for the living room" },
       { catName: "Bedroom", description: "Furniture for the bedroom" },
       { catName: "Dining Room", description: "Furniture for the dining room" },
     ]);
 
-    // Insert Sample Products with full model data
+    // ======================
+    // 3. Create Products
+    // ======================
+
     const products = await Product.insertMany([
       {
         productName: "Modern Sofa Set",
@@ -500,11 +529,109 @@ const seedData = async () => {
           },
         },
       },
+
+    ]); // Keep your existing products array
+
+    // ======================
+    // 4. Create Blogs
+    // ======================
+    const blogs = await Blog.insertMany([
+      {
+        title: "Modern Furniture Trends 2024",
+        description: "Discover the latest trends in home furniture design",
+        adminUser: users[0]._id,
+        tags: ["design", "trends"],
+        img: "blog1.jpg",
+      },
+      {
+        title: "Choosing the Right Mattress",
+        description: "Complete guide to selecting the perfect mattress",
+        adminUser: users[0]._id,
+        tags: ["bedroom", "health"],
+        img: "blog2.jpg",
+      },
     ]);
 
-    console.log("Database Seeding Completed ✅");
+    // ======================
+    // 5. Create Carts
+    // ======================
+    const carts = await Cart.insertMany([
+      {
+        userId: users[1]._id,
+        products: [
+          {
+            productId: products[0]._id,
+            quantity: 2,
+          },
+          {
+            productId: products[1]._id,
+            quantity: 1,
+          },
+        ],
+      },
+      {
+        userId: users[0]._id,
+        products: [
+          {
+            productId: products[0]._id,
+            quantity: 2,
+          },
+          {
+            productId: products[1]._id,
+            quantity: 4,
+          },
+        ],
+      },
+    ]);
+    // ======================
+    // 6. Create Orders
+    // ======================
+    const orders = await Order.insertMany([
+      {
+        userId: users[1]._id,
+        orderItems: [
+          {
+            productId: products[0]._id,
+            quantity: 1,
+          },
+        ],
+        shippingAddress: {
+          street: "123 Main Street",
+          city: "New York",
+          province: "NY",
+          zipCode: "10001",
+          country: "USA",
+        },
+        totalAmount: products[0].productPrice * 0.9, // 10% discount
+        paymentMethod: "Direct Bank Transfer",
+        status: "Delivered",
+        transactionId: "TX123456789",
+      },
+    ]);
 
-    // Properly close the connection
+    // ======================
+    // 7. Create Images
+    // ======================
+    // const images = await Image.insertMany([
+    //   {
+    //     public_id: "living_room_1",
+    //     url: "https://example.com/living-room.jpg",
+    //   },
+    //   {
+    //     public_id: "bedroom_1",
+    //     url: "https://example.com/bedroom.jpg",
+    //   },
+    // ]);
+
+    console.log("Database Seeding Completed ✅");
+    console.log(`Summary:
+      Users: ${users.length}
+      Categories: ${categories.length}
+      Products: ${products.length}
+      Blogs: ${blogs.length}
+      Carts: ${carts.length}
+      Orders: ${orders.length}`);
+
     await mongoose.connection.close();
     console.log("MongoDB Connection Closed 🔌");
     process.exit(0);
