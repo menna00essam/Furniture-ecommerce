@@ -372,7 +372,6 @@ module.exports = {
   getProductById,
   getMinEffectivePrice,
   getMaxEffectivePrice,
-  // getAllProductNamesAndIds,
   getProductForComparison,
   getSearchProducts,
 };
