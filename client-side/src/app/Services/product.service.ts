@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { product } from '../Models/product.model';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap, take, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { catchError, tap, take, map, switchMap } from 'rxjs/operators';
 
 enum SortOptions {
   Default = 'Default',
@@ -13,6 +13,7 @@ enum SortOptions {
   AtoZ = 'Alphabetically: A to Z',
   ZtoA = 'Alphabetically: Z to A',
 }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,13 +29,45 @@ export class ProductService {
     page: number = 1,
     limit: number = 16,
     categories: string[] = [],
-    sortBy: SortOptions = SortOptions.Default
+    sortBy: SortOptions = SortOptions.Default,
+    minPrice?: number,
+    maxPrice?: number
   ): Observable<any> {
-    let url = `${this.apiUrl}?categories=${
-      categories.length ? `${categories.join(',')}` : ''
-    }&page=${page}&limit=${limit}`;
+    console.log('[ProductService] Fetching products with params:', {
+      page,
+      limit,
+      categories,
+      sortBy,
+      minPrice,
+      maxPrice,
+    });
 
-    // Append sorting parameters based on the selected sorting option
+    if (minPrice === undefined || maxPrice === undefined) {
+      console.log(
+        '[ProductService] Fetching min/max price before proceeding...'
+      );
+      return combineLatest([this.getMinPrice(), this.getMaxPrice()]).pipe(
+        switchMap(([fetchedMin, fetchedMax]) => {
+          console.log('[ProductService] Min/Max price fetched:', {
+            min: fetchedMin,
+            max: fetchedMax,
+          });
+          return this.getProducts(
+            page,
+            limit,
+            categories,
+            sortBy,
+            minPrice ?? fetchedMin,
+            maxPrice ?? fetchedMax
+          );
+        })
+      );
+    }
+
+    let url = `${this.apiUrl}?categories=${
+      categories.length ? categories.join(',') : ''
+    }&page=${page}&limit=${limit}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+
     switch (sortBy) {
       case SortOptions.LowToHigh:
         url += '&sortBy=price&order=asc';
@@ -56,14 +89,16 @@ export class ProductService {
         break;
     }
 
-    console.log(url);
+    console.log('[ProductService] API Request URL:', url);
 
     return this.http
       .get<{ data: { totalProducts: number; products: any[] } }>(url)
       .pipe(
         tap((response) => {
+          console.log('[ProductService] Raw API response:', response);
+
           if (!response.data || !response.data.products) {
-            console.error('Invalid API response:', response);
+            console.error('[ProductService] Invalid API response:', response);
             return;
           }
 
@@ -80,10 +115,15 @@ export class ProductService {
             date: p.productDate,
             sale: p.productSale,
           }));
+
+          console.log(
+            '[ProductService] Transformed product data:',
+            apiProducts
+          );
           this.productsSubject.next(apiProducts);
         }),
         catchError((error) => {
-          console.error('Error fetching products:', error);
+          console.error('[ProductService] Error fetching products:', error);
           return of([]);
         })
       );
@@ -91,11 +131,16 @@ export class ProductService {
 
   // Get a single product by ID
   getProduct(productId: string): Observable<product> {
+    console.log('[ProductService] Fetching product with ID:', productId);
+
     return this.http
       .get<{ status: string; data: { product: any } }>(
         `${this.apiUrl}/${productId}`
       )
       .pipe(
+        tap((response) =>
+          console.log('[ProductService] Raw product response:', response)
+        ),
         map(({ data }) => ({
           id: data.product._id,
           name: data.product.productName,
@@ -113,50 +158,64 @@ export class ProductService {
           sizes: data.product.sizes,
           brand: data.product.brand,
         })),
+        tap((product) =>
+          console.log('[ProductService] Transformed product:', product)
+        ),
         catchError((error) => {
-          console.error('Error fetching product:', error);
+          console.error('[ProductService] Error fetching product:', error);
           return of(null as unknown as product);
         })
       );
   }
 
   getMinPrice(): Observable<number> {
-    return this.products$.pipe(
-      map((products) => products.map((p) => this.getEffectivePrice(p))),
-      map((prices) => {
-        if (!prices.length) return 0;
-        else return Math.min(...prices);
-      })
-    );
+    console.log('[ProductService] Fetching minimum price...');
+    return this.http
+      .get<{ data: { minEffectivePrice: number } }>(`${this.apiUrl}/min-price`)
+      .pipe(
+        tap((response) =>
+          console.log('[ProductService] Min price response:', response)
+        ),
+        map((response) => response.data?.minEffectivePrice ?? 0),
+        catchError((error) => {
+          console.error('[ProductService] Error fetching min price:', error);
+          return of(0);
+        })
+      );
   }
 
   getMaxPrice(): Observable<number> {
-    return this.products$.pipe(
-      map((products) => products.map((p) => this.getEffectivePrice(p))),
-      map((prices) => {
-        if (!prices.length) return 0;
-        return Math.max(...prices);
-      })
-    );
-  }
-
-  private getEffectivePrice(product: product): number {
-    return product.sale
-      ? product.price * (1 - product.sale / 100)
-      : product.price;
+    console.log('[ProductService] Fetching maximum price...');
+    return this.http
+      .get<{ data: { maxEffectivePrice: number } }>(`${this.apiUrl}/max-price`)
+      .pipe(
+        tap((response) =>
+          console.log('[ProductService] Max price response:', response)
+        ),
+        map((response) => response.data?.maxEffectivePrice ?? 0),
+        catchError((error) => {
+          console.error('[ProductService] Error fetching max price:', error);
+          return of(0);
+        })
+      );
   }
 
   searchProducts(query: string): Observable<{ id: string; value: string }[]> {
+    console.log('[ProductService] Searching for products with query:', query);
+
     if (!query.trim()) return of([]);
 
     return this.http
       .get<{ data: any[] }>(`${this.apiUrl}/search?query=${query}`)
       .pipe(
+        tap((response) =>
+          console.log('[ProductService] Search response:', response)
+        ),
         map((response) =>
           response.data.map((p) => ({ id: p._id, value: p.productName }))
         ),
         catchError((error) => {
-          console.error('Search error:', error);
+          console.error('[ProductService] Search error:', error);
           return of([]);
         })
       );
