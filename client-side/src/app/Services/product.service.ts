@@ -4,29 +4,73 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap, take, map } from 'rxjs/operators';
 
+enum SortOptions {
+  Default = 'Default',
+  LowToHigh = 'Price: Low to High',
+  HighToLow = 'Price: High to Low',
+  Newest = 'Newest',
+  Oldest = 'Oldest',
+  AtoZ = 'Alphabetically: A to Z',
+  ZtoA = 'Alphabetically: Z to A',
+}
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
   private productsSubject = new BehaviorSubject<product[]>([]);
+  apiUrl = 'http://localhost:5000/products';
   products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  // Fetch products from API and update state
-  getProducts(page: number = 1, limit: number = 16): Observable<any> {
+  // Fetch products from API
+  getProducts(
+    page: number = 1,
+    limit: number = 16,
+    categories: string[] = [],
+    sortBy: SortOptions = SortOptions.Default
+  ): Observable<any> {
+    let url = `${this.apiUrl}?categories=${
+      categories.length ? `${categories.join(',')}` : ''
+    }&page=${page}&limit=${limit}`;
+
+    // Append sorting parameters based on the selected sorting option
+    switch (sortBy) {
+      case SortOptions.LowToHigh:
+        url += '&sortBy=price&order=asc';
+        break;
+      case SortOptions.HighToLow:
+        url += '&sortBy=price&order=desc';
+        break;
+      case SortOptions.Newest:
+        url += '&sortBy=date&order=desc';
+        break;
+      case SortOptions.Oldest:
+        url += '&sortBy=date&order=asc';
+        break;
+      case SortOptions.AtoZ:
+        url += '&sortBy=name&order=asc';
+        break;
+      case SortOptions.ZtoA:
+        url += '&sortBy=name&order=desc';
+        break;
+    }
+
+    console.log(url);
+
     return this.http
-      .get<{ data: { totalProducts: number; products: any[] } }>(
-        `http://localhost:5000/products?page=${page}&limit=${limit}`
-      )
+      .get<{ data: { totalProducts: number; products: any[] } }>(url)
       .pipe(
         tap((response) => {
+          if (!response.data || !response.data.products) {
+            console.error('Invalid API response:', response);
+            return;
+          }
+
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages.length
-              ? p.productImages
-              : ['assets/images/no-image.jpg'],
+            images: p.productImages,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
@@ -45,21 +89,35 @@ export class ProductService {
       );
   }
 
-  // Get product names (reactively)
-  getProductNames(): Observable<{ id: string; value: string }[]> {
-    return this.products$.pipe(
-      map((products: product[]) =>
-        products.map((p) => ({ id: p.id, value: p.name }))
+  // Get a single product by ID
+  getProduct(productId: string): Observable<product> {
+    return this.http
+      .get<{ status: string; data: { product: any } }>(
+        `${this.apiUrl}/${productId}`
       )
-    );
-  }
-
-  // Get a single product by ID reactively
-  getProduct(productId: string): Observable<product | undefined> {
-    return this.products$.pipe(
-      take(1), // Take only the latest value
-      map((products) => products.find((p) => p.id === productId)) // Transform the array to a single product
-    );
+      .pipe(
+        map(({ data }) => ({
+          id: data.product._id,
+          name: data.product.productName,
+          images: data.product.productImages,
+          subTitle: data.product.productSubtitle,
+          price: data.product.productPrice,
+          quantity: data.product.productQuantity,
+          categories: data.product.productCategories.map(
+            (cat: { catName: string }) => cat.catName
+          ),
+          date: data.product.productDate,
+          sale: data.product.productSale,
+          description: data.product.productDescription,
+          colors: data.product.colors,
+          sizes: data.product.sizes,
+          brand: data.product.brand,
+        })),
+        catchError((error) => {
+          console.error('Error fetching product:', error);
+          return of(null as unknown as product);
+        })
+      );
   }
 
   getMinPrice(): Observable<number> {
@@ -86,5 +144,21 @@ export class ProductService {
     return product.sale
       ? product.price * (1 - product.sale / 100)
       : product.price;
+  }
+
+  searchProducts(query: string): Observable<{ id: string; value: string }[]> {
+    if (!query.trim()) return of([]);
+
+    return this.http
+      .get<{ data: any[] }>(`${this.apiUrl}/search?query=${query}`)
+      .pipe(
+        map((response) =>
+          response.data.map((p) => ({ id: p._id, value: p.productName }))
+        ),
+        catchError((error) => {
+          console.error('Search error:', error);
+          return of([]);
+        })
+      );
   }
 }
