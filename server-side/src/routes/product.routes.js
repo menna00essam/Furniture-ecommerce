@@ -1,11 +1,11 @@
 const express = require('express');
 const productController = require('../controllers/product.controller');
 const router = express.Router();
-const varifyToken = require('../middlewares/auth.middleware');
 
 router.route('/').get(productController.getAllProducts);
-// router.route('/all').get(productController.getAllProductNamesAndIds);
 router.route('/search').get(productController.getSearchProducts);
+router.route('/min-price').get(productController.getMinEffectivePrice);
+router.route('/max-price').get(productController.getMaxEffectivePrice);
 router.route('/:product_id').get(productController.getProductById);
 
 router

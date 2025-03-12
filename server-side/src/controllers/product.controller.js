@@ -53,7 +53,6 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
     order = 'desc',
     sortBy = 'date',
   } = req.query;
-  console.log(sortBy, order, categories);
 
   limit = Math.max(1, limit);
   page = Math.max(1, page);
@@ -217,6 +216,75 @@ const getProductById = asyncWrapper(async (req, res, next) => {
   });
 });
 
+const getMinEffectivePrice = asyncWrapper(async (req, res, next) => {
+  const minPrice = await Product.aggregate([
+    {
+      $addFields: {
+        effectivePrice: {
+          $cond: {
+            if: { $gt: ['$productSale', 0] }, // If there's a discount
+            then: {
+              $multiply: [
+                '$productPrice',
+                { $subtract: [1, { $divide: ['$productSale', 100] }] },
+              ],
+            },
+            else: '$productPrice', // Otherwise, use original price
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        minEffectivePrice: { $min: '$effectivePrice' },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      minEffectivePrice: minPrice.length ? minPrice[0].minEffectivePrice : 0,
+    },
+  });
+});
+
+const getMaxEffectivePrice = asyncWrapper(async (req, res, next) => {
+  const maxPrice = await Product.aggregate([
+    {
+      $addFields: {
+        effectivePrice: {
+          $cond: {
+            if: { $gt: ['$productSale', 0] }, // If there's a discount
+            then: {
+              $multiply: [
+                '$productPrice',
+                { $subtract: [1, { $divide: ['$productSale', 100] }] },
+              ],
+            },
+            else: '$productPrice', // Otherwise, use original price
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        maxEffectivePrice: { $max: '$effectivePrice' },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      maxEffectivePrice: maxPrice.length ? maxPrice[0].maxEffectivePrice : 0,
+    },
+  });
+});
+
+
 const getProductForComparison = asyncWrapper(async (req, res, next) => {
   const { product_id } = req.params;
   if (!product_id) {
@@ -302,6 +370,8 @@ async function getCategoryIds(query) {
 module.exports = {
   getAllProducts,
   getProductById,
+  getMinEffectivePrice,
+  getMaxEffectivePrice,
   // getAllProductNamesAndIds,
   getProductForComparison,
   getSearchProducts,
