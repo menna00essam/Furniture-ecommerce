@@ -41,10 +41,6 @@ const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
 
 //   res.status(200).json({
 //     status: httpStatusText.SUCCESS,
-//     data: { totalProducts, products },
-//   });
-// });
-
 const getAllProducts = asyncWrapper(async (req, res, next) => {
   let {
     limit = 16,
@@ -52,19 +48,17 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
     categories = '',
     order = 'desc',
     sortBy = 'date',
+    minPrice,
+    maxPrice,
   } = req.query;
-  console.log(sortBy, order, categories);
 
-  limit = Math.max(1, limit);
-  page = Math.max(1, page);
+  // Convert pagination values to numbers
+  limit = Number(limit);
+  page = Number(page);
 
-  if (isNaN(limit) || isNaN(page)) {
+  if (isNaN(limit) || isNaN(page) || limit < 1 || page < 1) {
     return next(
-      new AppError(
-        "Invalid pagination parameters. 'limit' and 'page' must be positive numbers.",
-        400,
-        httpStatusText.FAIL
-      )
+      new AppError('Invalid pagination parameters.', 400, httpStatusText.FAIL)
     );
   }
 
@@ -75,15 +69,16 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
   const sortFields = {
     name: 'productName',
     date: 'productDate',
-    price: 'effectivePrice', // Use calculated field for sorting by price
+    price: 'effectivePrice',
   };
 
-  const sortField = sortFields[sortBy] || 'productDate'; // Default to sorting by date
+  // Validate sortBy value
+  const sortField = sortFields[sortBy] || 'productDate';
 
+  // Category filter
   let categoryFilter = {};
-  if (categories && categories.trim() !== '') {
+  if (categories) {
     const categoryIds = categories.split(',').map((id) => id.trim());
-    console.log(categoryIds);
 
     if (!categoryIds.every((id) => mongoose.isValidObjectId(id))) {
       return next(
@@ -92,58 +87,91 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
     }
 
     categoryFilter = {
-      productCategories: { $elemMatch: { $in: categoryIds } },
+      productCategories: {
+        $in: categoryIds.map((id) => new mongoose.Types.ObjectId(id)),
+      },
     };
   }
 
-  console.log('Category Filter:', JSON.stringify(categoryFilter, null, 2));
+  // Fetch min & max price dynamically if not provided
+  if (!minPrice || !maxPrice) {
+    const { minPrice: min, maxPrice: max } = await getPriceRange();
+    minPrice = minPrice ?? min;
+    maxPrice = maxPrice ?? max;
+  }
 
-  const totalProducts = await Product.countDocuments(categoryFilter);
+  minPrice = Number(minPrice);
+  maxPrice = Number(maxPrice);
 
-  const products = await Product.aggregate([
-    { $match: categoryFilter }, // Apply category filter only if categories is provided
+  // Price filter
+  const priceFilter =
+    !isNaN(minPrice) && !isNaN(maxPrice)
+      ? { effectivePrice: { $gte: minPrice, $lte: maxPrice } }
+      : {};
 
-    // Calculate effective price (discounted price)
+  // Fetch total products count and products list concurrently
+  const [totalProducts, products] = await Promise.all([
+    getTotalProducts(categoryFilter, priceFilter),
+    getFilteredProducts(
+      categoryFilter,
+      priceFilter,
+      sortField,
+      sortOrder,
+      skip,
+      limit
+    ),
+  ]);
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: { totalProducts, products },
+  });
+});
+
+// Function to get price range
+const getPriceRange = async () => {
+  const result = await Product.aggregate([
+    { $addFields: { effectivePrice: calculateEffectivePrice() } },
     {
-      $addFields: {
-        effectivePrice: {
-          $cond: {
-            if: { $gt: ['$productSale', 0] }, // If sale exists
-            then: {
-              $multiply: [
-                '$productPrice',
-                { $subtract: [1, { $divide: ['$productSale', 100] }] },
-              ],
-            },
-            else: '$productPrice', // Otherwise, use original price
-          },
-        },
+      $group: {
+        _id: null,
+        minPrice: { $min: '$effectivePrice' },
+        maxPrice: { $max: '$effectivePrice' },
       },
     },
+  ]);
 
-    // Sorting dynamically
+  return result[0] || { minPrice: 0, maxPrice: 0 };
+};
+
+// Function to get total products count
+const getTotalProducts = async (categoryFilter, priceFilter) => {
+  const result = await Product.aggregate([
+    { $match: categoryFilter },
+    { $addFields: { effectivePrice: calculateEffectivePrice() } },
+    { $match: priceFilter },
+    { $count: 'total' },
+  ]);
+
+  return result.length > 0 ? result[0].total : 0;
+};
+
+// Function to get filtered products
+const getFilteredProducts = async (
+  categoryFilter,
+  priceFilter,
+  sortField,
+  sortOrder,
+  skip,
+  limit
+) => {
+  return await Product.aggregate([
+    { $match: categoryFilter },
+    { $addFields: { effectivePrice: calculateEffectivePrice() } },
+    { $match: priceFilter },
     { $sort: { [sortField]: sortOrder } },
-
-    // Pagination
     { $skip: skip },
     { $limit: limit },
-
-    // Select required fields
-    {
-      $project: {
-        _id: 1,
-        productName: 1,
-        productSubtitle: 1,
-        productImages: 1,
-        productPrice: 1,
-        productDate: 1,
-        productSale: 1,
-        productQuantity: 1,
-        effectivePrice: 1,
-      },
-    },
-
-    // Populate categories
     {
       $lookup: {
         from: 'categories',
@@ -152,7 +180,6 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
         as: 'productCategories',
       },
     },
-
     {
       $project: {
         _id: 1,
@@ -168,22 +195,67 @@ const getAllProducts = asyncWrapper(async (req, res, next) => {
           $map: {
             input: '$productCategories',
             as: 'category',
-            in: {
-              _id: '$$category._id',
-              catName: '$$category.catName',
-            },
+            in: { _id: '$$category._id', catName: '$$category.catName' },
           },
         },
       },
     },
   ]);
+};
 
-  console.log(JSON.stringify(products, null, 2));
+// Function to calculate effective price
+const calculateEffectivePrice = () => ({
+  $cond: {
+    if: { $gt: ['$productSale', 0] },
+    then: {
+      $multiply: [
+        '$productPrice',
+        { $subtract: [1, { $divide: ['$productSale', 100] }] },
+      ],
+    },
+    else: '$productPrice',
+  },
+});
 
-  res.status(200).json({
-    status: httpStatusText.SUCCESS,
-    data: { totalProducts, products },
-  });
+// Function to project required fields
+const projectFields = () => ({
+  _id: 1,
+  productName: 1,
+  productSubtitle: 1,
+  productImages: 1,
+  productPrice: 1,
+  productDate: 1,
+  productSale: 1,
+  productQuantity: 1,
+  effectivePrice: 1,
+});
+
+// Function to lookup categories
+const lookupCategories = () => ({
+  from: 'categories',
+  localField: 'productCategories',
+  foreignField: '_id',
+  as: 'productCategories',
+});
+
+// Function to project category names
+const projectCategoryNames = () => ({
+  _id: 1,
+  productName: 1,
+  productSubtitle: 1,
+  productImages: 1,
+  productPrice: 1,
+  productDate: 1,
+  productSale: 1,
+  productQuantity: 1,
+  effectivePrice: 1,
+  productCategories: {
+    $map: {
+      input: '$productCategories',
+      as: 'category',
+      in: { _id: '$$category._id', catName: '$$category.catName' },
+    },
+  },
 });
 
 const getProductById = asyncWrapper(async (req, res, next) => {
@@ -213,6 +285,74 @@ const getProductById = asyncWrapper(async (req, res, next) => {
     status: httpStatusText.SUCCESS,
     data: {
       product,
+    },
+  });
+});
+
+const getMinEffectivePrice = asyncWrapper(async (req, res, next) => {
+  const minPrice = await Product.aggregate([
+    {
+      $addFields: {
+        effectivePrice: {
+          $cond: {
+            if: { $gt: ['$productSale', 0] }, // If there's a discount
+            then: {
+              $multiply: [
+                '$productPrice',
+                { $subtract: [1, { $divide: ['$productSale', 100] }] },
+              ],
+            },
+            else: '$productPrice', // Otherwise, use original price
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        minEffectivePrice: { $min: '$effectivePrice' },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      minEffectivePrice: minPrice.length ? minPrice[0].minEffectivePrice : 0,
+    },
+  });
+});
+
+const getMaxEffectivePrice = asyncWrapper(async (req, res, next) => {
+  const maxPrice = await Product.aggregate([
+    {
+      $addFields: {
+        effectivePrice: {
+          $cond: {
+            if: { $gt: ['$productSale', 0] }, // If there's a discount
+            then: {
+              $multiply: [
+                '$productPrice',
+                { $subtract: [1, { $divide: ['$productSale', 100] }] },
+              ],
+            },
+            else: '$productPrice', // Otherwise, use original price
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        maxEffectivePrice: { $max: '$effectivePrice' },
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    data: {
+      maxEffectivePrice: maxPrice.length ? maxPrice[0].maxEffectivePrice : 0,
     },
   });
 });
@@ -302,7 +442,8 @@ async function getCategoryIds(query) {
 module.exports = {
   getAllProducts,
   getProductById,
-  // getAllProductNamesAndIds,
+  getMinEffectivePrice,
+  getMaxEffectivePrice,
   getProductForComparison,
   getSearchProducts,
 };
