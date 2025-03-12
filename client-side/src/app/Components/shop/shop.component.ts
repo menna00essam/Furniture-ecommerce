@@ -31,6 +31,7 @@ import { CategoriesService } from '../../Services/categories.service';
 
 // Models
 import { product } from '../../Models/product.model';
+import { category } from '../../Models/category.model';
 
 // Enums
 enum SortOptions {
@@ -113,7 +114,7 @@ export class ShopComponent implements OnInit {
 
   // Sorting
   sortMenuItems = Object.values(SortOptions);
-  categories$!: Observable<{ id: string; catName: string }[]>;
+  categories$!: Observable<category[]>;
   categoriesNames$!: Observable<string[]>;
 
   constructor(
@@ -135,7 +136,7 @@ export class ShopComponent implements OnInit {
 
     this.categories$ = this.categoriesService.categories$;
     this.categoriesNames$ = this.categories$.pipe(
-      map((categories) => categories.map((cat) => cat.catName))
+      map((categories) => categories.map((cat) => cat.name))
     );
     this.categoriesService.getCategories().subscribe();
     this.checkScreenSize();
@@ -187,7 +188,7 @@ export class ShopComponent implements OnInit {
     this.toggleDropdown(false);
   }
 
-  onCategoryChange(category: { id: string; catName: string }, event: Event) {
+  onCategoryChange(category: category, event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedCategories = checked
       ? [...this.selectedCategories, category.id]

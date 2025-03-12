@@ -59,13 +59,13 @@
         >
           <input
             type="checkbox"
-            [id]="'category' + category.catName"
-            [name]="'category' + category.catName"
+            [id]="'category' + category.name"
+            [name]="'category' + category.name"
             (change)="onCategoryChange(category, $event)"
             class="w-[1.2em] h-[1.2em]"
           />
-          <label [for]="'category' + category.catName">{{
-            category.catName | titlecase
+          <label [for]="'category' + category.name">{{
+            category.name | titlecase
           }}</label>
         </div>
       </div>
