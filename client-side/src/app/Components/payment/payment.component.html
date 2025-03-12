@@ -1,0 +1,58 @@
+<div [formGroup]="paymentForm" class="mt-6">
+  <div class="mb-4">
+    <label class="block text-md font-bold mb-2 text-gray-dark-600"
+      >Card number *</label
+    >
+    <input
+      type="text"
+      class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
+      placeholder="Card number"
+      formControlName="cardNumber"
+    />
+    @if (paymentForm.get('cardNumber')?.invalid &&
+    paymentForm.get('cardNumber')?.touched) {
+    <div class="text-red-500 text-sm">Card number is required.</div>
+    }
+  </div>
+
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div>
+      <label class="block text-md font-bold mb-2 text-gray-dark-600"
+        >Expiry (MM/YY) *</label
+      >
+      <input
+        type="text"
+        class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
+        placeholder="MM/YY"
+        formControlName="expiry"
+      />
+      @if (paymentForm.get('expiry')?.invalid &&
+      paymentForm.get('expiry')?.touched) {
+      <div class="text-red-500 text-sm">Expiry date is required.</div>
+      }
+    </div>
+    <div>
+      <label class="block text-md font-bold mb-2 text-gray-dark-600"
+        >Card code *</label
+      >
+      <input
+        type="text"
+        class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
+        placeholder="CVC"
+        formControlName="cvc"
+      />
+      @if (paymentForm.get('cvc')?.invalid && paymentForm.get('cvc')?.touched) {
+      <div class="text-red-500 text-sm">CVC is required.</div>
+      }
+    </div>
+  </div>
+
+  <!--*** Emails with news ***-->
+  <div class="flex items-center mb-6">
+    <input type="checkbox" class="mr-2" />
+    <label class="text-sm"
+      >I would like to receive referral marketing and promotional emails
+      (optional)</label
+    >
+  </div>
+</div>
