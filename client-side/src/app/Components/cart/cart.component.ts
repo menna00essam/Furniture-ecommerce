@@ -7,6 +7,7 @@ import { HeaderBannerComponent } from '../shared/header-banner/header-banner.com
 import { CartService } from '../../Services/cart.service';
 import { product } from '../../Models/product.model';
 import { Observable, map } from 'rxjs';
+import { StepperComponent } from '../shared/stepper/stepper.component';
 
 @Component({
   selector: 'app-cart',
@@ -20,6 +21,7 @@ import { Observable, map } from 'rxjs';
     HeaderBannerComponent,
     FeatureBannerComponent,
     CurrencyPipe,
+    StepperComponent,
   ],
 })
 export class CartComponent implements OnInit {
