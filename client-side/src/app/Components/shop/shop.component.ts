@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -33,6 +34,9 @@ import { CategoriesService } from '../../Services/categories.service';
 import { product } from '../../Models/product.model';
 import { category } from '../../Models/category.model';
 
+import { NgToastModule, NgToastService } from 'ng-angular-popup';
+import { ToasterPosition } from 'ng-angular-popup';
+
 // Enums
 enum SortOptions {
   Default = 'Default',
@@ -52,6 +56,7 @@ enum SortOptions {
     FormsModule,
     DragDropModule,
     MatSliderModule,
+    NgToastModule,
     MatProgressSpinnerModule,
     TitleCasePipe,
     FeatureBannerComponent,
@@ -67,25 +72,17 @@ enum SortOptions {
     trigger('slideInOut', [
       transition(':enter', [
         style({ transform: 'translateX(-100%)' }),
-        animate(
-          '0.5s cubic-bezier(.4,0,.2,1)',
-          style({ transform: 'translateX(0%)' })
-        ),
+        animate('0.5s ease-out', style({ transform: 'translateX(0%)' })),
       ]),
       transition(':leave', [
-        animate(
-          '0.5s cubic-bezier(.4,0,.2,1)',
-          style({ transform: 'translateX(-100%)' })
-        ),
+        animate('0.5s ease-in', style({ transform: 'translateX(-100%)' })),
       ]),
     ]),
   ],
 })
 export class ShopComponent implements OnInit {
   @ViewChild('productsContainer') productsContainer!: ElementRef;
-  @ViewChild('priceSlider', { static: false }) priceSlider!: ElementRef;
   @ViewChild('sortMenu', { static: false }) sortMenuRef!: ElementRef;
-  @ViewChild('price', { static: false }) priceRef!: ElementRef;
 
   // UI State
   showFilters = false;
@@ -117,44 +114,59 @@ export class ShopComponent implements OnInit {
   categories$!: Observable<category[]>;
   categoriesNames$!: Observable<string[]>;
 
+  ToasterPosition = ToasterPosition;
+  // Track loading state
+  loading = true;
+
   constructor(
     private productService: ProductService,
     private categoriesService: CategoriesService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private toast: NgToastService
   ) {}
 
   ngOnInit(): void {
+    console.log('Initializing ShopComponent');
     this.products$ = this.productService.products$;
     this.fetchProducts();
+    this.initializePriceRange();
+    this.initializeCategories();
+    this.checkScreenSize();
+  }
+
+  private initializePriceRange() {
     this.priceMin$ = this.productService.getMinPrice();
     this.priceMax$ = this.productService.getMaxPrice();
-
     combineLatest([this.priceMin$, this.priceMax$]).subscribe(([min, max]) => {
+      console.log(`Price range initialized: ${min} - ${max}`);
       this.minPrice = min;
       this.maxPrice = max;
     });
+  }
 
+  private initializeCategories() {
     this.categories$ = this.categoriesService.categories$;
     this.categoriesNames$ = this.categories$.pipe(
       map((categories) => categories.map((cat) => cat.name))
     );
     this.categoriesService.getCategories().subscribe();
-    this.checkScreenSize();
   }
 
-  loading = true; // Track loading state
-
   fetchProducts() {
-    this.loading = true; // Start loading
+    console.log('Fetching products...');
+    this.loading = true;
     this.productService
       .getProducts(
         this.currentPage,
         this.productsPerPage,
         this.selectedCategories,
-        this.selectedSortValueSubject.value
+        this.selectedSortValueSubject.value,
+        this.minPrice,
+        this.maxPrice
       )
       .subscribe({
         next: (response) => {
+          console.log('Products fetched:', response.data);
           this.totalProducts = response.data.totalProducts;
           this.updatePagesCount();
           this.loading = false;
@@ -166,33 +178,38 @@ export class ShopComponent implements OnInit {
       });
   }
 
-  updatePagesCount(): void {
+  private updatePagesCount(): void {
     this.pagesCount = Math.ceil(this.totalProducts / this.productsPerPage);
+    console.log(`Total pages updated: ${this.pagesCount}`);
   }
 
-  priceChange(event: Event, isMin: boolean) {
+  onPriceChange(event: Event, isMin: boolean): void {
     const value = Number((event.target as HTMLInputElement).value);
-    if (isMin) {
-      this.minPrice = Math.min(value, this.maxPrice - 1);
-    } else {
-      this.maxPrice = Math.max(value, this.minPrice + 1);
-    }
+    isMin
+      ? (this.minPrice = Math.min(value, this.maxPrice - 1))
+      : (this.maxPrice = Math.max(value, this.minPrice + 1));
+    console.log(
+      `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
+    );
+    this.fetchProducts();
   }
 
-  onSortChange(selectedItem: { id: string; value: string }) {
+  onSortChange(selectedItem: { id: string; value: string }): void {
     const sortOption = selectedItem.value as SortOptions;
     if (this.sortMenuItems.includes(sortOption)) {
+      console.log(`Sorting by: ${sortOption}`);
       this.selectedSortValueSubject.next(sortOption);
       this.fetchProducts();
     }
     this.toggleDropdown(false);
   }
 
-  onCategoryChange(category: category, event: Event) {
+  onCategoryChange(category: category, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     this.selectedCategories = checked
       ? [...this.selectedCategories, category.id]
       : this.selectedCategories.filter((c) => c !== category.id);
+    console.log(`Category selection changed: ${this.selectedCategories}`);
     this.fetchProducts();
   }
 
@@ -206,15 +223,16 @@ export class ShopComponent implements OnInit {
     return `Showing ${start}-${end} of ${this.totalProducts} results`;
   }
 
-  goToPage(page: number) {
+  goToPage(page: number): void {
     if (page >= 1 && page <= this.pagesCount) {
+      console.log(`Navigating to page: ${page}`);
       this.currentPage = page;
       this.fetchProducts();
       this.scrollToProducts();
     }
   }
 
-  private scrollToProducts() {
+  private scrollToProducts(): void {
     if (this.productsContainer) {
       const offset = 100;
       const topPosition =
@@ -225,24 +243,24 @@ export class ShopComponent implements OnInit {
     }
   }
 
-  toggleShowFilter(open: boolean = !this.showFilters) {
+  toggleShowFilter(open: boolean = !this.showFilters): void {
     this.showFilters = open;
     if (window.innerWidth < 1024) {
       this.renderer.setStyle(document.body, 'overflowY', open ? 'hidden' : '');
     }
   }
 
-  toggleDropdown(open: boolean) {
+  toggleDropdown(open: boolean): void {
     this.showSortMenu = open;
   }
 
   @HostListener('window:resize')
-  checkScreenSize() {
+  checkScreenSize(): void {
     this.disableAnimation = window.innerWidth >= 1024;
   }
 
   @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
+  onClickOutside(event: Event): void {
     if (this.showSortMenu && this.sortMenuRef) {
       const clickedInsideMenu = this.sortMenuRef.nativeElement.contains(
         event.target
