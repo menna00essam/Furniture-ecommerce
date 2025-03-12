@@ -24,7 +24,7 @@ const OrderSchema = new mongoose.Schema(
       zipCode: { type: String, required: true },
       country: { type: String, required: true },
     },
-    totalAmount: { type: Number, required: true },
+    totalAmount: { type: Number, required: true }, // - - - //
     status: {
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered"],
