@@ -22,6 +22,8 @@ const postRouter = require("./src/routes/post.routes");
 const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
+const orderRouter = require("./src/routes/order.routes");
+
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
@@ -45,6 +47,7 @@ app.use("/posts", postRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
+app.use("/orders", orderRouter);
 
 / * * * Global MiddleWare * * * /;
 // Not found routes

@@ -39,7 +39,13 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
       );
     }
   }
+  // Generate orderNumber using the last 4 digits of the current timestamp
+  const timestamp = Date.now().toString(); // Get current timestamp as a string
+  const last4Digits = timestamp.slice(-4); // Extract the last 4 digits
+  const orderNumber = `${last4Digits}`; // Format as XXXX
 
+  // Get the current date for createdAt
+  const createdAt = new Date();
   const order = new Order({
     userId,
     orderItems,
@@ -47,6 +53,8 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
     totalAmount: cart.totalPrice,
     paymentMethod,
     transactionId,
+    orderNumber, // Add the generated orderNumber
+    createdAt, // Add the current timestamp
   });
 
   await order.save();
