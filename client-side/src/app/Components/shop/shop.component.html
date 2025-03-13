@@ -118,15 +118,29 @@ async); @let productsMaxPrice = (priceMax$ | async);
       (currentPageChange)="goToPage($event)"
     ></app-pagination>
     } @else if (loading) {
-    <div class="w-full flex justify-center">
-      <mat-progress-spinner mode="indeterminate" />
+
+    <div
+      class="grid gap-6 w-full h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+      [ngClass]="{
+        'lg:grid-cols-3': showFilters,
+        'lg:grid-cols-5': !showFilters
+      }"
+    >
+      <div *ngFor="let item of skeletonArr">
+        <app-product-item-skeleton></app-product-item-skeleton>
+      </div>
+    </div>
+    <div class="flex justify-center py-3 gap-5">
+      <div *ngFor="let item of [1, 2, 3]">
+        <ngx-skeleton-loader [theme]="{ 'width.px': 60, 'height.px': 45 }" />
+      </div>
     </div>
 
     }@else {
     <div
       class="w-full h-full flex justify-center items-center text-center text-gray"
     >
-      No products found.
+      No products matches this filter.
     </div>
     }
   </div>
