@@ -33,9 +33,8 @@ import { CategoriesService } from '../../Services/categories.service';
 // Models
 import { product } from '../../Models/product.model';
 import { category } from '../../Models/category.model';
-
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { ToasterPosition } from 'ng-angular-popup';
+import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 // Enums
 enum SortOptions {
@@ -56,8 +55,8 @@ enum SortOptions {
     FormsModule,
     DragDropModule,
     MatSliderModule,
-    NgToastModule,
     MatProgressSpinnerModule,
+    NgxSkeletonLoaderModule,
     TitleCasePipe,
     FeatureBannerComponent,
     HeaderBannerComponent,
@@ -65,6 +64,7 @@ enum SortOptions {
     FilterOptionComponent,
     ProductItemComponent,
     PaginationComponent,
+    ProductItemSkeletonComponent,
   ],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
@@ -109,20 +109,21 @@ export class ShopComponent implements OnInit {
   totalProducts = 0;
   pagesCount = 0;
 
+  // Skeleton Count
+  skeletonArr = Array(this.productsPerPage);
+
   // Sorting
   sortMenuItems = Object.values(SortOptions);
   categories$!: Observable<category[]>;
   categoriesNames$!: Observable<string[]>;
 
-  ToasterPosition = ToasterPosition;
   // Track loading state
   loading = true;
 
   constructor(
     private productService: ProductService,
     private categoriesService: CategoriesService,
-    private renderer: Renderer2,
-    private toast: NgToastService
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
