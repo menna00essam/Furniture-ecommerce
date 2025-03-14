@@ -3,6 +3,8 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
+require("./src/services/orderStatus.service");
+
 / * * * * Utils * * * * /;
 const httpStatusText = require("./src/utils/httpStatusText");
 / * * * * End Utils * * * * /;
@@ -23,10 +25,9 @@ const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
-const orderRouter=require("./src/routes/order.routes")
+const orderRouter = require("./src/routes/order.routes");
 
 / * * * * End Router imports * * * * /;
-
 
 // Connect to MongoDB
 connectDB();
@@ -40,7 +41,6 @@ app.get("/", (req, res) => {
   res.json("You need furniture? Here’s Furniro!");
 });
 
-
 / * * * Routes * * * /;
 app.use("/register", registerationRouter);
 app.use("/users", userRouter);
@@ -52,8 +52,6 @@ app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
 app.use("/contact", contactRouter);
 app.use("/orders", orderRouter);
-
-
 
 / * * * Global MiddleWare * * * /;
 // Not found routes

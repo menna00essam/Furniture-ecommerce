@@ -41,18 +41,6 @@ const OrderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-// Middleware to generate orderNumber before saving
-
-// OrderSchema.pre("save", async function (next) {
-//   if (!this.orderNumber) {
-//     this.orderNumber = `${Date.now().slice(-4)}-${Math.floor(
-//       1000 + Math.random() * 9000
-//     )
-//       .toString()
-//       .slice(0, 5)}`;
-//   }
-//   next();
-// });
 
 OrderSchema.pre("save", async function (next) {
   if (!this.orderNumber) {
