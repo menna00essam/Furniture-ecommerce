@@ -23,6 +23,7 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { FilterOptionComponent } from './filter-option/filter-option.component';
+
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
