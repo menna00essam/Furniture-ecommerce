@@ -49,7 +49,6 @@ export class UserActionsComponent implements OnInit {
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
-      console.log(status);
     });
 
     this.cart$ = this.cartService.cart$;
