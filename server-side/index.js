@@ -27,7 +27,7 @@ const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
 const orderRouter = require("./src/routes/order.routes");
 
-// / * * * * End Router imports * * * * /;
+/ * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
 connectDB();
