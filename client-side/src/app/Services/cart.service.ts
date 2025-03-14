@@ -2,7 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
-import { product } from '../Models/product.model';
+import { product } from '../models/product.model';
 import { AuthService } from './auth.service';
 
 @Injectable({

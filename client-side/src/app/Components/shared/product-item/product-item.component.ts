@@ -20,7 +20,7 @@ import {
 
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
-import { product } from '../../../Models/product.model';
+import { product } from '../../../models/product.model';
 import { map, Observable } from 'rxjs';
 
 @Component({

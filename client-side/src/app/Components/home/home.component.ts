@@ -19,7 +19,7 @@ import { ProductService } from '../../Services/product.service';
 import { ButtonComponent } from '../shared/button/button.component';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { Observable } from 'rxjs';
-import { product } from '../../Models/product.model';
+import { product } from '../../models/product.model';
 
 @Component({
   selector: 'app-home',
