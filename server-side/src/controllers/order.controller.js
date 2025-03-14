@@ -7,8 +7,20 @@ const getOrders = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   console.log("User ID:", userId); // Debugging
 
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  let { limit = 10, page = 1 } = req.query;
+
+  limit = Math.max(1, limit);
+  page = Math.max(1, page);
+
+  if (isNaN(limit) || isNaN(page)) {
+    return next(
+      new AppError(
+        "Invalid pagination parameters. 'limit' and 'page' must be positive numbers.",
+        400,
+        httpStatusText.FAIL
+      )
+    );
+  }
   const skip = (page - 1) * limit;
 
   const orders = await Order.find({ userId })
@@ -17,7 +29,6 @@ const getOrders = asyncWrapper(async (req, res, next) => {
     .skip(skip)
     .limit(limit);
 
-  console.log(orders);
   const totalOrders = await Order.countDocuments({ userId });
 
   if (orders.length === 0) {
@@ -27,8 +38,9 @@ const getOrders = asyncWrapper(async (req, res, next) => {
   }
 
   const formattedOrders = orders.map((order) => ({
-    orderNumber: order._id,
+    orderNumber: order.orderNumber,
     status: order.status,
+    orderNumber: order.orderNumber,
     total: `${order.totalAmount.toFixed(2)}`,
     createdAt: order.createdAt.toLocaleDateString("en-US", {
       year: "numeric",
