@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { product } from '../models/product.model';
+import { product } from '../Models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, tap, take, map, switchMap } from 'rxjs/operators';

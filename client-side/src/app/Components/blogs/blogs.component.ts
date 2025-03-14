@@ -9,7 +9,7 @@ import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 import { BlogService } from '../../Services/blog.service';
-import { BlogPost } from '../../models/blog.model';
+import { BlogPost } from '../../Models/blog.model';
 
 import { RouterModule } from '@angular/router';
 
@@ -84,14 +84,18 @@ export class BlogsComponent implements OnInit {
     if (this.blogsContainer?.nativeElement) {
       const offset = 100;
       window.scrollTo({
-        top: this.blogsContainer.nativeElement.getBoundingClientRect().top + window.scrollY - offset,
+        top:
+          this.blogsContainer.nativeElement.getBoundingClientRect().top +
+          window.scrollY -
+          offset,
         behavior: 'smooth',
       });
     }
   }
 
   filterByCategory(selectedItem: { id: string; value: string } | string) {
-    this.selectedCategory = typeof selectedItem === 'string' ? selectedItem : selectedItem.value;
+    this.selectedCategory =
+      typeof selectedItem === 'string' ? selectedItem : selectedItem.value;
     this.currentPage = 1;
     this.toggleDropdown(false);
   }

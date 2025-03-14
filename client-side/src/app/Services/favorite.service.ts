@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { product } from '../models/product.model';
+import { product } from '../Models/product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +11,12 @@ export class FavoriteService {
     return this.favorites;
   }
 
-  addFavorite( product: product) {
+  addFavorite(product: product) {
     if (this.favorites.every((p) => p.id != product.id))
       this.favorites.push(product);
   }
 
-  removeFavorite( productId: string): void {
+  removeFavorite(productId: string): void {
     this.favorites = this.favorites.filter((p) => p.id !== productId);
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { BlogPost } from '../../models/blog.model';
+import { BlogPost } from '../../Models/blog.model';
 import { BlogService } from '../../Services/blog.service';
 import { CommonModule } from '@angular/common';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
@@ -32,7 +32,8 @@ export class BlogComponent implements OnInit {
     const blogID = this.route.snapshot.paramMap.get('id');
 
     if (blogID) {
-      this.blogService.getPostById(blogID).subscribe((data) => { // ✅ استخدام `getPostById` بشكل صحيح
+      this.blogService.getPostById(blogID).subscribe((data) => {
+        // ✅ استخدام `getPostById` بشكل صحيح
         this.blog = data;
         this.selectedCategory = data.category;
       });
@@ -49,7 +50,8 @@ export class BlogComponent implements OnInit {
 
   get relatedBlogs(): BlogPost[] {
     return this.blogs.filter(
-      (blog) => blog.category === this.selectedCategory && blog.id !== this.blogID
+      (blog) =>
+        blog.category === this.selectedCategory && blog.id !== this.blogID
     );
   }
 }

@@ -1,12 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { product } from '../../../models/product.model';
+import { product } from '../../../Models/product.model';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../../Services/cart.service';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
 import { Observable, map } from 'rxjs';
 import { FavoriteService } from '../../../Services/favorite.service';
-
 @Component({
   selector: 'app-favorites-items',
   imports: [ButtonComponent, CommonModule, RouterModule],
