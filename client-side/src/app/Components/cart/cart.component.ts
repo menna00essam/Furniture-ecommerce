@@ -1,11 +1,57 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { CartService } from '../../Services/cart.service';
+import { product } from '../../Models/product.model';
+import { Observable, map } from 'rxjs';
+import { StepperComponent } from '../shared/stepper/stepper.component';
 
 @Component({
   selector: 'app-cart',
-  imports: [],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css'
+  styleUrls: ['./cart.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    CartTotalsComponent,
+    HeaderBannerComponent,
+    FeatureBannerComponent,
+    CurrencyPipe,
+    StepperComponent,
+  ],
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
+  cart$!: Observable<product[]>;
+  cartLength$!: Observable<number>;
+  constructor(private cartService: CartService) {}
 
+  ngOnInit(): void {
+    this.cart$ = this.cartService.cart$;
+    this.cartService.getCart().subscribe();
+    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
+  }
+
+  get subtotal(): number {
+    return this.cartService.getSubtotal();
+  }
+
+  updateQuantity(item: product, quantity: number) {
+    item.quantity = quantity;
+  }
+
+  removeItem(itemId: string) {
+    this.cartService.removeProduct(itemId);
+  }
+
+  increaseQuantity(productId: string) {
+    this.cartService.increaseQuantity(productId);
+  }
+
+  decreaseQuantity(productId: string) {
+    this.cartService.decreaseQuantity(productId);
+  }
 }
