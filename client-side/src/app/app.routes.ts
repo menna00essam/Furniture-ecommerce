@@ -66,18 +66,6 @@ export const routes: Routes = [
       { path: 'favorites', component: FavoritesComponent },
       { path: 'privacypolicy', component: PrivacyPolicyComponent },
       { path: 'returns', component: ReturnsComponent },
-      // { path: 'payment', component: PaymentComponent },
-      {
-        path: '',
-        component: StepperComponent,
-        children: [
-          { path: 'cart', component: CartComponent },
-          { path: 'checkout', component: CheckoutComponent },
-          { path: 'order-complete', component: OrdersComponent },
-          { path: '**', component: ErrorComponent },
-        ],
-      },
-
       {
         path: 'profile',
         component: ProfileComponent,
@@ -100,6 +88,9 @@ export const routes: Routes = [
           },
         ],
       },
+      { path: 'cart', component: CartComponent },
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'order-complete', component: OrdersComponent },
       { path: '**', component: ErrorComponent },
     ],
   },
