@@ -23,8 +23,10 @@ const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
+const orderRouter=require("./src/routes/order.routes")
 
 / * * * * End Router imports * * * * /;
+
 
 // Connect to MongoDB
 connectDB();
@@ -49,6 +51,8 @@ app.use("/checkout", checkoutRouter);
 app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
 app.use("/contact", contactRouter);
+app.use("/orders", orderRouter);
+
 
 
 / * * * Global MiddleWare * * * /;
