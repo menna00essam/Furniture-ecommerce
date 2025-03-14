@@ -58,9 +58,7 @@ export class CartService implements OnInit {
           data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages.length
-              ? p.productImages
-              : ['/images/products/1.jpg'],
+            images: p.productImages,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
