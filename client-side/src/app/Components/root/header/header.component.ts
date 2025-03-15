@@ -3,8 +3,8 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../../search/search.component';
-import { UserActionsComponent } from '../../user-actions/user-actions.component';
-import { NavigationComponent } from '../../navigation/navigation.component';
+import { UserActionsComponent } from './user-actions/user-actions.component';
+import { NavigationComponent } from './navigation/navigation.component';
 
 @Component({
   selector: 'app-header',

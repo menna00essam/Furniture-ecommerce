@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { product } from '../../Models/product.model';
+import { product } from '../../../../Models/product.model';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { trigger, transition, animate, style } from '@angular/animations';
 import { RouterModule } from '@angular/router';
-import { FavoriteService } from '../../Services/favorite.service';
-import { CartService } from '../../Services/cart.service';
-import { AuthService } from '../../Services/auth.service';
+import { FavoriteService } from '../../../../Services/favorite.service';
+import { CartService } from '../../../../Services/cart.service';
+import { AuthService } from '../../../../Services/auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 

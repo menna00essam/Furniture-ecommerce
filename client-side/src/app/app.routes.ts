@@ -22,8 +22,8 @@ import { adminGuard } from './Guards/admin.guard';
 import { authGuard } from './Guards/auth.guard';
 
 import { ProfileComponent } from './Components/profile/profile.component';
-import { SettingComponent } from './Components/setting/setting.component';
-import { OrdersComponent } from './Components/orders/orders.component';
+import { SettingComponent } from './Components/profile/setting/setting.component';
+import { OrdersComponent } from './Components/profile/orders/orders.component';
 import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
 import { PrivacyPolicyComponent } from './Components/privacy-policy/privacy-policy.component';
 import { ReturnsComponent } from './Components/returns/returns.component';
