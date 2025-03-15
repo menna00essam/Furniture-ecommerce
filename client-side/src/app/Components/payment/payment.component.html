@@ -1,58 +1,47 @@
-<div [formGroup]="paymentForm" class="mt-6">
-  <div class="mb-4">
-    <label class="block text-md font-bold mb-2 text-gray-dark-600"
-      >Card number *</label
-    >
-    <input
-      type="text"
-      class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
-      placeholder="Card number"
-      formControlName="cardNumber"
-    />
-    @if (paymentForm.get('cardNumber')?.invalid &&
-    paymentForm.get('cardNumber')?.touched) {
-    <div class="text-red-500 text-sm">Card number is required.</div>
-    }
-  </div>
-
-  <div class="grid grid-cols-2 gap-4 mb-4">
-    <div>
-      <label class="block text-md font-bold mb-2 text-gray-dark-600"
-        >Expiry (MM/YY) *</label
-      >
-      <input
+<div class="mt-6">
+  <div class="payment-form">
+    <form [formGroup]="paymentForm" (ngSubmit)="validatePaymentForm()">
+      
+      <!--*** Card-number-input ***-->
+      <app-input
+        label="Card Number *"
+        labelClass="text-gray-700 font-medium"
+        placeholder="Card Number"
         type="text"
-        class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
+        bgC="secondary"
+        width="full"
+        [control]="cardNumber"
+      ></app-input>
+
+      <!--*** Expiry-date-input ***-->
+      <app-input
+        label="Expiry Date (MM/YY) *"
+        labelClass="text-gray-700 font-medium mt-2"
         placeholder="MM/YY"
-        formControlName="expiry"
-      />
-      @if (paymentForm.get('expiry')?.invalid &&
-      paymentForm.get('expiry')?.touched) {
-      <div class="text-red-500 text-sm">Expiry date is required.</div>
-      }
-    </div>
-    <div>
-      <label class="block text-md font-bold mb-2 text-gray-dark-600"
-        >Card code *</label
-      >
-      <input
         type="text"
-        class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-700 focus:shadow-md"
-        placeholder="CVC"
-        formControlName="cvc"
-      />
-      @if (paymentForm.get('cvc')?.invalid && paymentForm.get('cvc')?.touched) {
-      <div class="text-red-500 text-sm">CVC is required.</div>
-      }
-    </div>
-  </div>
+        bgC="secondary"
+        width="full"
+        [control]="expiry"
+      ></app-input>
 
-  <!--*** Emails with news ***-->
-  <div class="flex items-center mb-6">
-    <input type="checkbox" class="mr-2" />
-    <label class="text-sm"
-      >I would like to receive referral marketing and promotional emails
-      (optional)</label
-    >
+      <!--*** cvc-input ***-->
+      <app-input
+        label="CVC *"
+        labelClass="text-gray-700 font-medium mt-2"
+        placeholder="CVC"
+        type="text"
+        bgC="secondary"
+        width="full"
+        [control]="cvc"
+      ></app-input>
+    </form>
+  </div>
+  <!--*** email-subscription ***-->
+  <div class="flex items-center gap-2 mt-4">
+    <input type="checkbox" id="emailSubscription" class="w-4 h-4" />
+    <label for="emailSubscription" class="text-sm text-gray-600">
+      I would like to receive referral marketing and promotional emails
+      (optional)
+    </label>
   </div>
 </div>

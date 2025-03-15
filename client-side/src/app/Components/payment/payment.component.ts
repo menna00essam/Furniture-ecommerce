@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -8,10 +9,12 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CheckoutService } from '../../Services/checkout.service';
+import { InputComponent } from '../shared/input/input.component'; 
 
 @Component({
   selector: 'app-payment',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent], 
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.css',
 })
@@ -31,6 +34,20 @@ export class PaymentComponent {
       cvc: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
     });
   }
+
+  // Getter methods for form controls
+  get cardNumber(): FormControl {
+    return this.paymentForm.get('cardNumber') as FormControl;
+  }
+
+  get expiry(): FormControl {
+    return this.paymentForm.get('expiry') as FormControl;
+  }
+
+  get cvc(): FormControl {
+    return this.paymentForm.get('cvc') as FormControl;
+  }
+
   validatePaymentForm() {
     const paymentValidation = this.checkoutService.validatePaymentForm(
       this.paymentForm.value

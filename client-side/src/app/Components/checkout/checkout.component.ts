@@ -12,6 +12,7 @@ import {
 import {
   AbstractControl,
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
@@ -23,10 +24,9 @@ import { CartService } from '../../Services/cart.service';
 import { CurrencyPipe } from '@angular/common';
 import { PaymentComponent } from '../payment/payment.component';
 import { CheckoutService } from '../../Services/checkout.service';
-
 import { StepperComponent } from '../shared/stepper/stepper.component';
 import { RouterModule } from '@angular/router';
-
+import { InputComponent } from '../shared/input/input.component';
 
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -37,6 +37,7 @@ export function noNumbersValidator(): ValidatorFn {
 
 @Component({
   selector: 'app-checkout',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -48,14 +49,15 @@ export function noNumbersValidator(): ValidatorFn {
     ButtonComponent,
     CurrencyPipe,
     StepperComponent,
+    InputComponent,
   ],
   templateUrl: './checkout.component.html',
-  styleUrl: './checkout.component.css',
+  // styleUrl: './checkout.component.css',
   animations: [
     trigger('slideUpDown', [
       state('in', style({ height: '*', opacity: 1 })),
       state('out', style({ height: '0', opacity: 0 })),
-      transition('in <=> out', animate('200ms ease-in-out')),
+      transition('in <=> out', animate('400ms ease-in-out')),
     ]),
   ],
 })
@@ -73,72 +75,93 @@ export class CheckoutComponent {
   ) {
     this.checkoutForm = this.fb.group({
       firstName: ['', [Validators.required, noNumbersValidator()]],
-      lastName: ['', [Validators.required]],
+      lastName: ['', [Validators.required, noNumbersValidator()]],
       companyName: [''],
       country: ['', Validators.required],
       address: ['', Validators.required],
-      city: ['', [Validators.required]],
+      city: ['', [Validators.required, noNumbersValidator()]],
       zip: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
       email: ['', [Validators.required, Validators.email]],
       additionalInfo: [''],
-      paymentMethod: ['', Validators.required],
+      paymentMethod: ['', Validators.required], 
     });
-
     this.cartItems = this.cartService.getCheckoutData();
     this.subtotal = this.cartService.getSubtotal();
-    // console.log('Cart Items>>>>>>>>>>', this.cartItems);
+  }
+
+  get firstName(): FormControl {
+    return this.checkoutForm.get('firstName') as FormControl;
+  }
+
+  get lastName(): FormControl {
+    return this.checkoutForm.get('lastName') as FormControl;
+  }
+
+  get companyName(): FormControl {
+    return this.checkoutForm.get('companyName') as FormControl;
+  }
+
+  get country(): FormControl {
+    return this.checkoutForm.get('country') as FormControl;
+  }
+
+  get address(): FormControl {
+    return this.checkoutForm.get('address') as FormControl;
+  }
+
+  get city(): FormControl {
+    return this.checkoutForm.get('city') as FormControl;
+  }
+
+  get zip(): FormControl {
+    return this.checkoutForm.get('zip') as FormControl;
+  }
+
+  get phone(): FormControl {
+    return this.checkoutForm.get('phone') as FormControl;
+  }
+
+  get email(): FormControl {
+    return this.checkoutForm.get('email') as FormControl;
   }
 
   onSubmit() {
-    this.checkoutForm.markAllAsTouched();
-    this.checkoutForm.patchValue({
-      paymentMethod: this.selectedPayment,
-    });
+    const billingValues = this.checkoutForm.value;
+    const paymentValues = this.paymentComponent?.paymentForm?.value; 
+  
 
-    const checkoutValidation = this.checkoutService.validateCheckoutForm(
-      this.checkoutForm.value
-    );
-    // console.log('Checkout Validation>>>>>', checkoutValidation);
+    const billingValidation = this.checkoutService.validateCheckoutForm(billingValues);
+    const paymentValidation = this.checkoutService.validatePaymentForm(paymentValues);
+  
 
-    let paymentValidation: { isValid: boolean; errors: string[] } = {
-      isValid: true,
-      errors: [],
-    };
+    let errors: string[] = [...billingValidation.errors];
+  
 
-    if (
-      (this.selectedPayment === 'bank' || this.selectedPayment === 'cod') &&
-      this.paymentComponent
-    ) {
-      this.paymentComponent.paymentForm.markAllAsTouched();
-      paymentValidation = this.checkoutService.validatePaymentForm(
-        this.paymentComponent.paymentForm.value
-      );
-      // console.log('Payment Validation>>>>>', paymentValidation);
+    if (billingValues.paymentMethod === 'bank') {
+      errors = [...errors, ...paymentValidation.errors];
     }
-
-    if (
-      !checkoutValidation.isValid ||
-      (this.selectedPayment === 'bank' && !paymentValidation.isValid)
-    ) {
-      console.log('Form is invalid>>> Errors:', [
-        ...checkoutValidation.errors,
-        ...paymentValidation.errors,
-      ]);
+    if (this.checkoutForm.invalid) {
+      this.checkoutForm.markAllAsTouched();
       return;
     }
 
-    console.log('Checkout successfully!', this.checkoutForm.value);
-    this.checkoutForm.reset();
-    this.checkoutForm.markAsPristine();
-    this.checkoutForm.markAsUntouched();
-
-    if (this.selectedPayment === 'bank' && this.paymentComponent) {
-      this.paymentComponent.paymentForm.reset();
-      this.paymentComponent.paymentForm.markAsPristine();
-      this.paymentComponent.paymentForm.markAsUntouched();
+    if (errors.length > 0) {
+      console.error("Validation failed:", errors);
+      this.checkoutForm.markAllAsTouched();
+      this.paymentComponent?.paymentForm?.markAllAsTouched();
+      return;
     }
+    this.selectedPayment = billingValues.paymentMethod;
+  // console.log("Payment Method>>>>>", this.selectedPayment);
+    // console.log("payment details>>>>>", { billingDetails: billingValues, paymentDetails: paymentValues });
+    //*** reste forms ***/ 
+  this.checkoutForm.reset();
+  this.paymentComponent?.paymentForm?.reset();
+  this.selectedPayment = '';
 
-    this.selectedPayment = '';
+    this.checkoutService.processOrder(billingValues,paymentValues);
   }
+  
+  
 }
