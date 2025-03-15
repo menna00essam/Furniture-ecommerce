@@ -161,6 +161,11 @@ export class CheckoutComponent {
   this.paymentComponent?.paymentForm?.reset();
   this.selectedPayment = '';
 
+  //*** reste cart And product price ***/ 
+  this.cartItems = [];
+  this.subtotal = 0;
+  this.cartService.clearCart();
+
     this.checkoutService.processOrder(billingValues,paymentValues);
   }
   
