@@ -32,8 +32,8 @@ import { ProductService } from '../../Services/product.service';
 import { CategoriesService } from '../../Services/categories.service';
 
 // Models
-import { product } from '../../Models/product.model';
-import { category } from '../../Models/category.model';
+import { product } from '../../models/product.model';
+import { category } from '../../models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 

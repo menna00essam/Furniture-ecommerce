@@ -175,4 +175,10 @@ export class CartService implements OnInit {
   isInCart(productId: string): boolean {
     return this.cartSubject.getValue().some((p) => p.id === productId);
   }
+
+  clearCart(): void {
+    this.cartSubject.next([]);
+    this.checkoutSubject.next([]);
+    localStorage.removeItem('cart');
+  }
 }
