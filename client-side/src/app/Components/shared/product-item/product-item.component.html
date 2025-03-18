@@ -70,7 +70,7 @@
     [@slideInOut]="isHovered ? 'in' : 'out'"
     [@.disabled]="disableAnimation"
   >
-    <app-button type="plainBtn" (click)="addToCart()" btnWidth="200px"
+    <app-button type="plain" (click)="addToCart()" btnWidth="200px"
       >{{ isInCart(product.id) ? "Remove from" : "Add to" }} Cart</app-button
     >
     <nav
@@ -110,4 +110,5 @@
     </nav>
   </div>
 </div>
-<ng-toast [position]="ToasterPosition.BOTTOM_RIGHT" /> <!-- configure width with position -->
+<ng-toast [position]="ToasterPosition.BOTTOM_RIGHT" />
+<!-- configure width with position -->

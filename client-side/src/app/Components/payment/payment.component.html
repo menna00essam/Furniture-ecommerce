@@ -1,42 +1,42 @@
-<div class="mt-6">
-  <div class="payment-form">
-    <form [formGroup]="paymentForm" (ngSubmit)="validatePaymentForm()">
-      <!--*** Card-number-input ***-->
-      <app-input
-        label="Card Number *"
-        labelClass="text-gray-700 font-medium"
-        placeholder="Card Number"
-        type="text"
-        bgC="secondary"
-        width="full"
-        [control]="paymentForm.controls['cardNumber']"
-      ></app-input>
+<div class="flex flex-col gap-4">
+  <form
+    [formGroup]="paymentForm"
+    (ngSubmit)="validatePaymentForm()"
+    class="flex flex-col gap-4"
+  >
+    <!--*** Card-number-input ***-->
+    <app-input
+      label="Card Number *"
+      placeholder="Card Number"
+      type="text"
+      bgC="secondary"
+      width="full"
+      [control]="paymentForm.controls['cardNumber']"
+    ></app-input>
 
-      <!--*** Expiry-date-input ***-->
-      <app-input
-        label="Expiry Date (MM/YY) *"
-        labelClass="text-gray-700 font-medium mt-2"
-        placeholder="MM/YY"
-        type="text"
-        bgC="secondary"
-        width="full"
-        [control]="paymentForm.controls['expiry']"
-      ></app-input>
+    <!--*** Expiry-date-input ***-->
+    <app-input
+      label="Expiry Date (MM/YY) *"
+      placeholder="MM/YY"
+      type="text"
+      bgC="secondary"
+      width="full"
+      [control]="paymentForm.controls['expiry']"
+    ></app-input>
 
-      <!--*** cvc-input ***-->
-      <app-input
-        label="CVC *"
-        labelClass="text-gray-700 font-medium mt-2"
-        placeholder="CVC"
-        type="text"
-        bgC="secondary"
-        width="full"
-        [control]="paymentForm.controls['cvc']"
-      ></app-input>
-    </form>
-  </div>
+    <!--*** cvc-input ***-->
+    <app-input
+      label="CVC *"
+      placeholder="CVC"
+      type="text"
+      bgC="secondary"
+      width="full"
+      [control]="paymentForm.controls['cvc']"
+    ></app-input>
+  </form>
+
   <!--*** email-subscription ***-->
-  <div class="flex items-center gap-2 mt-4">
+  <div class="flex items-center gap-2">
     <input type="checkbox" id="emailSubscription" class="w-4 h-4" />
     <label for="emailSubscription" class="text-sm text-gray-600">
       I would like to receive referral marketing and promotional emails

@@ -5,123 +5,104 @@
 <app-stepper></app-stepper>
 
 <!--**** Checkout Section ****-->
-<section class="flex flex-col md:flex-row p-10 gap-10 mx-auto">
+<section class="flex flex-col md:flex-row p-10 gap-10">
   <!-- Billing Details Form -->
-  <div class="flex-1 p-6 shadow rounded-lg">
+  <div class="shadow p-6 rounded-lg flex-1 max-h-max flex flex-col gap-8">
+    <h2 class="text-3xl font-bold">Billing Details</h2>
     <form
       [formGroup]="checkoutForm"
       (ngSubmit)="onSubmit()"
       class="flex flex-col gap-4"
     >
-      <h2 class="text-3xl font-bold mb-4 text-gray-800">Billing Details</h2>
-
       <!--*** First Name ***-->
       <app-input
         label="First Name *"
-        labelClass="text-gray-700 font-medium"
         placeholder="First Name"
         type="text"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['firstName']"
-        formControlName="firstName"
       ></app-input>
 
       <!--*** Last Name ***-->
       <app-input
         label="Last Name *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Last Name"
         type="text"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['lastName']"
-        formControlName="lastName"
       ></app-input>
 
       <!--*** Company Name ***-->
       <app-input
         label="Company Name (Optional)"
-        labelClass="text-gray-700 font-medium"
         placeholder="Company Name"
         type="text"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['companyName']"
-        formControlName="companyName"
       ></app-input>
 
       <!--*** Country ***-->
       <app-input
         label="Country / Region *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Select Country"
         type="select"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['country']"
-        formControlName="country"
       >
       </app-input>
 
       <!--*** Address ***-->
       <app-input
         label="Street Address *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Address"
         type="text"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['address']"
-        formControlName="address"
       ></app-input>
 
       <!--*** City ***-->
       <app-input
         label="Town / City *"
-        labelClass="text-gray-700 font-medium"
         placeholder="City"
         type="text"
         bgC="secondary"
         width="full"
-        [control]="checkoutForm.controls['firstName']"
-        formControlName="city"
+        [control]="checkoutForm.controls['city']"
       ></app-input>
 
       <!--*** Zip Code ***-->
       <app-input
         label="Zip Code *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Zip Code"
         type="text"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['zip']"
-        formControlName="zip"
       ></app-input>
 
       <!--*** Phone ***-->
       <app-input
         label="Phone *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Phone"
         type="tel"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['phone']"
-        formControlName="phone"
       ></app-input>
 
       <!--*** Email ***-->
       <app-input
         label="Email Address *"
-        labelClass="text-gray-700 font-medium"
         placeholder="Email"
         type="email"
         bgC="secondary"
         width="full"
         [control]="checkoutForm.controls['email']"
-        formControlName="email"
       ></app-input>
 
       <!--*** Additional Information ***-->
@@ -138,9 +119,10 @@
   </div>
 
   <!--***** Confirming payment *****-->
-  <div class="Confirming-payment shadow p-6 rounded-lg flex-1 max-h-max">
-    <h3 class="text-3xl font-bold mb-4">Payment Method</h3>
-    <table class="w-full mt-8">
+  <div class="shadow p-6 rounded-lg flex-1 max-h-max flex flex-col gap-8">
+    <h2 class="text-3xl font-bold">Payment Method</h2>
+
+    <table class="w-full">
       <thead>
         <tr class="bg-gray-100">
           <th class="p-2 text-left">Product</th>
@@ -160,49 +142,55 @@
         </tr>
       </tbody>
     </table>
-    <div class="payment-method mt-6">
+
+    <div class="flex flex-col">
       <!--***** Payment Options *****-->
-      <div [formGroup]="checkoutForm">
-        <label class="flex items-center mb-4">
+      <div [formGroup]="checkoutForm" class="flex flex-col gap-2">
+        <div class="flex gap-2">
           <input
             type="radio"
+            id="cashMethod"
             name="paymentMethod"
             formControlName="paymentMethod"
             value="cod"
-            class="mr-2"
           />
-          Cash On Delivery
-        </label>
-        <label class="flex items-center mb-4">
+          <label for="cashMethod"> Cash On Delivery </label>
+        </div>
+        <div class="flex gap-2">
           <input
             type="radio"
+            id="cardMethod"
             name="paymentMethod"
             formControlName="paymentMethod"
             value="bank"
-            class="mr-2"
           />
-          Credit Card
-          <span class="payment-icons ml-2 flex items-center gap-2">
-            <img src="/icons/visa-card.svg" alt="VISA" class="w-9" />
-            <img src="/icons/mastercard.svg" alt="Mastercard" class="w-9" />
-            <img src="/icons/depit-card.svg" alt="Debit Card" class="w-9" />
-          </span>
-        </label>
+          <label class="flex items-center gap-2" for="cardMethod">
+            <span> Credit Card </span>
+            <div class="flex items-center gap-2">
+              <img src="/icons/visa-card.svg" alt="VISA" class="w-9" />
+              <img src="/icons/mastercard.svg" alt="Mastercard" class="w-9" />
+              <img src="/icons/depit-card.svg" alt="Debit Card" class="w-9" />
+            </div>
+          </label>
+        </div>
         <p
-          *ngIf="
+          [@slideUpDown]="
             checkoutForm.get('paymentMethod')?.invalid &&
             checkoutForm.get('paymentMethod')?.touched
+              ? 'in'
+              : 'out'
           "
-          class="text-red-500 text-sm"
+          class="text-red-light text-sm"
         >
           Please select a payment method.
         </p>
       </div>
+
       <div
         [@slideUpDown]="
           checkoutForm.get('paymentMethod')?.value === 'bank' ? 'in' : 'out'
         "
-        class="overflow-hidden"
+        class="overflow-hidden ml-4"
       >
         <app-payment></app-payment>
       </div>
@@ -210,16 +198,16 @@
         [@slideUpDown]="
           checkoutForm.get('paymentMethod')?.value === 'cod' ? 'in' : 'out'
         "
-        class="overflow-hidden"
+        class="overflow-hidden ml-4"
       >
-        <p class="text-gray-500 text-sm mt-4">
+        <p class="text-gray-500 text-sm">
           You can make your payment when you receive the order at your doorstep.
           Please keep exact change ready to avoid any inconvenience.
         </p>
       </div>
     </div>
 
-    <p class="mt-8 text-gray-800">
+    <p class="text-gray-800">
       Your personal data will be used to support your experience throughout this
       website, to manage access to your account , and for other purposes
       described in our
@@ -229,8 +217,8 @@
     </p>
     <app-button
       (click)="onSubmit()"
-      class="flex justify-center items-center mx-auto mt-8"
-      [type]="'semi-black-outline'"
+      class="flex justify-center items-center mx-auto"
+      type="black-outline"
       >Place Order</app-button
     >
   </div>

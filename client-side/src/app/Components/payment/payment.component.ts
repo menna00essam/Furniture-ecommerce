@@ -16,21 +16,20 @@ import { InputComponent } from '../shared/input/input.component';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent],
   templateUrl: './payment.component.html',
-  styleUrl: './payment.component.css',
 })
 export class PaymentComponent {
   paymentForm = new FormGroup({
-    cardNumber: new FormControl([
-      '',
-      [Validators.required, Validators.pattern(/^\d{16}$/)],
+    cardNumber: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{16}$/),
     ]),
-    expiry: new FormControl([
-      '',
-      [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)],
+    expiry: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/),
     ]),
-    cvc: new FormControl([
-      '',
-      [Validators.required, Validators.pattern(/^\d{3,4}$/)],
+    cvc: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{3,4}$/),
     ]),
   });
 
