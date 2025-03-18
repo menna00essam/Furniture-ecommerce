@@ -181,7 +181,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
   user.resetTokenExpiry = Date.now() + 600000;
 
   await user.save();
-  const resetLink = `http://localhost:4200/register/reset-password?token=${user.resetToken}`;
+  const resetLink = `http://localhost:4200/auth/reset-password?token=${user.resetToken}`;
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.email,

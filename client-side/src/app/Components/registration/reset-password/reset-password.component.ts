@@ -13,16 +13,30 @@ import {
 import { InputComponent } from '../../shared/input/input.component';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule],
   templateUrl: './reset-password.component.html',
+  animations: [
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in-out')),
+    ]),
+  ],
 })
 export class ResetPasswordComponent {
   token = '';
-  message = '';
+  errorMessage = '';
 
   resetForm = new FormGroup(
     {
@@ -49,7 +63,7 @@ export class ResetPasswordComponent {
   }
 
   resetPassword() {
-    this.resetForm.markAllAsTouched(); // Mark fields as touched for validation messages
+    this.resetForm.markAllAsTouched(); // Ensure errors are shown after form interaction
 
     if (this.resetForm.valid) {
       this.authService
@@ -59,12 +73,12 @@ export class ResetPasswordComponent {
         )
         .subscribe({
           next: () => {
-            this.message = 'Password reset successfully';
+            this.errorMessage = 'Password reset successfully';
             this.resetForm.reset();
-            this.router.navigate(['/register/login']);
+            this.router.navigate(['/auth/login']);
           },
           error: (err) => {
-            this.message = 'Error: ' + err.error.message;
+            this.errorMessage = 'Error: ' + err.error.message;
           },
         });
     } else {
