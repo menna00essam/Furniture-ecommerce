@@ -3,14 +3,17 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-require("./src/services/orderStatus.service");
+// Scripts to run
+require("./src/middlewares/passport.middleware");
+require('./src/services/orderStatus.service');
 
+const passport = require("passport");
 / * * * * Utils * * * * /;
 const httpStatusText = require("./src/utils/httpStatusText");
 / * * * * End Utils * * * * /;
 
 const PORT = process.env.PORT || 5000;
-
+app.use(passport.initialize());
 / * * * * DB * * * /;
 const connectDB = require("./src/config/db");
 / * * * * End Db * * * * /;
@@ -25,7 +28,7 @@ const checkoutRouter = require("./src/routes/checkout.routes");
 const cartRouter = require("./src/routes/cart.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
-const orderRouter = require("./src/routes/order.routes");
+const orderRouter = require('./src/routes/order.routes');
 
 / * * * * End Router imports * * * * /;
 
@@ -42,7 +45,7 @@ app.get("/", (req, res) => {
 });
 
 / * * * Routes * * * /;
-app.use("/register", registerationRouter);
+app.use("/auth", registerationRouter);
 app.use("/users", userRouter);
 app.use("/categories", categoreRouter);
 app.use("/products", productRouter);
@@ -51,8 +54,7 @@ app.use("/checkout", checkoutRouter);
 app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
 app.use("/contact", contactRouter);
-app.use("/orders", orderRouter);
-
+app.use('/orders', orderRouter);
 / * * * Global MiddleWare * * * /;
 // Not found routes
 app.all("*", (req, res, next) => {
