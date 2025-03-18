@@ -30,6 +30,7 @@ import {
 })
 export class ForgotPasswordComponent {
   errorMessage = '';
+  message = '';
   forgotForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
   });
@@ -41,11 +42,11 @@ export class ForgotPasswordComponent {
         .forgotPassword(this.forgotForm.controls.email.value!)
         .subscribe({
           next: (res) => {
-            this.errorMessage = 'Check your email for a password reset link';
+            this.message = '✅ Check your email for a password reset link';
             this.forgotForm.reset();
           },
           error: (err) => {
-            console.log(err)
+            console.log(err);
             this.errorMessage = 'Error: ' + err.error.message;
           },
         });

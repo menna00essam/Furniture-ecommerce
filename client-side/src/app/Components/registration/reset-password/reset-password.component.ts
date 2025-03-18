@@ -37,11 +37,18 @@ import {
 export class ResetPasswordComponent {
   token = '';
   errorMessage = '';
+  message = '';
 
   resetForm = new FormGroup(
     {
-      password: new FormControl('', [Validators.required]),
-      confirmPassword: new FormControl('', [Validators.required]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
+      confirmPassword: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
     },
     { validators: this.passwordMatchValidator() }
   );
@@ -73,7 +80,7 @@ export class ResetPasswordComponent {
         )
         .subscribe({
           next: () => {
-            this.errorMessage = 'Password reset successfully';
+            this.message = 'Password reset successfully';
             this.resetForm.reset();
             this.router.navigate(['/auth/login']);
           },
