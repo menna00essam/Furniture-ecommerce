@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
 import { Observable, map } from 'rxjs';
 import { FavoriteService } from '../../../Services/favorite.service';
-
 @Component({
   selector: 'app-favorites-items',
   imports: [ButtonComponent, CommonModule, RouterModule],
