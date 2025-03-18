@@ -1,7 +1,6 @@
 <div class="mt-6">
   <div class="payment-form">
     <form [formGroup]="paymentForm" (ngSubmit)="validatePaymentForm()">
-      
       <!--*** Card-number-input ***-->
       <app-input
         label="Card Number *"
@@ -10,7 +9,7 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="cardNumber"
+        [control]="paymentForm.controls['cardNumber']"
       ></app-input>
 
       <!--*** Expiry-date-input ***-->
@@ -21,7 +20,7 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="expiry"
+        [control]="paymentForm.controls['expiry']"
       ></app-input>
 
       <!--*** cvc-input ***-->
@@ -32,7 +31,7 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="cvc"
+        [control]="paymentForm.controls['cvc']"
       ></app-input>
     </form>
   </div>

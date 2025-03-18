@@ -1,66 +1,64 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../Services/auth.service';
 import {
-  FormBuilder,
   FormControl,
   FormGroup,
-  ReactiveFormsModule,
   Validators,
+  ReactiveFormsModule,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
+
 import { InputComponent } from '../../shared/input/input.component';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
+  standalone: true,
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule],
   templateUrl: './reset-password.component.html',
-  styleUrl: './reset-password.component.css',
 })
 export class ResetPasswordComponent {
   token = '';
   message = '';
-  resetForm: FormGroup;
-  get passwordControl(): FormControl {
-    return this.resetForm.get('password') as FormControl;
-  }
-  get confirmPasswordControl(): FormControl {
-    return this.resetForm.get('confirmPassword') as FormControl;
-  }
+
+  resetForm = new FormGroup(
+    {
+      password: new FormControl('', [Validators.required]),
+      confirmPassword: new FormControl('', [Validators.required]),
+    },
+    { validators: this.passwordMatchValidator() }
+  );
 
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder
+    private router: Router
   ) {
     this.token = this.route.snapshot.queryParams['token'];
-    this.resetForm = this.fb.group(
-      {
-        password: ['', [Validators.required]],
-        confirmPassword: ['', [Validators.required]],
-      },
-      { validator: this.passwordMatch }
-    );
   }
-  passwordMatch(group: FormGroup) {
-    const password = group.get('password')?.value;
-    const confirmPassword = group.get('confirmPassword')?.value;
-    if (password === confirmPassword) {
-      return null;
-    } else {
-      return { passwordMatch: true };
-    }
+
+  passwordMatchValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const password = control.get('password')?.value;
+      const confirmPassword = control.get('confirmPassword')?.value;
+      return password === confirmPassword ? null : { passwordMismatch: true };
+    };
   }
+
   resetPassword() {
-    this.resetForm.controls['password'].markAsTouched();
-    this.resetForm.controls['confirmPassword'].markAsTouched();
+    this.resetForm.markAllAsTouched(); // Mark fields as touched for validation messages
 
     if (this.resetForm.valid) {
       this.authService
-        .resetPassword(this.resetForm.controls['password'].value!, this.token)
+        .resetPassword(
+          this.resetForm.controls['password'].value ?? '',
+          this.token
+        )
         .subscribe({
-          next: (res) => {
+          next: () => {
             this.message = 'Password reset successfully';
             this.resetForm.reset();
             this.router.navigate(['/register/login']);

@@ -6,5 +6,6 @@ import { RouterOutlet } from '@angular/router';
   imports: [RouterOutlet],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css',
+  
 })
 export class RegistrationComponent {}

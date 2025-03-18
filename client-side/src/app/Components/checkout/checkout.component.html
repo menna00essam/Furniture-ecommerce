@@ -8,7 +8,11 @@
 <section class="flex flex-col md:flex-row p-10 gap-10 mx-auto">
   <!-- Billing Details Form -->
   <div class="flex-1 p-6 shadow rounded-lg">
-    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+    <form
+      [formGroup]="checkoutForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-4"
+    >
       <h2 class="text-3xl font-bold mb-4 text-gray-800">Billing Details</h2>
 
       <!--*** First Name ***-->
@@ -19,7 +23,8 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="firstName"
+        [control]="checkoutForm.controls['firstName']"
+        formControlName="firstName"
       ></app-input>
 
       <!--*** Last Name ***-->
@@ -30,7 +35,8 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="lastName"
+        [control]="checkoutForm.controls['lastName']"
+        formControlName="lastName"
       ></app-input>
 
       <!--*** Company Name ***-->
@@ -41,20 +47,22 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="companyName"
+        [control]="checkoutForm.controls['companyName']"
+        formControlName="companyName"
       ></app-input>
 
       <!--*** Country ***-->
       <app-input
-      label="Country / Region *"
-      labelClass="text-gray-700 font-medium"
-      placeholder="Select Country"
-      type="select"
-      bgC="secondary"
-      width="full"
-      [control]="country"
-    >
-    </app-input>
+        label="Country / Region *"
+        labelClass="text-gray-700 font-medium"
+        placeholder="Select Country"
+        type="select"
+        bgC="secondary"
+        width="full"
+        [control]="checkoutForm.controls['country']"
+        formControlName="country"
+      >
+      </app-input>
 
       <!--*** Address ***-->
       <app-input
@@ -64,7 +72,8 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="address"
+        [control]="checkoutForm.controls['address']"
+        formControlName="address"
       ></app-input>
 
       <!--*** City ***-->
@@ -75,7 +84,8 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="city"
+        [control]="checkoutForm.controls['firstName']"
+        formControlName="city"
       ></app-input>
 
       <!--*** Zip Code ***-->
@@ -86,7 +96,8 @@
         type="text"
         bgC="secondary"
         width="full"
-        [control]="zip"
+        [control]="checkoutForm.controls['zip']"
+        formControlName="zip"
       ></app-input>
 
       <!--*** Phone ***-->
@@ -97,7 +108,8 @@
         type="tel"
         bgC="secondary"
         width="full"
-        [control]="phone"
+        [control]="checkoutForm.controls['phone']"
+        formControlName="phone"
       ></app-input>
 
       <!--*** Email ***-->
@@ -108,17 +120,20 @@
         type="email"
         bgC="secondary"
         width="full"
-        [control]="email"
+        [control]="checkoutForm.controls['email']"
+        formControlName="email"
       ></app-input>
 
       <!--*** Additional Information ***-->
-      <label class="block text-gray-700 font-medium">Additional Information</label>
-        <textarea
-          id="additional-info"
-          rows="4"
-          formControlName="additionalInfo"
-          class="w-full outline-0 rounded-md p-2 ps-2 bg-secondary"
-        ></textarea>
+      <label class="block text-gray-700 font-medium"
+        >Additional Information</label
+      >
+      <textarea
+        id="additional-info"
+        rows="4"
+        formControlName="additionalInfo"
+        class="w-full outline-0 rounded-md p-2 ps-2 bg-secondary"
+      ></textarea>
     </form>
   </div>
 
@@ -150,42 +165,51 @@
       <div [formGroup]="checkoutForm">
         <label class="flex items-center mb-4">
           <input
-          type="radio"
-          name="paymentMethod"
-          formControlName="paymentMethod"
-          value="cod"
-          class="mr-2"
-        />
-        Cash On Delivery
-      </label>
-      <label class="flex items-center mb-4">
-        <input
-          type="radio"
-          name="paymentMethod"
-          formControlName="paymentMethod"
-          value="bank"
-          class="mr-2"
-        />
-        Credit Card
-        <span class="payment-icons ml-2 flex items-center gap-2">
-          <img src="/icons/visa-card.svg" alt="VISA" class="w-9" />
-          <img src="/icons/mastercard.svg" alt="Mastercard" class="w-9" />
-          <img src="/icons/depit-card.svg" alt="Debit Card" class="w-9" />
-        </span>
-      </label>
-      <p *ngIf="checkoutForm.get('paymentMethod')?.invalid && checkoutForm.get('paymentMethod')?.touched"
-      class="text-red-500 text-sm">
-     Please select a payment method.
-   </p>
+            type="radio"
+            name="paymentMethod"
+            formControlName="paymentMethod"
+            value="cod"
+            class="mr-2"
+          />
+          Cash On Delivery
+        </label>
+        <label class="flex items-center mb-4">
+          <input
+            type="radio"
+            name="paymentMethod"
+            formControlName="paymentMethod"
+            value="bank"
+            class="mr-2"
+          />
+          Credit Card
+          <span class="payment-icons ml-2 flex items-center gap-2">
+            <img src="/icons/visa-card.svg" alt="VISA" class="w-9" />
+            <img src="/icons/mastercard.svg" alt="Mastercard" class="w-9" />
+            <img src="/icons/depit-card.svg" alt="Debit Card" class="w-9" />
+          </span>
+        </label>
+        <p
+          *ngIf="
+            checkoutForm.get('paymentMethod')?.invalid &&
+            checkoutForm.get('paymentMethod')?.touched
+          "
+          class="text-red-500 text-sm"
+        >
+          Please select a payment method.
+        </p>
       </div>
       <div
-        [@slideUpDown]="checkoutForm.get('paymentMethod')?.value === 'bank' ? 'in' : 'out'"
+        [@slideUpDown]="
+          checkoutForm.get('paymentMethod')?.value === 'bank' ? 'in' : 'out'
+        "
         class="overflow-hidden"
       >
         <app-payment></app-payment>
       </div>
       <div
-        [@slideUpDown]="checkoutForm.get('paymentMethod')?.value === 'cod' ? 'in' : 'out'"
+        [@slideUpDown]="
+          checkoutForm.get('paymentMethod')?.value === 'cod' ? 'in' : 'out'
+        "
         class="overflow-hidden"
       >
         <p class="text-gray-500 text-sm mt-4">
@@ -199,7 +223,9 @@
       Your personal data will be used to support your experience throughout this
       website, to manage access to your account , and for other purposes
       described in our
-      <a class="font-bold text-primary" [routerLink]="['/privacypolicy']">privacy policy</a>.
+      <a class="font-bold text-primary" [routerLink]="['/privacypolicy']"
+        >privacy policy</a
+      >.
     </p>
     <app-button
       (click)="onSubmit()"

@@ -27,8 +27,6 @@ import { OrdersComponent } from './Components/profile/orders/orders.component';
 import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
 import { PrivacyPolicyComponent } from './Components/privacy-policy/privacy-policy.component';
 import { ReturnsComponent } from './Components/returns/returns.component';
-// import { PaymentComponent } from './Components/payment/payment.component';
-import { StepperComponent } from './Components/shared/stepper/stepper.component';
 
 export const routes: Routes = [
   {

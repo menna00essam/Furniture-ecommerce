@@ -1,92 +1,85 @@
-<div class="flex flex-col lg:flex-row min-h-screen">
-  <div class="flex-1 flex flex-col justify-center items-center py-5">
-    <div class="flex flex-col gap-4 shadow w-[90%] lg:w-[70%] p-10 rounded-xl">
-      <div class="flex items-center gap-2 w-full">
-        <img src="images/logo.png" alt="Logo" class="w-[30px] lg:w-[40px]" />
-        <div class="font-montserrat text-2xl font-bold">Furniro</div>
-      </div>
+<div class="flex flex-col gap-4">
+  <h2 class="text-5xl font-bold font-poppins">Sign In</h2>
+  <form [formGroup]="loginForm" class="flex flex-col gap-4">
+    <app-input
+      placeholder="Email"
+      label="Email"
+      type="email"
+      bgC="secondary"
+      width="full"
+      [control]="loginForm.controls['email']"
+    ></app-input>
 
-      <div class="sign text-4xl font-bold font-poppins">Sign In</div>
+    <div class="relative">
+      <app-input
+        placeholder="Enter your password"
+        label="Password"
+        type="password"
+        bgC="secondary"
+        width="full"
+        [control]="loginForm.controls['password']"
+      ></app-input>
 
-      <form [formGroup]="form" class="flex flex-col gap-1">
-        <div class="flex justify-between items-center">
-          <label class="text-gray-700 font-medium">Email</label>
-        </div>
-        <app-input
-          class="mb-5"
-          placeholder="Email"
-          type="email"
-          bgC="secondary"
-          width="full"
-          [control]="form.controls['email']"
-        ></app-input>
-
-        <div class="flex justify-between items-center">
-          <label class="text-gray-700 font-medium">Password</label>
-          <a
-            routerLink="/auth/forgot-password"
-            class="text-primary text-sm cursor-pointer hover:underline"
-          >
-            Forgot password?
-          </a>
-        </div>
-        <app-input
-          placeholder="Enter your password"
-          type="password"
-          bgC="secondary"
-          width="full"
-          [control]="form.controls['password']"
-        ></app-input>
-        <div class="flex items-center gap-2 mt-4">
-          <input
-            type="checkbox"
-            id="agree"
-            formControlName="agree"
-            class="w-4 h-4"
-          />
-          <label for="agree" class="text-sm text-gray-600"> Remember me </label>
-        </div>
-
-        <div
-          class="text-red-500 text-center"
-          [@slideUpDown]="errorMessage ? 'in' : 'out'"
-        >
-          {{ errorMessage }}
-        </div>
-
-        <div class="text-center mt-4">
-          <span class="text-gray">Don't have an account?</span>
-          <a
-            class="text-primary font-semibold hover:underline"
-            routerLink="/auth/signup"
-          >
-            Sign Up
-          </a>
-        </div>
-        <div class="flex justify-center mt-5">
-          <button
-            (click)="onGoogleSignIn()"
-            class="flex items-center cursor-pointer justify-center gap-2 w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-secondary transition duration-200"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google Logo"
-              class="w-5 h-5"
-            />
-            <span class="text-gray-700 font-medium">Continue with Google</span>
-          </button>
-        </div>
-
-        <div class="flex justify-center mt-5">
-          <app-button (click)="onSubmit()">Sign In</app-button>
-        </div>
-      </form>
+      <a
+        [routerLink]="['/auth/forgot-password']"
+        class="text-primary text-sm cursor-pointer hover:underline absolute top-0 right-0"
+      >
+        Forgot password?
+      </a>
     </div>
-  </div>
 
-  <div
-    class="bg-secondary w-[100%] lg:w-[600px] hidden lg:flex items-start py-4"
-  >
-    <img src="icons/registration.svg" alt="" class="scale-x-[-1] w-[90%]" />
-  </div>
+    <div class="flex flex-col gap-2 w-full mt-2">
+      <div class="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="agree"
+          formControlName="agree"
+          class="w-4 h-4"
+        />
+        <label for="agree" class="text-sm text-gray-600">Remember me</label>
+      </div>
+    </div>
+
+    <div
+      class="text-red-500 text-center"
+      [@slideUpDown]="errorMessage ? 'in' : 'out'"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <div class="flex justify-center">
+      <app-button (click)="onSubmit()">Sign In</app-button>
+    </div>
+
+    <div class="text-center mt-2">
+      <span class="text-gray">Don't have an account?</span>
+      <span>
+        <a
+          class="text-primary font-bold opacity-100"
+          [routerLink]="['/auth/signup']"
+        >
+          Sign Up</a
+        >
+      </span>
+    </div>
+
+    <div class="flex justify-center items-center w-1/2 self-center">
+      <div class="bg-gray-light h-0.5 flex-1"></div>
+      <span class="px-4">or</span>
+      <div class="bg-gray-light h-0.5 flex-1"></div>
+    </div>
+    <div class="flex justify-center">
+      <button
+        (click)="onGoogleSignIn()"
+        class="flex items-center cursor-pointer justify-center gap-2 w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-secondary transition duration-200"
+      >
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          alt="Google Logo"
+          class="w-5 h-5"
+        />
+        <span class="text-gray-700 font-medium">Continue with Google</span>
+      </button>
+    </div>
+  </form>
 </div>

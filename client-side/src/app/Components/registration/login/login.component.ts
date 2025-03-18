@@ -32,7 +32,7 @@ import {
 })
 export class LoginComponent {
   errorMessage: string = '';
-  form = new FormGroup({
+  loginForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [
       Validators.required,
@@ -54,13 +54,13 @@ export class LoginComponent {
     });
   }
   onSubmit() {
-    this.form.controls.email.markAsTouched();
-    this.form.controls.password.markAsTouched();
-    this.form.controls.agree.markAsTouched();
-    if (this.form.valid) {
-      this.authService.login(this.form.value).subscribe({
+    this.loginForm.controls.email.markAsTouched();
+    this.loginForm.controls.password.markAsTouched();
+    this.loginForm.controls.agree.markAsTouched();
+    if (this.loginForm.valid) {
+      this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
-          this.form.reset();
+          this.loginForm.reset();
           localStorage.setItem('token', res.data.token);
           const decoded: any = jwtDecode(res.data.token);
           localStorage.setItem('role', decoded.role);
