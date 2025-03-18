@@ -32,7 +32,7 @@ import { StepperComponent } from './Components/shared/stepper/stepper.component'
 
 export const routes: Routes = [
   {
-    path: 'register',
+    path: 'auth',
     component: RegistrationComponent,
     children: [
       { path: '', component: LoginComponent, canActivate: [authGuard] },
@@ -40,11 +40,6 @@ export const routes: Routes = [
       { path: 'signup', component: SignupComponent, canActivate: [authGuard] },
       { path: 'forgot-password', component: ForgotPasswordComponent },
       { path: 'reset-password', component: ResetPasswordComponent },
-      { path: '**', component: ErrorComponent },
-
-      { path: '', component: LoginComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'signup', component: SignupComponent },
       { path: '**', component: ErrorComponent },
     ],
   },
@@ -89,8 +84,16 @@ export const routes: Routes = [
         ],
       },
       { path: 'cart', component: CartComponent },
-      { path: 'checkout', component: CheckoutComponent },
-      { path: 'order-complete', component: OrdersComponent },
+      {
+        path: 'checkout',
+        component: CheckoutComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'order-complete',
+        component: OrdersComponent,
+        canActivate: [authGuard],
+      },
       { path: '**', component: ErrorComponent },
     ],
   },
