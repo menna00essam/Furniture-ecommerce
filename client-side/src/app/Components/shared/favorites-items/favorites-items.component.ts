@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
 import { Observable, map } from 'rxjs';
 import { FavoriteService } from '../../../Services/favorite.service';
+import { productCart } from '../../../Models/productCart.model';
 @Component({
   selector: 'app-favorites-items',
   imports: [ButtonComponent, CommonModule, RouterModule],
@@ -14,7 +15,7 @@ import { FavoriteService } from '../../../Services/favorite.service';
 })
 export class FavoritesItemsComponent implements OnInit {
   favorites: product[] = [];
-  cart$!: Observable<product[]>;
+  cart$!: Observable<productCart[]>;
 
   constructor(
     private cdr: ChangeDetectorRef,

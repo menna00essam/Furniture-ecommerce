@@ -25,6 +25,7 @@ import { map, Observable } from 'rxjs';
 
 import { NgToastModule, NgToastService } from 'ng-angular-popup';
 import { ToasterPosition } from 'ng-angular-popup';
+import { productCart } from '../../../Models/productCart.model';
 
 @Component({
   selector: 'app-product-item',
@@ -47,7 +48,7 @@ export class ProductItemComponent implements OnInit {
   isHovered = false;
   disableAnimation = false;
 
-  cart$!: Observable<product[]>;
+  cart$!: Observable<productCart[]>;
 
   ToasterPosition = ToasterPosition;
 

@@ -137,7 +137,7 @@
               {{ item.name }}
             </h3>
             <div class="flex gap-[10px]">
-              <div>1</div>
+              <div>{{ item.quantity }}</div>
               <div>x</div>
               <div class="text-primary">{{ item.price | currency }}</div>
             </div>
@@ -156,7 +156,9 @@
     </div>
     <div class="flex justify-between">
       <div>Subtotal</div>
-      <div class="text-primary">{{ cartProductsTotalPrice | currency }}</div>
+      <div class="text-primary">
+        {{ cartProductsTotalPrice | async | currency }}
+      </div>
     </div>
   </div>
   <div class="flex justify-between">

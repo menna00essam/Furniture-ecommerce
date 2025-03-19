@@ -8,6 +8,7 @@ import { CartService } from '../../Services/cart.service';
 import { product } from '../../Models/product.model';
 import { Observable, map } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
+import { productCart } from '../../Models/productCart.model';
 
 @Component({
   selector: 'app-cart',
@@ -25,22 +26,18 @@ import { StepperComponent } from '../shared/stepper/stepper.component';
   ],
 })
 export class CartComponent implements OnInit {
-  cart$!: Observable<product[]>;
+  cart$!: Observable<productCart[]>;
   cartLength$!: Observable<number>;
+  subtotal$!: Observable<number>; // Declare subtotal$ as a property
+
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-    this.cartService.getCart().subscribe();
-    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
-  }
+    this.subtotal$ = this.cartService.getSubtotal(); // Assign the observable here
+    this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
 
-  get subtotal(): number {
-    return this.cartService.getSubtotal();
-  }
-
-  updateQuantity(item: product, quantity: number) {
-    item.quantity = quantity;
+    this.cartService.getCart().subscribe({ next: (cart) => console.log(cart) });
   }
 
   removeItem(itemId: string) {

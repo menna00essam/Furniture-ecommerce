@@ -8,6 +8,7 @@ import { product } from '../../../../Models/product.model';
 import { FavoriteService } from '../../../../Services/favorite.service';
 import { CartService } from '../../../../Services/cart.service';
 import { AuthService } from '../../../../Services/auth.service';
+import { productCart } from '../../../../Models/productCart.model';
 
 @Component({
   selector: 'app-user-actions',
@@ -32,9 +33,9 @@ import { AuthService } from '../../../../Services/auth.service';
   ],
 })
 export class UserActionsComponent implements OnInit {
-  cartProductsTotalPrice = 0;
+  cartProductsTotalPrice!: Observable<number>;
   cartLength$!: Observable<number>;
-  cart$!: Observable<product[]>;
+  cart$!: Observable<productCart[]>;
   favoritesLength = 0;
   favModalShow = false;
   cartModalShow = false;
@@ -48,14 +49,13 @@ export class UserActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((status) => {
-      console.log(status);
       this.isLoggedIn = status;
-      console.log(status);
     });
 
-    this.cart$ = this.cartService.cart$;
     this.cartService.getCart().subscribe();
-    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
+    this.cart$ = this.cartService.cart$;
+    this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
+    this.cartProductsTotalPrice = this.cartService.getSubtotal();
   }
 
   get favorites(): product[] {

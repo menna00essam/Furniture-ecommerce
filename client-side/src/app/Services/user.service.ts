@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { user } from '../Models/user.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   private userSubject = new BehaviorSubject<user | null>(null);
 
@@ -29,7 +30,7 @@ export class UserService {
   }
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 }

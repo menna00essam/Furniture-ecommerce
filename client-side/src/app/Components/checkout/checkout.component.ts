@@ -28,6 +28,7 @@ import { InputComponent } from '../shared/input/input.component';
 
 import { CartService } from '../../Services/cart.service';
 import { CheckoutService } from '../../Services/checkout.service';
+import { Observable } from 'rxjs';
 
 // Custom Validator: No Numbers
 export function noNumbersValidator(): ValidatorFn {
@@ -86,7 +87,7 @@ export class CheckoutComponent {
 
   selectedPayment: string = '';
   cartItems: any[] = [];
-  subtotal: number = 0;
+  subtotal!: Observable<number>;
 
   @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
 
@@ -147,7 +148,6 @@ export class CheckoutComponent {
 
     // Clear cart
     this.cartItems = [];
-    this.subtotal = 0;
     this.cartService.clearCart();
   }
 }
