@@ -3,6 +3,6 @@ export interface productCart {
   images: string[];
   name: string;
   price: number;
-  sale?: number;
   quantity: number;
+  subtotal: number;
 }

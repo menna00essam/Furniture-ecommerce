@@ -6,9 +6,7 @@ import { product } from '../Models/product.model';
 import { AuthService } from './auth.service';
 import { productCart } from '../Models/productCart.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class CartService {
   private apiUrl = 'http://localhost:5000/cart';
 
@@ -22,10 +20,9 @@ export class CartService {
   checkoutData$ = this.checkoutSubject.asObservable();
 
   constructor(private http: HttpClient, private authService: AuthService) {
-    // Subscribe to AuthService's isLoggedIn$ to update CartService
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedInSubject.next(status);
-      this.loadCart(); // Load cart when login status changes
+      this.loadCart();
     });
   }
 
@@ -35,16 +32,7 @@ export class CartService {
   }
 
   private getGuestCart(): productCart[] {
-    const guestCart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    return guestCart.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      images: p.images?.length ? p.images : ['/images/products/1.jpg'],
-      subTitle: p.subTitle,
-      price: p.price,
-      quantity: p.quantity,
-    }));
+    return JSON.parse(localStorage.getItem('cart') || '[]');
   }
 
   private saveGuestCart(cart: productCart[]): void {
@@ -63,62 +51,71 @@ export class CartService {
         .get<{ data: { products: any[] } }>(this.apiUrl, {
           headers: this.getAuthHeaders(),
         })
-
         .pipe(
-          tap((res) => {
-            console.log(res);
-          }),
           map(({ data }) =>
-            data.products.map((p) => ({
-              id: p._id,
-              name: p.productName,
-              images: p.productImages,
-              price: p.productPrice,
-              quantity: p.productQuantity,
-            }))
+            data.products.map((p) => {
+              const effectivePrice = p.productSale
+                ? p.productPrice * (1 - p.productSale / 100)
+                : p.productPrice;
+              return {
+                id: p._id,
+                name: p.productName,
+                images: p.productImages,
+                price: effectivePrice,
+                quantity: p.productQuantity,
+                subtotal: effectivePrice * p.productQuantity,
+              };
+            })
           ),
-          catchError((error) => {
-            console.error('Error fetching products:', error);
+          tap((cart) => this.cartSubject.next(cart)), 
+          catchError(() => {
+            this.cartSubject.next([]); 
             return of([]);
           })
         );
     } else {
       const guestCart = this.getGuestCart();
-      if (
-        JSON.stringify(this.cartSubject.getValue()) !==
-        JSON.stringify(guestCart)
-      ) {
-        this.cartSubject.next(guestCart);
-      }
+      this.cartSubject.next(guestCart); 
       return of(guestCart);
     }
   }
 
   updateCart(cart: productCart[]): void {
     this.cartSubject.next(cart);
+    if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
     console.log(cart);
   }
 
-  addProduct(product: productCart): void {
-    this.cart$.subscribe((cart) => {
-      const updatedCart = [...cart];
+  addProduct(product: product): void {
+    const discountedPrice = product.sale
+      ? product.price * (1 - product.sale / 100)
+      : product.price;
+    const cart = [...this.cartSubject.getValue()];
+    const existingProduct = cart.find((p) => p.id === product.id);
 
-      if (!updatedCart.some((p) => p.id === product.id)) {
-        updatedCart.push({ ...product, quantity: 1 });
-        this.updateCart(updatedCart);
+    if (existingProduct) {
+      existingProduct.quantity++;
+      existingProduct.subtotal =
+        existingProduct.quantity * existingProduct.price;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name,
+        images: product.images,
+        price: discountedPrice,
+        quantity: 1,
+        subtotal: discountedPrice,
+      });
+    }
 
-        if (this.isLoggedInSubject.getValue()) {
-          console.log(1);
-          this.http
-            .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
-              headers: this.getAuthHeaders(),
-            })
-            .subscribe();
-        } else {
-          this.saveGuestCart(updatedCart);
-        }
-      }
-    });
+    this.updateCart(cart);
+    if (this.isLoggedInSubject.getValue()) {
+      this.http
+        .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
+          headers: this.getAuthHeaders(),
+        })
+        .subscribe();
+    }
   }
 
   removeProduct(productId: string): void {
@@ -131,21 +128,19 @@ export class CartService {
     remove = false
   ): void {
     let cart = [...this.cartSubject.getValue()];
-
     if (remove) {
-      cart = cart.filter((p) => p.id !== productId); // Remove the product
+      cart = cart.filter((p) => p.id !== productId);
     } else {
       const product = cart.find((p) => p.id === productId);
       if (product) {
         product.quantity += change;
+        product.subtotal = product.quantity * product.price;
         if (product.quantity <= 0) {
-          cart = cart.filter((p) => p.id !== productId); // Remove if quantity is zero
+          cart = cart.filter((p) => p.id !== productId);
         }
       }
     }
-
     this.updateCart(cart);
-
     if (this.isLoggedInSubject.getValue()) {
       this.http
         .patch(
@@ -159,8 +154,6 @@ export class CartService {
           { headers: this.getAuthHeaders() }
         )
         .subscribe();
-    } else {
-      this.saveGuestCart(cart);
     }
   }
 
@@ -173,15 +166,9 @@ export class CartService {
   }
 
   getSubtotal(): Observable<number> {
-    return this.cartSubject
-      .asObservable()
-      .pipe(
-        map((cart) =>
-          cart && cart.length > 0
-            ? cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-            : 0
-        )
-      );
+    return this.cart$.pipe(
+      map((cart) => cart.reduce((sum, item) => sum + item.subtotal, 0))
+    );
   }
 
   setCheckoutData(): void {

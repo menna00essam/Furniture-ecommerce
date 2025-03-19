@@ -52,9 +52,9 @@ export class UserActionsComponent implements OnInit {
       this.isLoggedIn = status;
     });
 
-    this.cartService.getCart().subscribe();
     this.cart$ = this.cartService.cart$;
-    this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
+    this.cartService.getCart().subscribe();
+    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
     this.cartProductsTotalPrice = this.cartService.getSubtotal();
   }
 

@@ -33,11 +33,11 @@ export class CartComponent implements OnInit {
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
+    this.cartService.getCart().subscribe();
+
     this.cart$ = this.cartService.cart$;
     this.subtotal$ = this.cartService.getSubtotal(); // Assign the observable here
     this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
-
-    this.cartService.getCart().subscribe({ next: (cart) => console.log(cart) });
   }
 
   removeItem(itemId: string) {

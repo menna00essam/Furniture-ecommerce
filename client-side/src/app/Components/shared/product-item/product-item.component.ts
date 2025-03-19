@@ -81,7 +81,6 @@ export class ProductItemComponent implements OnInit {
   }
 
   addToCart() {
-    console.log(1);
     if (this.cartService.isInCart(this.product.id)) {
       this.cartService.removeProduct(this.product.id);
       this.toast.success(
@@ -91,6 +90,7 @@ export class ProductItemComponent implements OnInit {
       );
     } else {
       this.cartService.addProduct(this.product);
+
       this.toast.success('Product Added Succeffully to cart', 'SUCCESS', 1000);
     }
     this.cdr.detectChanges();
