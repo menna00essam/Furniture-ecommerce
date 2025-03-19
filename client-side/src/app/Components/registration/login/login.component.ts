@@ -17,6 +17,7 @@ import {
   animate,
   state,
 } from '@angular/animations';
+
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, InputComponent, RouterModule, ButtonComponent],
@@ -38,46 +39,43 @@ export class LoginComponent {
       Validators.required,
       Validators.minLength(8),
     ]),
-    agree: new FormControl(false),
+    rememberme: new FormControl(false),
   });
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
+    // Handle Google login token from query params
     this.route.queryParams.subscribe((params) => {
       const token = params['token'];
       if (token) {
-        this.authService.handleGoogleLogin(token);
+        this.authService.handleGoogleLogin(token, false);
         this.router.navigate(['/']);
       }
     });
   }
+
   onSubmit() {
-    this.loginForm.controls.email.markAsTouched();
-    this.loginForm.controls.password.markAsTouched();
-    this.loginForm.controls.agree.markAsTouched();
+    this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
+      const { email, password, rememberme } = this.loginForm.value;
+
+      this.authService.login({ email, password }, rememberme!).subscribe({
         next: (res) => {
           this.loginForm.reset();
-          localStorage.setItem('token', res.data.token);
-          const decoded: any = jwtDecode(res.data.token);
-          localStorage.setItem('role', decoded.role);
-          if (decoded.role === 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/']);
-          }
         },
         error: (err) => {
-          this.errorMessage = err.error.error;
+          this.errorMessage =
+            err.error?.error || 'Login failed. Please try again.';
         },
       });
     } else {
       console.error('Form invalid');
     }
   }
+
   onGoogleSignIn() {
     this.authService.googleSignIn();
   }
