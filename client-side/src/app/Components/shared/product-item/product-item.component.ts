@@ -74,6 +74,19 @@ export class ProductItemComponent implements OnInit {
 
   addToFavourites() {
     this.favoriteService.toggleFavourite(this.product.id).subscribe();
+    if (this.favoriteService.isInFavorites(this.product.id)) {
+      this.toast.success(
+        'Product removed Succeffully to favorites',
+        'SUCCESS',
+        1000
+      );
+    } else {
+      this.toast.success(
+        'Product added Succeffully from favorites',
+        'SUCCESS',
+        1000
+      );
+    }
     this.cdr.detectChanges();
   }
 
@@ -87,7 +100,6 @@ export class ProductItemComponent implements OnInit {
       );
     } else {
       this.cartService.addProduct(this.product);
-
       this.toast.success('Product Added Succeffully to cart', 'SUCCESS', 1000);
     }
     this.cdr.detectChanges();
