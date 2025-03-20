@@ -18,7 +18,6 @@ export class FavoriteService {
     this.authService.isLoggedIn$.subscribe((status) => {
       if (status) {
         this.loadFavorites();
-        console.log(5);
       }
     });
   }
@@ -39,7 +38,6 @@ export class FavoriteService {
       })
       .pipe(
         tap((response) => {
-          console.log(response);
           const apiFavorites = response.data.favourites.map((p) => ({
             id: p._id,
             name: p.productName,

@@ -83,7 +83,6 @@ export class CartService {
   updateCart(cart: productCart[]): void {
     this.cartSubject.next(cart);
     if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
-    console.log(cart);
   }
 
   addProduct(product: product): void {

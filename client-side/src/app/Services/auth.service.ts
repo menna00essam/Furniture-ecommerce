@@ -54,7 +54,6 @@ export class AuthService {
   login(user: any, rememberMe: boolean): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, user).pipe(
       tap((response: any) => {
-        console.log(response);
         if (response?.data.token) {
           this.storeToken(response.data.token, rememberMe);
           this.isLoggedInSubject.next(true);
@@ -111,7 +110,6 @@ export class AuthService {
   }
 
   private storeToken(token: string, rememberMe: boolean): void {
-    console.log('Storing token:', token);
     try {
       const decoded: any = jwtDecode(token);
       const storage = rememberMe ? localStorage : sessionStorage;
@@ -131,7 +129,6 @@ export class AuthService {
 
   private navigateToDashboard(): void {
     const role = this.getRole();
-    console.log(role);
     const targetRoute = role === 'ADMIN' ? '/admin' : '/';
     if (this.router.url !== targetRoute) {
       this.router.navigate([targetRoute]);
