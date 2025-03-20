@@ -61,6 +61,7 @@ export class ProductItemComponent implements OnInit {
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
     this.cartService.getCart().subscribe();
+    this.favoriteService.getFavorites().subscribe();
   }
 
   onMouseEnter() {
@@ -72,11 +73,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   addToFavourites() {
-    if (this.isFavorite(this.product.id)) {
-      this.favoriteService.removeFavorite(this.product.id);
-    } else {
-      this.favoriteService.addFavorite(this.product);
-    }
+    this.favoriteService.toggleFavourite(this.product.id).subscribe();
     this.cdr.detectChanges();
   }
 
@@ -105,7 +102,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   isFavorite(productId: string): boolean {
-    return this.favoriteService.getFavorites().some((p) => p.id === productId);
+    return this.favoriteService.isInFavorites(productId);
   }
 
   isInCart(productId: string): boolean {

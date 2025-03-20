@@ -67,15 +67,15 @@ export class CartService {
               };
             })
           ),
-          tap((cart) => this.cartSubject.next(cart)), 
+          tap((cart) => this.cartSubject.next(cart)),
           catchError(() => {
-            this.cartSubject.next([]); 
+            this.cartSubject.next([]);
             return of([]);
           })
         );
     } else {
       const guestCart = this.getGuestCart();
-      this.cartSubject.next(guestCart); 
+      this.cartSubject.next(guestCart);
       return of(guestCart);
     }
   }

@@ -1,6 +1,6 @@
-@if(favorites.length > 0){
+@let favoritesLength =(favoritesLength$|async)??0; @if(favoritesLength > 0){
 <div
-  *ngFor="let item of favorites"
+  *ngFor="let item of favorites$ | async"
   class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 py-4 border-b"
 >
   <div class="flex flex-1 justify-between sm:items-center">
@@ -24,9 +24,6 @@
     >
   </div>
   <div class="flex gap-2 justify-end">
-    <app-button (click)="addToCart(item)" btnWidth="fit"
-      >{{ isInCart(item.id) ? "Remove from" : "Add to" }} Cart</app-button
-    >
     <app-button type="primary-outline" btnWidth="fit">Remove</app-button>
   </div>
 </div>
