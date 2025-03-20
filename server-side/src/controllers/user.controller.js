@@ -172,11 +172,8 @@ const toggleFavourite = asyncWrapper(async (req, res, next) => {
 
 const getFavourites = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log('user id', userId);
-  console.log('hers is get favourites', userId);
-
   const user = await User.findById(userId)
-    .populate('favourites', '_id productName productImages productPrice')
+    .populate('favourites', '_id productName productImages productSubtitle')
     .lean();
 
   if (!user) {
