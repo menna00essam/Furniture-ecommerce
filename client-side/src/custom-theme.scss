@@ -28,4 +28,9 @@ html {
       active-indicator-color: var(--color-primary),
     )
   );
+  @include mat.dialog-overrides(
+    (
+      container-min-width: 500px,
+    )
+  );
 }
