@@ -55,12 +55,10 @@ export class UserActionsComponent implements OnInit {
     });
 
     this.cart$ = this.cartService.cart$;
-    this.cartService.getCart().subscribe();
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
     this.cartProductsTotalPrice = this.cartService.getSubtotal();
 
     this.favorites$ = this.favoriteService.favorites$;
-    this.favoriteService.getFavorites().subscribe();
     this.favoritesLength$ = this.favoriteService.favorites$.pipe(
       map((favorites) => favorites.length)
     );

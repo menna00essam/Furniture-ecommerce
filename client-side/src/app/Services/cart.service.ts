@@ -5,6 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { product } from '../Models/product.model';
 import { AuthService } from './auth.service';
 import { productCart } from '../Models/productCart.model';
+import { NgToastService } from 'ng-angular-popup';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -19,12 +20,18 @@ export class CartService {
   private checkoutSubject = new BehaviorSubject<productCart[]>([]);
   checkoutData$ = this.checkoutSubject.asObservable();
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private toast: NgToastService
+  ) {
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedInSubject.next(status);
       this.loadCart();
     });
   }
+
+  /*** Helper Methods ***/
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -41,8 +48,17 @@ export class CartService {
       : localStorage.setItem('cart', JSON.stringify(cart));
   }
 
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      return of(result as T);
+    };
+  }
+
+  /*** Cart Operations ***/
+
   private loadCart(): void {
-    this.getCart().subscribe((cart) => this.cartSubject.next(cart));
+    this.getCart().subscribe();
   }
 
   getCart(): Observable<productCart[]> {
@@ -52,32 +68,29 @@ export class CartService {
           headers: this.getAuthHeaders(),
         })
         .pipe(
-          map(({ data }) =>
-            data.products.map((p) => {
-              const effectivePrice = p.productSale
-                ? p.productPrice * (1 - p.productSale / 100)
-                : p.productPrice;
-              return {
-                id: p._id,
-                name: p.productName,
-                images: p.productImages,
-                price: effectivePrice,
-                quantity: p.productQuantity,
-                subtotal: effectivePrice * p.productQuantity,
-              };
-            })
-          ),
+          map(({ data }) => data.products.map((p) => this.mapToProductCart(p))),
           tap((cart) => this.cartSubject.next(cart)),
-          catchError(() => {
-            this.cartSubject.next([]);
-            return of([]);
-          })
+          catchError(this.handleError<productCart[]>('getCart', []))
         );
     } else {
       const guestCart = this.getGuestCart();
       this.cartSubject.next(guestCart);
       return of(guestCart);
     }
+  }
+
+  private mapToProductCart(p: any): productCart {
+    const effectivePrice = p.productSale
+      ? p.productPrice * (1 - p.productSale / 100)
+      : p.productPrice;
+    return {
+      id: p._id,
+      name: p.productName,
+      images: p.productImages,
+      price: effectivePrice,
+      quantity: p.productQuantity,
+      subtotal: effectivePrice * p.productQuantity,
+    };
   }
 
   updateCart(cart: productCart[]): void {
@@ -89,8 +102,8 @@ export class CartService {
     const discountedPrice = product.sale
       ? product.price * (1 - product.sale / 100)
       : product.price;
-    const cart = [...this.cartSubject.getValue()];
-    const existingProduct = cart.find((p) => p.id === product.id);
+    let cart = [...this.cartSubject.getValue()];
+    let existingProduct = cart.find((p) => p.id === product.id);
 
     if (existingProduct) {
       existingProduct.quantity++;
@@ -113,7 +126,16 @@ export class CartService {
         .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
           headers: this.getAuthHeaders(),
         })
-        .subscribe();
+        .pipe(catchError(this.handleError('addProduct')))
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              this.toast.success(`${product.name} added to cart successfully.`);
+            }
+          },
+        });
+    } else {
+      this.toast.success(`${product.name} added to cart successfully.`);
     }
   }
 
@@ -127,11 +149,14 @@ export class CartService {
     remove = false
   ): void {
     let cart = [...this.cartSubject.getValue()];
-    if (remove) {
-      cart = cart.filter((p) => p.id !== productId);
-    } else {
-      const product = cart.find((p) => p.id === productId);
-      if (product) {
+    let productName = '';
+
+    const product = cart.find((p) => p.id === productId);
+    if (product) {
+      productName = product.name;
+      if (remove) {
+        cart = cart.filter((p) => p.id !== productId);
+      } else {
         product.quantity += change;
         product.subtotal = product.quantity * product.price;
         if (product.quantity <= 0) {
@@ -139,20 +164,42 @@ export class CartService {
         }
       }
     }
+
     this.updateCart(cart);
+
     if (this.isLoggedInSubject.getValue()) {
+      // Logged-in users: Send API request
       this.http
         .patch(
           this.apiUrl,
-          {
-            productId,
-            quantity: remove
-              ? 0
-              : cart.find((p) => p.id === productId)?.quantity || 0,
-          },
+          { productId, quantity: remove ? 0 : product?.quantity || 0 },
           { headers: this.getAuthHeaders() }
         )
-        .subscribe();
+        .pipe(
+          catchError((error) => {
+            this.toast.danger(
+              remove
+                ? `Failed to remove ${productName} from cart.`
+                : `Failed to update ${productName} quantity.`
+            );
+            return this.handleError('modifyQuantity')(error);
+          })
+        )
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              const message = remove
+                ? `${productName} has been removed from the cart.`
+                : `${productName} quantity updated successfully.`;
+              this.toast.success(message);
+            }
+          },
+        });
+    } else {
+      const message = remove
+        ? `${productName} has been removed from the cart.`
+        : `${productName} quantity updated successfully.`;
+      this.toast.success(message);
     }
   }
 
@@ -170,6 +217,8 @@ export class CartService {
     );
   }
 
+  /*** Checkout Operations ***/
+
   setCheckoutData(): void {
     this.checkoutSubject.next([...this.cartSubject.getValue()]);
   }
@@ -177,6 +226,8 @@ export class CartService {
   getCheckoutData(): productCart[] {
     return this.checkoutSubject.getValue();
   }
+
+  /*** Utility Methods ***/
 
   isInCart(productId: string): boolean {
     return this.cartSubject.getValue().some((p) => p.id === productId);

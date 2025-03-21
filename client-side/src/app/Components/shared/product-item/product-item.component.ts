@@ -21,16 +21,15 @@ import {
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { ToasterPosition } from 'ng-angular-popup';
+import { NgToastService } from 'ng-angular-popup';
 import { productCart } from '../../../Models/productCart.model';
 
 @Component({
   selector: 'app-product-item',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterModule, NgToastModule],
+  imports: [CommonModule, ButtonComponent, RouterModule],
   providers: [CurrencyPipe],
   templateUrl: './product-item.component.html',
   animations: [
@@ -50,18 +49,13 @@ export class ProductItemComponent implements OnInit {
 
   cart$!: Observable<productCart[]>;
 
-  ToasterPosition = ToasterPosition;
-
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
-    private cartService: CartService,
-    private toast: NgToastService
+    private cartService: CartService
   ) {}
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-    this.cartService.getCart().subscribe();
-    this.favoriteService.getFavorites().subscribe();
   }
 
   onMouseEnter() {
@@ -72,35 +66,16 @@ export class ProductItemComponent implements OnInit {
     if (!this.disableAnimation) this.isHovered = false;
   }
 
-  addToFavourites() {
+  toggleFavourites() {
     this.favoriteService.toggleFavourite(this.product.id).subscribe();
-    if (this.favoriteService.isInFavorites(this.product.id)) {
-      this.toast.success(
-        'Product removed Succeffully to favorites',
-        'SUCCESS',
-        1000
-      );
-    } else {
-      this.toast.success(
-        'Product added Succeffully from favorites',
-        'SUCCESS',
-        1000
-      );
-    }
     this.cdr.detectChanges();
   }
 
-  addToCart() {
+  toggleCart() {
     if (this.cartService.isInCart(this.product.id)) {
       this.cartService.removeProduct(this.product.id);
-      this.toast.success(
-        'Product removed Succeffully from cart',
-        'SUCCESS',
-        1000
-      );
     } else {
       this.cartService.addProduct(this.product);
-      this.toast.success('Product Added Succeffully to cart', 'SUCCESS', 1000);
     }
     this.cdr.detectChanges();
   }

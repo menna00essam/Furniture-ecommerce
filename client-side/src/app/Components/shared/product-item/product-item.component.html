@@ -70,7 +70,7 @@
     [@slideInOut]="isHovered ? 'in' : 'out'"
     [@.disabled]="disableAnimation"
   >
-    <app-button type="plain" (click)="addToCart()" btnWidth="200px"
+    <app-button type="plain" (click)="toggleCart()" btnWidth="200px"
       >{{ isInCart(product.id) ? "Remove from" : "Add to" }} Cart</app-button
     >
     <nav
@@ -96,7 +96,7 @@
       <button
         class="flex gap-1 cursor-pointer"
         aria-label="Add to wishlist"
-        (click)="addToFavourites()"
+        (click)="toggleFavourites()"
       >
         <img
           src="/icons/heart-white{{
@@ -110,5 +110,4 @@
     </nav>
   </div>
 </div>
-<ng-toast [position]="ToasterPosition.BOTTOM_RIGHT" />
 <!-- configure width with position -->

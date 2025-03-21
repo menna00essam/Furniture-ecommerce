@@ -28,15 +28,13 @@ import { productCart } from '../../Models/productCart.model';
 export class CartComponent implements OnInit {
   cart$!: Observable<productCart[]>;
   cartLength$!: Observable<number>;
-  subtotal$!: Observable<number>; // Declare subtotal$ as a property
+  subtotal$!: Observable<number>;
 
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.cartService.getCart().subscribe();
-
     this.cart$ = this.cartService.cart$;
-    this.subtotal$ = this.cartService.getSubtotal(); // Assign the observable here
+    this.subtotal$ = this.cartService.getSubtotal();
     this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
   }
 

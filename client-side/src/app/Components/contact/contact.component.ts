@@ -11,9 +11,8 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { ButtonComponent } from '../shared/button/button.component';
 import { ContactService } from '../../Services/contact.service';
 import { InputComponent } from '../shared/input/input.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDialog } from '@angular/material/dialog';
-import { ContactConfirmModalComponent } from '../contact-confim-modal/contact-confirm-modal.component';
+import { ContactConfirmModalComponent } from '../modals/contact-confim-modal/contact-confirm-modal.component';
+import { ModalService } from '../../Services/modal.service';
 
 @Component({
   selector: 'app-contact',
@@ -21,7 +20,6 @@ import { ContactConfirmModalComponent } from '../contact-confim-modal/contact-co
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatDialogModule,
     HeaderBannerComponent,
     FeatureBannerComponent,
     ButtonComponent,
@@ -30,7 +28,6 @@ import { ContactConfirmModalComponent } from '../contact-confim-modal/contact-co
   templateUrl: './contact.component.html',
 })
 export class ContactComponent {
-  readonly dialog = inject(MatDialog);
   message: string = '';
   isSuccess: boolean = false;
 
@@ -44,7 +41,10 @@ export class ContactComponent {
     message: new FormControl<string>('', [Validators.required]),
   });
 
-  constructor(private contactService: ContactService) {
+  constructor(
+    private contactService: ContactService,
+    private modalService: ModalService
+  ) {
     this.contactService.message$.subscribe((response) => {
       if (response) {
         this.message = response.message;
@@ -53,9 +53,6 @@ export class ContactComponent {
     });
   }
 
-  openDialog() {
-    this.dialog.open(ContactConfirmModalComponent);
-  }
   onSubmit() {
     if (this.contactForm.valid) {
       const formValues = this.contactForm.value;
@@ -67,8 +64,8 @@ export class ContactComponent {
       };
 
       this.contactService.sendMessage(contactData).subscribe();
+      this.modalService.show(ContactConfirmModalComponent);
       this.contactForm.reset();
-      this.openDialog();
     } else {
       this.message = 'Please fill all fields correctly.';
       this.isSuccess = false;
