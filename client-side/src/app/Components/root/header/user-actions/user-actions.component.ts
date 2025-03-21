@@ -84,6 +84,6 @@ export class UserActionsComponent implements OnInit {
 
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
-    document.body.style.width = isOpen ? 'calc(100% - 10px)' : '';
+    document.body.style.width = isOpen ? 'calc(100%)' : '';
   }
 }
