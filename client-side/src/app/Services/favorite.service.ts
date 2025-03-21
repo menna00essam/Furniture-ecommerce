@@ -120,7 +120,6 @@ export class FavoriteService {
   }
 
   /*** ERROR HANDLING ***/
-
   private handleFavoriteError(
     error: any,
     fallbackValue: productFavorite[]
