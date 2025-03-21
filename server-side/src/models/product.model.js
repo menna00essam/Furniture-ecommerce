@@ -14,7 +14,6 @@ const ProductSchema = new mongoose.Schema(
   {
     productName: { type: String, required: true },
     productSubtitle: { type: String, required: true },
-    productImages: [{ type: String }],
     productPrice: { type: Number, required: true },
     productDate: { type: Date, default: Date.now },
     productSale: { type: Number, default: 0 },
@@ -24,27 +23,17 @@ const ProductSchema = new mongoose.Schema(
     productDescription: { type: String },
     brand: { type: String },
 
-    variants: [
+    colors: [
       {
-        color: {
-          name: {
-            type: String,
-            required: true,
-            enum: ALLOWED_COLORS.map((c) => c.name),
-          },
-          hex: { type: String, required: true },
+        name: {
+          type: String,
+          required: true,
+          enum: ALLOWED_COLORS.map((c) => c.name),
         },
-        size: { type: String, required: true },
-        sku: { type: String, unique: true, required: true },
+        hex: { type: String, required: true },
+        images: [{ type: String, required: true }],
         quantity: { type: Number, required: true },
-        price: { type: Number },
-        discount: { type: Number, default: 0 },
-        images: [{ type: String }],
-        dimensions: {
-          width: { type: Number },
-          height: { type: Number },
-          depth: { type: Number },
-        },
+        sku: { type: String, unique: true },
       },
     ],
 
@@ -99,14 +88,14 @@ const ProductSchema = new mongoose.Schema(
 
 // Pre-save hook to assign correct hex code and auto-generate SKU
 ProductSchema.pre("save", function (next) {
-  this.variants.forEach((variant) => {
-    const colorInfo = ALLOWED_COLORS.find((c) => c.name === variant.color.name);
+  this.colors.forEach((color) => {
+    const colorInfo = ALLOWED_COLORS.find((c) => c.name === color.name);
     if (colorInfo) {
-      variant.color.hex = colorInfo.hex;
+      color.hex = colorInfo.hex;
     }
 
-    if (!variant.sku) {
-      variant.sku = `${this.productName}-${variant.color.name}-${variant.size}`
+    if (!color.sku) {
+      color.sku = `${this.productName}-${color.name}`
         .toUpperCase()
         .replace(/\s+/g, "-");
     }
