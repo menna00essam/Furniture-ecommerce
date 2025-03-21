@@ -144,15 +144,18 @@ const editUser = asyncWrapper(async (req, res, next) => {
 const toggleFavourite = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   const productId = req.body.productId;
+
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     return next(new AppError('Invalid product ID', 400));
   }
+
   const user = await User.findById(userId);
   if (!user) {
     return next(new AppError('User Not found', 404, httpStatusText.NOT_FOUND));
   }
+
   const index = user.favourites.indexOf(productId);
-  let isFavourite;
+
   if (index !== -1) {
     isFavourite = false;
     user.favourites.splice(index, 1);
@@ -160,13 +163,17 @@ const toggleFavourite = asyncWrapper(async (req, res, next) => {
     isFavourite = true;
     user.favourites.push(productId);
   }
+
   await user.save();
+
+  // Populate favourites before sending response
+  const updatedUser = await User.findById(userId)
+    .populate('favourites', '_id productName productImages productSubtitle')
+    .lean();
+
   res.status(200).json({
     status: 'success',
-    message: isFavourite
-      ? 'Product added to favourites'
-      : 'Product removed from favourites',
-    data: { favourites: user.favourites },
+    data: { favourites: updatedUser.favourites }, // Returns populated data
   });
 });
 
