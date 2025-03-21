@@ -63,6 +63,9 @@ export class CheckoutService {
       errors,
     };
   }
+  processOrder(billingValues: any,paymentValues: any) {
+    console.log('payment details>>>>>', { billingValues, paymentValues });
+  }
 
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

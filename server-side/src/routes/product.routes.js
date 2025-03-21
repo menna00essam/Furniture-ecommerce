@@ -6,7 +6,6 @@ router.route('/').get(productController.getAllProducts);
 router.route('/search').get(productController.getSearchProducts);
 router.route('/min-price').get(productController.getMinEffectivePrice);
 router.route('/max-price').get(productController.getMaxEffectivePrice);
-router.route('/:product_id').get(productController.getProductById);
 
 router
   .route('/comparison/:product_id')

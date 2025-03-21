@@ -23,7 +23,6 @@ export class CartService implements OnInit {
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
-      console.log(status);
     });
   }
 
@@ -59,9 +58,7 @@ export class CartService implements OnInit {
           data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages.length
-              ? p.productImages
-              : ['/images/products/1.jpg'],
+            images: p.productImages,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
@@ -177,5 +174,11 @@ export class CartService implements OnInit {
 
   isInCart(productId: string): boolean {
     return this.cartSubject.getValue().some((p) => p.id === productId);
+  }
+
+  clearCart(): void {
+    this.cartSubject.next([]);
+    this.checkoutSubject.next([]);
+    localStorage.removeItem('cart');
   }
 }
