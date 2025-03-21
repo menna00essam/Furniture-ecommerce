@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { product } from '../Models/product.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, tap, map, first, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { NgToastService } from 'ng-angular-popup';
 import { productFavorite } from '../Models/productFavorite.model';
+import { ModalService } from './modal.service';
+import { LoginPromptModalComponent } from '../Components/modals/login-prompt-modal/login-prompt-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -14,99 +16,124 @@ export class FavoriteService {
   private favoritesSubject = new BehaviorSubject<productFavorite[]>([]);
   favorites$ = this.favoritesSubject.asObservable();
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private toast: NgToastService,
+    private modalService: ModalService
+  ) {
     this.authService.isLoggedIn$.subscribe((status) => {
-      if (status) {
-        this.loadFavorites();
-      }
+      if (status) this.loadFavorites();
     });
   }
+
+  /*** AUTHORIZATION HEADER ***/
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
+  /*** FAVORITES FETCHING ***/
   private loadFavorites(): void {
     this.getFavorites().subscribe();
   }
-  // Fetch favorites from API and update state
-  getFavorites(): Observable<any> {
+
+  getFavorites(): Observable<productFavorite[]> {
     return this.http
       .get<{ data: { favourites: any[] } }>(`${this.apiUrl}/favourites`, {
         headers: this.getAuthHeaders(),
       })
       .pipe(
-        tap((response) => {
-          const apiFavorites = response.data.favourites.map((p) => ({
-            id: p._id,
-            name: p.productName,
-            images: p.productImages.length
-              ? p.productImages
-              : ['/images/products/1.png'],
-            subTitle: p.productSubtitle,
-            price: p.productPrice,
-          }));
-          this.favoritesSubject.next(apiFavorites);
-        }),
-        catchError((error) => {
-          console.error('Error fetching favorites:', error);
-          return of([]); // Return empty array if API fails
-        })
+        map((response) => this.mapFavorites(response.data.favourites)),
+        tap((favorites) => this.favoritesSubject.next(favorites)),
+        catchError((error) => this.handleFavoriteError(error, []))
       );
   }
 
-  // Toggle favorite and update state
+  /*** TOGGLE FAVORITE (ADD/REMOVE) ***/
   toggleFavourite(productId: string): Observable<productFavorite[]> {
-    const url = `${this.apiUrl}/toggle-favourites`;
-    const headers = this.getAuthHeaders();
-    const body = { productId };
+    let productName = this.getStoredProductName(productId); // Store name before removing
 
-    console.log(
-      '%c[FavoriteService] Toggling Favorite',
-      'color: blue; font-weight: bold;'
-    );
-    console.log('→ Sending Request to:', url);
-    console.log('→ Headers:', headers);
-    console.log('→ Body:', body);
-
-    return this.http
-      .post<{
-        status: string;
-        message: string;
-        data: { favourites: string[] };
-      }>(url, body, { headers })
-      .pipe(
-        tap((response) =>
-          console.log(
-            '%c[API Response]',
-            'color: green; font-weight: bold;',
-            response
-          )
-        ),
-        map((response) => {
-          if (response?.data?.favourites) {
-            const updatedFavorites = response.data.favourites.map(
-              (id) => ({ id } as product)
-            );
-            this.favoritesSubject.next(updatedFavorites);
-            return updatedFavorites;
-          }
-          return [];
-        }),
-        catchError((error) => {
-          console.error(
-            '%c[API Error]',
-            'color: red; font-weight: bold;',
-            error
-          );
+    return this.authService.isLoggedIn$.pipe(
+      first(),
+      switchMap((isLoggedIn) => {
+        if (!isLoggedIn) {
+          this.modalService.show(LoginPromptModalComponent);
           return of(this.favoritesSubject.getValue());
-        })
-      );
+        }
+
+        return this.http
+          .post<{ data: { favourites: any[] } }>(
+            `${this.apiUrl}/toggle-favourites`,
+            { productId },
+            { headers: this.getAuthHeaders() }
+          )
+          .pipe(
+            map((response) => this.mapFavorites(response.data.favourites)),
+            tap((favorites) => {
+              this.favoritesSubject.next(favorites);
+
+              // Fetch name after adding
+              if (!productName) {
+                productName = this.getFetchedProductName(productId, favorites);
+              }
+
+              this.showFavoriteToast(productId, productName);
+            }),
+            catchError((error) =>
+              this.handleFavoriteError(error, this.favoritesSubject.getValue())
+            )
+          );
+      })
+    );
   }
 
-  // Check if a product is in favorites
   isInFavorites(productId: string): boolean {
     return this.favoritesSubject.getValue().some((p) => p.id === productId);
+  }
+
+  /*** FAVORITE NAME HANDLINGE ***/
+  private getStoredProductName(productId: string): string | null {
+    const product = this.favoritesSubject
+      .getValue()
+      .find((p) => p.id === productId);
+    return product ? product.name : null;
+  }
+
+  private getFetchedProductName(
+    productId: string,
+    favorites: productFavorite[]
+  ): string {
+    const product = favorites.find((p) => p.id === productId);
+    return product ? product.name : 'Product';
+  }
+
+  /*** API RESPONSE MAPPING  ***/
+  private mapFavorites(apiFavorites: any[]): productFavorite[] {
+    return apiFavorites.map((p) => ({
+      id: p._id,
+      name: p.productName,
+      images: p.productImages,
+      subTitle: p.productSubtitle,
+    }));
+  }
+
+  /*** ERROR HANDLING ***/
+
+  private handleFavoriteError(
+    error: any,
+    fallbackValue: productFavorite[]
+  ): Observable<productFavorite[]> {
+    console.error('Error updating favorites:', error);
+    this.toast.danger('Failed to update favorites. Please try again.');
+    return of(fallbackValue);
+  }
+
+  /*** UI TOAST MESSAGES ***/
+  private showFavoriteToast(productId: string, productName: string): void {
+    const isFavoriteNow = this.isInFavorites(productId);
+    const action = isFavoriteNow ? 'added to' : 'removed from';
+    this.toast.success(`${productName} has been ${action} your favorites.`);
   }
 }
