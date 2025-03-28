@@ -153,15 +153,16 @@ export class ProductService {
           brand: data.product.brand,
 
           productCategories: data.product.productCategories.map(
-            (cat: string) => cat // Keeping ObjectIDs unless populated in the backend
+            (cat: string) => cat
           ),
 
           colors: data.product.colors.map((color: any) => ({
             name: color.name,
             hex: color.hex,
-            images: color.images,
             quantity: color.quantity,
             sku: color.sku,
+            mainImage: color.images.length > 0 ? color.images[0].url : null,
+            galleryImages: color.images.map((img: any) => img.url),
           })),
 
           additionalInformation: data.product.additionalInformation || {},
@@ -169,6 +170,7 @@ export class ProductService {
         tap((product) =>
           console.log('[ProductService] Transformed product:', product)
         ),
+
         catchError((error) => {
           console.error('[ProductService] Error fetching product:', error);
           return of(null as unknown as ProductDetails);

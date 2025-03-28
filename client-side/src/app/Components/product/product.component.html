@@ -28,7 +28,7 @@
         <!-- Main Image -->
         <div class="w-full">
           <div class="bg-secondary rounded-lg aspect-square lg:aspect-[3/4]">
-            <img class="w-full h-full object-contain p-4" src="images/products/1 (2).png" />
+            <img class="w-full h-full object-contain p-4" alt="Selected Color Image" [src]="selectedImage" />
           </div>
         </div>
 
@@ -37,33 +37,39 @@
 
     <!-- Product Details -->
     <div class="flex-1 lg:w-1/2 max-w-xl space-y-4 lg:space-y-6">
-      <h1 class="text-3xl lg:text-4xl font-light">Asgaard sofa</h1>
-      <p class="text-gray text-lg lg:text-xl font-medium">Rs. 250,000.00</p>
+      <h1 class="text-3xl lg:text-4xl font-light">{{product.productName}}</h1>
+      <p class="text-gray text-lg lg:text-xl font-medium"> ${{product.productPrice}}</p>
 
       <p class="text-sm lg:text-base text-black">
-        Setting the bar as one of the loudest speakers in its class, the Kilburn is a compact, stout-hearted hero with
-        a well-balanced audio.
+        {{product.productDescription}}
       </p>
 
       <!-- Size Selection -->
-      <div class="space-y-2">
+      <!-- <div class="space-y-2">
         <p class="text-gray text-sm">Size</p>
         <div class="flex gap-3">
           <div class="w-8 h-8 bg-primary text-white flex items-center justify-center rounded">L</div>
           <div class="w-8 h-8 bg-gray-light text-black flex items-center justify-center rounded">XL</div>
           <div class="w-8 h-8 bg-gray-light text-black flex items-center justify-center rounded">XS</div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Color Selection -->
+      @if (product?.colors?.length > 0) {
       <div class="space-y-2">
         <p class="text-gray text-sm">Color</p>
         <div class="flex gap-3">
-          <div class="w-8 h-8 bg-indigo-500 rounded-full"></div>
-          <div class="w-8 h-8 bg-black rounded-full"></div>
-          <div class="w-8 h-8 bg-primary rounded-full"></div>
+          @for (color of product.colors; track color) {
+          <div class="w-8 h-8 rounded-full border border-gray-300 cursor-pointer"
+            [ngStyle]="{ 'background-color': color.hex }" [title]="color.name" (click)="selectColor(color)"></div>
+          }
         </div>
       </div>
+
+      <!-- Display Selected Image -->
+      }
+
+
 
       <!-- Buttons Section -->
       <div class="flex flex-col sm:flex-row gap-3 lg:gap-4">
@@ -75,8 +81,8 @@
         </div>
 
         <!-- Action Buttons -->
-        <app-button class="flex-1" (click)="onSubmit()" [type]="'black-outline'">Add To Cart</app-button>
-        <app-button class="flex-1" (click)="onSubmit()" [type]="'black-outline'">
+        <app-button class="flex-1" [type]="'black-outline'">Add To Cart</app-button>
+        <app-button class="flex-1" [type]="'black-outline'">
           <span class="flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
