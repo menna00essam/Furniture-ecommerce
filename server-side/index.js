@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
@@ -10,13 +10,13 @@ require("./src/services/orderStatus.service");
 const passport = require("passport");
 
 / * * * * Utils * * * * /;
-const httpStatusText = require('./src/utils/httpStatusText');
+const httpStatusText = require("./src/utils/httpStatusText");
 / * * * * End Utils * * * * /;
 
 const PORT = process.env.PORT || 5000;
 app.use(passport.initialize());
 / * * * * DB * * * /;
-const connectDB = require('./src/config/db');
+const connectDB = require("./src/config/db");
 / * * * * End Db * * * * /;
 
 / * * * * Router imports * * * * /;
@@ -32,7 +32,6 @@ const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
 const orderRouter = require("./src/routes/order.routes");
 
-
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
@@ -43,8 +42,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-  res.json('You need furniture? Here’s Furniro!');
+app.get("/", (req, res) => {
+  res.json("You need furniture? Here’s Furniro!");
 });
 
 / * * * Routes * * * /;
@@ -62,10 +61,10 @@ app.use("/orders", orderRouter);
 
 / * * * Global MiddleWare * * * /;
 // Not found routes
-app.all('*', (req, res, next) => {
+app.all("*", (req, res, next) => {
   return res.status(404).json({
     status: httpStatusText.ERROR,
-    message: 'this resource is not avilable',
+    message: "this resource is not avilable",
   });
 });
 // global error handlers
