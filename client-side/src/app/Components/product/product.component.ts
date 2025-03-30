@@ -1,4 +1,3 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
@@ -8,8 +7,9 @@ import { ProductNavigationComponent } from '../products-components/product-navig
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
 import { ButtonComponent } from '../shared/button/button.component';
-import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { ProductDetails } from '../../models/product-details.model';
+import { Component, OnInit } from '@angular/core';
+import { ProductItemComponent } from '../shared/product-item/product-item.component';
 
 @Component({
   selector: 'app-product',
@@ -25,16 +25,18 @@ import { ProductDetails } from '../../models/product-details.model';
 })
 export class ProductComponent implements OnInit {
   productId: string | null = null;
-  product: any = {};
+  product!: ProductDetails;
   colors: {
     name: string;
     hex: string;
     mainImage?: string | null;
     galleryImages?: string[];
   }[] = [];
+  selectedColorIndex: number = 0;
   selectedImage: string | null = null;
-
   count: number = 1;
+  originalPrice: number = 0;
+  salePrice: number = 0;
 
   constructor(
     private productService: ProductService,
@@ -55,21 +57,22 @@ export class ProductComponent implements OnInit {
 
         if (productData) {
           this.product = productData as ProductDetails;
+          this.updatePrices();
 
-          // Ensure colors array exists and use the correct property names
+          // Ensure colors array exists and map correctly
           this.colors = Array.isArray(productData.colors)
             ? productData.colors.map((c: any) => ({
                 name: c.name || 'Unknown',
                 hex: c.hex || '#000000',
-                mainImage: c.mainImage || null,
+                mainImage: c.mainImage || c.galleryImages?.[0] || null,
                 galleryImages: Array.isArray(c.galleryImages)
-                  ? c.galleryImages
+                  ? c.galleryImages.slice(0, 6)
                   : [],
               }))
             : [];
 
           if (this.colors.length > 0) {
-            this.selectedImage = this.colors[0].mainImage ?? null;
+            this.setSelectedColor(0);
           }
         } else {
           console.warn('[ProductComponent] No product data received.');
@@ -80,12 +83,56 @@ export class ProductComponent implements OnInit {
       },
     });
   }
+  updatePrices() {
+    this.originalPrice = this.product.productPrice;
+    console.log('original price :', this.originalPrice);
+    const salePercentage = this.product.productSale || 0;
+    this.salePrice = this.originalPrice * (1 - salePercentage / 100) || 0;
+    console.log('saleprice :', this.salePrice);
+  }
 
-  selectColor(color: any) {
-    if (color) {
-      this.selectedImage = color.mainImage || color.galleryImages[0] || null;
+  /**
+   * Sets the selected color and updates images accordingly.
+   */
+  setSelectedColor(index: number) {
+    this.selectedColorIndex = index;
+    this.selectedImage = this.colors[index]?.mainImage || null;
+  }
+  get selectedColor() {
+    return this.colors[this.selectedColorIndex] || null;
+  }
+
+  /**
+   * Updates the main image when clicking a thumbnail.
+   */
+  selectThumbnail(image: string) {
+    this.selectedImage = image;
+  }
+
+  /**
+   * Handles color selection and updates the displayed image.
+   */
+  selectColor(color: {
+    name: string;
+    hex: string;
+    mainImage?: string | null;
+    galleryImages?: string[];
+  }) {
+    const index = this.colors.findIndex((c) => c.hex === color.hex);
+    if (index !== -1) {
+      this.setSelectedColor(index);
     }
   }
+
+  getMappedProduct(): any {
+    return {
+      name: this.product.productName,
+      subTitle: this.product.productDescription,
+      price: this.product.productPrice,
+      // Add other required mappings here
+    };
+  }
+
   increase() {
     this.count++;
   }
