@@ -31,6 +31,7 @@ const cartRouter = require("./src/routes/cart.routes");
 const galleryRouter = require("./src/routes/gallery.routes");
 const contactRouter = require("./src/routes/contact.routes");
 const orderRouter = require("./src/routes/order.routes");
+const paymentRouter = require("./src/routes/payment.routes");
 
 / * * * * End Router imports * * * * /;
 
@@ -58,6 +59,7 @@ app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
 app.use("/contact", contactRouter);
 app.use("/orders", orderRouter);
+app.use('/payments', paymentRouter);
 
 / * * * Global MiddleWare * * * /;
 // Not found routes
