@@ -15,6 +15,7 @@ const userSchema = {
     phone: { type: "string", pattern: "^[0-9]{11}$" },
     role: { type: "string", enum: ["ADMIN", "USER"], default: "USER" },
     agree: { type: "boolean" },
+    thumbnail: { type: "string" },
   },
   required: ["username", "email"],
   additionalProperties: false,

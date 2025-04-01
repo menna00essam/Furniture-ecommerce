@@ -69,6 +69,7 @@ const login = asyncWrapper(async (req, res, next) => {
       username: foundedUser.username,
       _id: foundedUser._id,
       role: foundedUser.role,
+      thumbnail: foundedUser.thumbnail,
     },
     process.env.JWT_SECRET
   );
@@ -88,6 +89,7 @@ const google = (req, res, next) => {
       username: req.user.username,
       role: req.user.role,
       _id: req.user._id,
+      thumbnail: req.user.thumbnail,
     },
     process.env.JWT_SECRET
   );
