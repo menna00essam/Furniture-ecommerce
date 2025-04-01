@@ -3,6 +3,7 @@ import { user } from '../Models/user.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +32,21 @@ export class UserService {
           } as user;
         }),
         tap((u) => this.userSubject.next(u))
+      );
+  }
+  changePassword(password: string) {
+    return this.http
+      .put<{ status: string; message: string }>(
+        `${this.apiUrl}/change-password`,
+        { password },
+        { headers: this.getAuthHeaders() }
+      )
+      .pipe(
+        tap((response) => {
+          if (response.status === 'success') {
+            console.log('Password changed successfully');
+          }
+        })
       );
   }
 

@@ -29,4 +29,9 @@ export class InputComponent {
   @Input() control!: FormControl;
   @Input() bgC: string = '';
   @Input() width: string = '';
+  showPassword: boolean = false;
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 }
