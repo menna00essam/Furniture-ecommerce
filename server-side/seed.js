@@ -16,41 +16,45 @@ const seedData = async () => {
 
     // Clear existing data
 
-    await User.deleteMany();
-    await Product.deleteMany();
-    await Category.deleteMany();
-    await Cart.deleteMany();
-    await Blog.deleteMany();
-    await Order.deleteMany();
+    // await User.deleteMany();
+    // await Product.deleteMany();
+    // await Category.deleteMany();
+    // await Cart.deleteMany();
+    // await Blog.deleteMany();
+    // await Order.deleteMany();
     // await Image.deleteMany();
 
     // ======================
     // 1. Create Users
     // ======================
-    const users = await User.insertMany([
-      {
-        username: "Haleem",
-        email: "Haleemo777@example.com",
-        password: "haleemo236!",
-        role: "ADMIN",
-        phone: "01126105400",
-      },
-      {
-        username: "Mohamed",
-        email: "Mohamed236236@gmail.com",
-        password: "hiiiii263!",
-        phone: "01126105400",
-      },
-    ]);
+    // const users = await User.insertMany([
+    //   {
+    //     username: "Haleem",
+    //     email: "Haleemo777@example.com",
+    //     password: "haleemo236!",
+    //     role: "ADMIN",
+    //     phone: "01126105400",
+    //   },
+    //   {
+    //     username: "Mohamed",
+    //     email: "Mohamed236236@gmail.com",
+    //     password: "hiiiii263!",
+    //     phone: "01126105400",
+    //   },
+    // ]);
 
     // ======================
     // 2. Create Categories
     // ======================
-    const categories = await Category.insertMany([
-      { catName: "Living Room", description: "Furniture for the living room" },
-      { catName: "Bedroom", description: "Furniture for the bedroom" },
-      { catName: "Dining Room", description: "Furniture for the dining room" },
-    ]);
+    // const categories = await Category.insertMany([
+    //   // {
+    //   //   catName: "Sofa",
+    //   //   description:
+    //   //     "comfortable seating furniture piece designed for living rooms, offering both style and relaxation.",
+    //   //   image:
+    //   //     "https://res.cloudinary.com/dddhappm3/image/upload/v1743163620/Sofas_wrzbpe.webp",
+    //   // },
+    // ]);
 
     // ======================
     // 3. Create Products
@@ -58,556 +62,144 @@ const seedData = async () => {
 
     const products = await Product.insertMany([
       {
-        productName: "Modern Sofa Set",
-        productSubtitle: "Luxury Leather Sofa Set",
-        productImages: ["sofa1.jpg", "sofa2.jpg"],
-        productPrice: 1200,
-        productQuantity: 10,
-        productSale: 10,
-        productCategories: [categories[0]._id],
+        productName: "ektorp",
+        productSubtitle: "toom modular sofa",
+        productPrice: 900.99,
+        productSale: 66,
+        productCategories: ["65f1c3a7a9f88a001b23d456"],
         productDescription:
-          "A modern and luxurious leather sofa set for your living room.",
-        colors: ["Black", "Brown"],
-        sizes: ["Large", "Medium"],
-        brand: "LuxuryHome",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Sofa, 2 Cushions",
-            modelNumber: "SF2023",
-            secondaryMaterial: "Wood",
-            configuration: "L-Shape",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-          },
-          productDetails: {
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-          },
-          dimensions: {
-            width: 220,
-            height: 90,
-            depth: 100,
-            seatHeight: 45,
-            legHeight: 10,
-          },
-          materials: {
-            primaryMaterial: "Leather",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-          },
-          specifications: {
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-            weight: 50,
-            brand: "LuxuryHome",
-          },
-          warranty: {
-            summary: "5 Years Manufacturer Warranty",
-            serviceType: "On-site Service",
-            covered: "Manufacturing Defects",
-            notCovered: "Physical Damage",
-            domesticWarranty: "5 Years",
-          },
-        },
-      },
-      {
-        productName: "Wooden King Bed",
-        productSubtitle: "Solid Wood King Size Bed with Storage",
-        productImages: ["bed1.jpg", "bed2.jpg"],
-        productPrice: 1500,
-        productQuantity: 5,
-        productSale: 5,
-        productCategories: [categories[1]._id],
-        productDescription:
-          "A sturdy and elegant wooden king-size bed with storage drawers.",
-        colors: ["Mahogany", "Walnut"],
-        sizes: ["King"],
-        brand: "WoodCraft",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Bed Frame, Storage Drawers",
-            modelNumber: "WD2023",
-            secondaryMaterial: "Plywood",
-            configuration: "Storage Bed",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-          },
-          productDetails: {
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-          },
-          dimensions: {
-            width: 200,
-            height: 120,
-            depth: 220,
-            seatHeight: 50,
-            legHeight: 15,
-          },
-          materials: {
-            primaryMaterial: "Solid Wood",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-          },
-          specifications: {
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-            weight: 80,
-            brand: "WoodCraft",
-          },
-          warranty: {
-            summary: "3 Years Manufacturer Warranty",
-            serviceType: "Doorstep Repair",
-            covered: "Manufacturing Defects",
-            notCovered: "Wear and Tear",
-            domesticWarranty: "3 Years",
-          },
-        },
-      },
-      {
-        productName: "Modern Sofa Set",
-        productSubtitle: "Luxury Leather Sofa Set",
-        productImages: ["sofa1.jpg", "sofa2.jpg"],
-        productPrice: 1200,
-        productQuantity: 10,
-        productSale: 10,
-        productCategories: [categories[0]._id],
-        productDescription:
-          "A modern and luxurious leather sofa set for your living room.",
-        colors: ["Black", "Brown"],
-        sizes: ["Large", "Medium"],
-        brand: "LuxuryHome",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Sofa, 2 Cushions",
-            modelNumber: "SF2023",
-            secondaryMaterial: "Wood",
-            configuration: "L-Shape",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-          },
-          productDetails: {
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-          },
-          dimensions: {
-            width: 220,
-            height: 90,
-            depth: 100,
-            seatHeight: 45,
-            legHeight: 10,
-          },
-          materials: {
-            primaryMaterial: "Leather",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-          },
-          specifications: {
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-            weight: 50,
-            brand: "LuxuryHome",
-          },
-          warranty: {
-            summary: "5 Years Manufacturer Warranty",
-            serviceType: "On-site Service",
-            covered: "Manufacturing Defects",
-            notCovered: "Physical Damage",
-            domesticWarranty: "5 Years",
-          },
-        },
-      },
-      {
-        productName: "Wooden King Bed",
-        productSubtitle: "Solid Wood King Size Bed with Storage",
-        productImages: ["bed1.jpg", "bed2.jpg"],
-        productPrice: 1500,
-        productQuantity: 5,
-        productSale: 5,
-        productCategories: [categories[1]._id],
-        productDescription:
-          "A sturdy and elegant wooden king-size bed with storage drawers.",
-        colors: ["Mahogany", "Walnut"],
-        sizes: ["King"],
-        brand: "WoodCraft",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Bed Frame, Storage Drawers",
-            modelNumber: "WD2023",
-            secondaryMaterial: "Plywood",
-            configuration: "Storage Bed",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-          },
-          productDetails: {
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-          },
-          dimensions: {
-            width: 200,
-            height: 120,
-            depth: 220,
-            seatHeight: 50,
-            legHeight: 15,
-          },
-          materials: {
-            primaryMaterial: "Solid Wood",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-          },
-          specifications: {
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-            weight: 80,
-            brand: "WoodCraft",
-          },
-          warranty: {
-            summary: "3 Years Manufacturer Warranty",
-            serviceType: "Doorstep Repair",
-            covered: "Manufacturing Defects",
-            notCovered: "Wear and Tear",
-            domesticWarranty: "3 Years",
-          },
-        },
-      },
-      {
-        productName: "Modern Sofa Set",
-        productSubtitle: "Luxury Leather Sofa Set",
-        productImages: ["sofa1.jpg", "sofa2.jpg"],
-        productPrice: 1200,
-        productQuantity: 10,
-        productSale: 10,
-        productCategories: [categories[0]._id],
-        productDescription:
-          "A modern and luxurious leather sofa set for your living room.",
-        colors: ["Black", "Brown"],
-        sizes: ["Large", "Medium"],
-        brand: "LuxuryHome",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Sofa, 2 Cushions",
-            modelNumber: "SF2023",
-            secondaryMaterial: "Wood",
-            configuration: "L-Shape",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-          },
-          productDetails: {
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-          },
-          dimensions: {
-            width: 220,
-            height: 90,
-            depth: 100,
-            seatHeight: 45,
-            legHeight: 10,
-          },
-          materials: {
-            primaryMaterial: "Leather",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-          },
-          specifications: {
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-            weight: 50,
-            brand: "LuxuryHome",
-          },
-          warranty: {
-            summary: "5 Years Manufacturer Warranty",
-            serviceType: "On-site Service",
-            covered: "Manufacturing Defects",
-            notCovered: "Physical Damage",
-            domesticWarranty: "5 Years",
-          },
-        },
-      },
-      {
-        productName: "Wooden King Bed",
-        productSubtitle: "Solid Wood King Size Bed with Storage",
-        productImages: ["bed1.jpg", "bed2.jpg"],
-        productPrice: 1500,
-        productQuantity: 5,
-        productSale: 5,
-        productCategories: [categories[1]._id],
-        productDescription:
-          "A sturdy and elegant wooden king-size bed with storage drawers.",
-        colors: ["Mahogany", "Walnut"],
-        sizes: ["King"],
-        brand: "WoodCraft",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Bed Frame, Storage Drawers",
-            modelNumber: "WD2023",
-            secondaryMaterial: "Plywood",
-            configuration: "Storage Bed",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-          },
-          productDetails: {
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-          },
-          dimensions: {
-            width: 200,
-            height: 120,
-            depth: 220,
-            seatHeight: 50,
-            legHeight: 15,
-          },
-          materials: {
-            primaryMaterial: "Solid Wood",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-          },
-          specifications: {
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-            weight: 80,
-            brand: "WoodCraft",
-          },
-          warranty: {
-            summary: "3 Years Manufacturer Warranty",
-            serviceType: "Doorstep Repair",
-            covered: "Manufacturing Defects",
-            notCovered: "Wear and Tear",
-            domesticWarranty: "3 Years",
-          },
-        },
-      },
-      {
-        productName: "Modern Sofa Set",
-        productSubtitle: "Luxury Leather Sofa Set",
-        productImages: ["sofa1.jpg", "sofa2.jpg"],
-        productPrice: 1200,
-        productQuantity: 10,
-        productSale: 10,
-        productCategories: [categories[0]._id],
-        productDescription:
-          "A modern and luxurious leather sofa set for your living room.",
-        colors: ["Black", "Brown"],
-        sizes: ["Large", "Medium"],
-        brand: "LuxuryHome",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Sofa, 2 Cushions",
-            modelNumber: "SF2023",
-            secondaryMaterial: "Wood",
-            configuration: "L-Shape",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-          },
-          productDetails: {
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-          },
-          dimensions: {
-            width: 220,
-            height: 90,
-            depth: 100,
-            seatHeight: 45,
-            legHeight: 10,
-          },
-          materials: {
-            primaryMaterial: "Leather",
-            upholsteryMaterial: "Genuine Leather",
-            upholsteryColor: "Black",
-            fillingMaterial: "Foam",
-            finishType: "Matte",
-          },
-          specifications: {
-            adjustableHeadrest: true,
-            maximumLoadCapacity: 300,
-            originOfManufacture: "USA",
-            weight: 50,
-            brand: "LuxuryHome",
-          },
-          warranty: {
-            summary: "5 Years Manufacturer Warranty",
-            serviceType: "On-site Service",
-            covered: "Manufacturing Defects",
-            notCovered: "Physical Damage",
-            domesticWarranty: "5 Years",
-          },
-        },
-      },
-      {
-        productName: "Wooden King Bed",
-        productSubtitle: "Solid Wood King Size Bed with Storage",
-        productImages: ["bed1.jpg", "bed2.jpg"],
-        productPrice: 1500,
-        productQuantity: 5,
-        productSale: 5,
-        productCategories: [categories[1]._id],
-        productDescription:
-          "A sturdy and elegant wooden king-size bed with storage drawers.",
-        colors: ["Mahogany", "Walnut"],
-        sizes: ["King"],
-        brand: "WoodCraft",
-        additionalInformation: {
-          general: {
-            salesPackage: "1 Bed Frame, Storage Drawers",
-            modelNumber: "WD2023",
-            secondaryMaterial: "Plywood",
-            configuration: "Storage Bed",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-          },
-          productDetails: {
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-          },
-          dimensions: {
-            width: 200,
-            height: 120,
-            depth: 220,
-            seatHeight: 50,
-            legHeight: 15,
-          },
-          materials: {
-            primaryMaterial: "Solid Wood",
-            upholsteryMaterial: "None",
-            upholsteryColor: "N/A",
-            fillingMaterial: "N/A",
-            finishType: "Glossy",
-          },
-          specifications: {
-            adjustableHeadrest: false,
-            maximumLoadCapacity: 500,
-            originOfManufacture: "India",
-            weight: 80,
-            brand: "WoodCraft",
-          },
-          warranty: {
-            summary: "3 Years Manufacturer Warranty",
-            serviceType: "Doorstep Repair",
-            covered: "Manufacturing Defects",
-            notCovered: "Wear and Tear",
-            domesticWarranty: "3 Years",
-          },
-        },
-      },
+          "A comfortable and stylish modern sofa with premium fabric upholstery.",
+        brand: "HomeStyle",
+        colors: [
+          {
+            name: "Graphite Black",
+            hex: "#1C1C1C",
 
-    ]); // Keep your existing products array
+            images: [
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-3_kqvegm",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561371/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-3_kqvegm.webp",
+              },
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-6_bwqlfu",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561371/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-6_bwqlfu.webp",
+              },
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-5_pvoee0",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561370/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-5_pvoee0.webp",
+              },
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-4_snvdcc",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561370/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-4_snvdcc.webp",
+              },
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-2_qgchdf",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561369/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-2_qgchdf.webp",
+              },
+              {
+                public_id:
+                  "categories/sofas/toom modular sofa/graphite-black/toom_modular_sofa-1_iawzkd",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742561367/categories/sofas/toom%20modular%20sofa/graphite-black/toom_modular_sofa-1_iawzkd.webp",
+              },
+            ],
+            quantity: 12,
+          },
+        ],
 
-    // ======================
-    // 4. Create Blogs
-    // ======================
-    const blogs = await Blog.insertMany([
-      {
-        title: "Modern Furniture Trends 2024",
-        description: "Discover the latest trends in home furniture design",
-        adminUser: users[0]._id,
-        tags: ["design", "trends"],
-        img: "blog1.jpg",
-      },
-      {
-        title: "Choosing the Right Mattress",
-        description: "Complete guide to selecting the perfect mattress",
-        adminUser: users[0]._id,
-        tags: ["bedroom", "health"],
-        img: "blog2.jpg",
+        additionalInformation: {
+          general: {
+            salesPackage: "1 Sofa",
+            modelNumber: "SOFA-123",
+            configuration: "Fixed Seat",
+            upholsteryMaterial: "Velvet",
+            upholsteryColor: "Black",
+          },
+          productDetails: {
+            fillingMaterial: "Foam",
+            finishType: "Matte",
+            adjustableHeadrest: false,
+            maximumLoadCapacity: 300,
+            originOfManufacture: "USA",
+          },
+          dimensions: {
+            width: 200,
+            height: 85,
+            depth: 90,
+            seatHeight: 45,
+            legHeight: 10,
+          },
+          warranty: {
+            summary: "1 Year Warranty",
+            serviceType: "Onsite Service",
+            covered: "Manufacturing Defects",
+            notCovered: "Physical Damage",
+            domesticWarranty: "Yes",
+          },
+        },
       },
     ]);
 
     // ======================
     // 5. Create Carts
     // ======================
-    const carts = await Cart.insertMany([
-      {
-        userId: users[1]._id,
-        products: [
-          {
-            productId: products[0]._id,
-            quantity: 2,
-          },
-          {
-            productId: products[1]._id,
-            quantity: 1,
-          },
-        ],
-      },
-      {
-        userId: users[0]._id,
-        products: [
-          {
-            productId: products[0]._id,
-            quantity: 2,
-          },
-          {
-            productId: products[1]._id,
-            quantity: 4,
-          },
-        ],
-      },
-    ]);
-    // ======================
-    // 6. Create Orders
-    // ======================
-    const orders = await Order.insertMany([
-      {
-        userId: users[1]._id,
-        orderItems: [
-          {
-            productId: products[0]._id,
-            quantity: 1,
-          },
-        ],
-        shippingAddress: {
-          street: "123 Main Street",
-          city: "New York",
-          province: "NY",
-          zipCode: "10001",
-          country: "USA",
-        },
-        totalAmount: products[0].productPrice * 0.9, // 10% discount
-        paymentMethod: "Direct Bank Transfer",
-        status: "Delivered",
-        transactionId: "TX123456789",
-      },
-    ]);
+    // const carts = await Cart.insertMany([
+    //   {
+    //     userId: users[1]._id,
+    //     products: [
+    //       {
+    //         productId: products[0]._id,
+    //         quantity: 2,
+    //       },
+    //       {
+    //         productId: products[1]._id,
+    //         quantity: 1,
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     userId: users[0]._id,
+    //     products: [
+    //       {
+    //         productId: products[0]._id,
+    //         quantity: 2,
+    //       },
+    //       {
+    //         productId: products[1]._id,
+    //         quantity: 4,
+    //       },
+    //     ],
+    //   },
+    // ]);
+    // // ======================
+    // // 6. Create Orders
+    // // ======================
+    // const orders = await Order.insertMany([
+    //   {
+    //     userId: users[1]._id,
+    //     orderItems: [
+    //       {
+    //         productId: products[0]._id,
+    //         quantity: 1,
+    //       },
+    //     ],
+    //     shippingAddress: {
+    //       street: "123 Main Street",
+    //       city: "New York",
+    //       province: "NY",
+    //       zipCode: "10001",
+    //       country: "USA",
+    //     },
+    //     totalAmount: products[0].productPrice * 0.9, // 10% discount
+    //     paymentMethod: "Direct Bank Transfer",
+    //     status: "Delivered",
+    //     transactionId: "TX123456789",
+    //   },
+    // ]);
 
     // ======================
     // 7. Create Images
@@ -625,12 +217,7 @@ const seedData = async () => {
 
     console.log("Database Seeding Completed ✅");
     console.log(`Summary:
-      Users: ${users.length}
-      Categories: ${categories.length}
-      Products: ${products.length}
-      Blogs: ${blogs.length}
-      Carts: ${carts.length}
-      Orders: ${orders.length}`);
+      Products: ${products.length}`);
 
     await mongoose.connection.close();
     console.log("MongoDB Connection Closed 🔌");

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const ALLOWED_COLORS = [
   { name: "Black", hex: "#000000" },
   { name: "White", hex: "#FFFFFF" },
@@ -7,7 +6,11 @@ const ALLOWED_COLORS = [
   { name: "Beige", hex: "#F5F5DC" },
   { name: "Brown", hex: "#8B4513" },
   { name: "Dark Brown", hex: "#5C4033" },
+  { name: "Light Blue", hex: "#ADD8E6" },
+  { name: "Dark Blue", hex: "#00008B" },
+  { name: "Graphite Black", hex: "#1C1C1C" },
   { name: "Navy Blue", hex: "#000080" },
+  { name: "Light Gray", hex: "#D3D3D3" },
 ];
 
 const ProductSchema = new mongoose.Schema(
@@ -30,8 +33,15 @@ const ProductSchema = new mongoose.Schema(
           required: true,
           enum: ALLOWED_COLORS.map((c) => c.name),
         },
-        hex: { type: String, required: true },
-        images: [{ type: String, required: true }],
+        hex: { type: String },
+        // images: [{ type: String, required: true }],
+        images: [
+          {
+            public_id: { type: String, required: true },
+            url: { type: String, required: true },
+          },
+        ],
+
         quantity: { type: Number, required: true },
         sku: { type: String, unique: true },
       },
@@ -86,12 +96,14 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Pre-save hook to assign correct hex code and auto-generate SKU
 ProductSchema.pre("save", function (next) {
   this.colors.forEach((color) => {
     const colorInfo = ALLOWED_COLORS.find((c) => c.name === color.name);
     if (colorInfo) {
       color.hex = colorInfo.hex;
+      console.log("aadsasdcdasaedAF", color.hex);
+    } else {
+      return next(new Error(`Invalid color name: ${color.name}`));
     }
 
     if (!color.sku) {
