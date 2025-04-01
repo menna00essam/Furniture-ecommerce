@@ -1,4 +1,4 @@
-@let user = (user$ |async)??{name:'',email:''};
+@let user = (user$ |async)??{name:'',email:'',thumbnail:''};
 <main
   class="max-w-[1680px] flex flex-col gap-2 items-start px-4 md:px-6 lg:px-8 mx-auto w-full"
 >
@@ -11,7 +11,7 @@
             ><img
               class="aspect-square h-full w-full"
               alt="User avatar"
-              src="images/user.png"
+              [src]="user.thumbnail || 'images/user.png'"
           /></span>
           <div class="flex flex-col">
             <p class="text-sm">{{ user.name }}</p>

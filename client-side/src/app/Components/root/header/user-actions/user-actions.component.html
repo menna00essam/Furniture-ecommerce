@@ -1,5 +1,5 @@
-@let cartLength = (cartLength$|async)??0; @let favoritesLength =
-(favoritesLength$|async)??0;
+@let user = (user$ |async)??{name:'',email:'',thumbnail:''};@let cartLength =
+(cartLength$|async)??0; @let favoritesLength = (favoritesLength$|async)??0;
 
 <ul class="flex gap-[15px] py-[15px] w-full justify-center">
   <li class="relative h-[20px]">
@@ -31,10 +31,10 @@
     }
   </li>
 
-  <li>
+  <li class="rounded-4xl overflow-hidden">
     <a routerLink="{{ isLoggedIn ? ['/profile'] : '/auth' }}">
       <img
-        src="{{ isLoggedIn ? 'images/user.png' : 'icons/account-alert.svg' }}"
+        [src]="isLoggedIn ? user.thumbnail : 'icons/account-alert.svg'"
         alt=""
         srcset=""
         class="w-[20px]"
