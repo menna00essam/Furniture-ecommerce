@@ -22,8 +22,13 @@ export class UserService {
       })
       .pipe(
         map(({ data: { user } }) => {
-          const { email, username, _id } = user;
-          return { email, name: username, id: _id } as user;
+          const { email, username, _id, thumbnail } = user;
+          return {
+            email,
+            name: username,
+            id: _id,
+            thumbnail,
+          } as user;
         }),
         tap((u) => this.userSubject.next(u))
       );
