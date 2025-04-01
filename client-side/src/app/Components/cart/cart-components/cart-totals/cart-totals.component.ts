@@ -3,6 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../shared/button/button.component';
 import { CartService } from '../../../../Services/cart.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart-totals',
@@ -12,11 +13,9 @@ import { CartService } from '../../../../Services/cart.service';
   imports: [CommonModule, ButtonComponent, CurrencyPipe],
 })
 export class CartTotalsComponent {
-  constructor(private router: Router, private cartService: CartService) {
-    // console.log('CartService>>>>>>', this.cartService);
-  }
+  constructor(private router: Router, private cartService: CartService) {}
 
-  @Input() subtotal: number = 0;
+  @Input() subtotal: Observable<number> = new Observable<number>();
 
   goToCheckout() {
     this.cartService.setCheckoutData();

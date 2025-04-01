@@ -31,7 +31,7 @@ import {
 })
 export class SignupComponent {
   errorMessage: string = '';
-  form = new FormGroup({
+  signupForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     username: new FormControl(null, [
       Validators.required,
@@ -51,16 +51,16 @@ export class SignupComponent {
   });
   constructor(private authService: AuthService, private router: Router) {}
   onSubmit() {
-    this.form.controls.email.markAsTouched();
-    this.form.controls.username.markAsTouched();
-    this.form.controls.password.markAsTouched();
-    this.form.controls.phone.markAsTouched();
-    this.form.controls.agree.markAsTouched();
+    this.signupForm.controls.email.markAsTouched();
+    this.signupForm.controls.username.markAsTouched();
+    this.signupForm.controls.password.markAsTouched();
+    this.signupForm.controls.phone.markAsTouched();
+    this.signupForm.controls.agree.markAsTouched();
 
-    if (this.form.valid) {
-      this.authService.signup(this.form.value).subscribe({
-        next: (res) => {
-          this.form.reset();
+    if (this.signupForm.valid) {
+      this.authService.signup(this.signupForm.value).subscribe({
+        next: () => {
+          this.signupForm.reset();
           this.router.navigate(['/auth/login']);
         },
         error: (err) => {

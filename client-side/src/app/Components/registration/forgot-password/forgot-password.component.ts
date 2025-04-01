@@ -8,15 +8,28 @@ import {
 } from '@angular/forms';
 import { InputComponent } from '../../shared/input/input.component';
 import { ButtonComponent } from '../../shared/button/button.component';
-import { Router, RouterModule } from '@angular/router';
-
+import { RouterModule } from '@angular/router';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state,
+} from '@angular/animations';
 @Component({
   selector: 'app-forgot-password',
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent, RouterModule],
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css',
+  animations: [
+    trigger('slideUpDown', [
+      state('in', style({ height: '*', opacity: 1 })),
+      state('out', style({ height: '0', opacity: 0 })),
+      transition('in <=> out', animate('200ms ease-in-out')),
+    ]),
+  ],
 })
 export class ForgotPasswordComponent {
+  errorMessage = '';
   message = '';
   forgotForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
@@ -24,17 +37,17 @@ export class ForgotPasswordComponent {
   constructor(private authService: AuthService) {}
   forgotPassword() {
     this.forgotForm.controls.email.markAsTouched();
-    console.log(this.forgotForm.controls.email.value);
     if (this.forgotForm.valid) {
       this.authService
         .forgotPassword(this.forgotForm.controls.email.value!)
         .subscribe({
           next: (res) => {
-            this.message = 'Check your email for a password reset link';
+            this.message = '✅ Check your email for a password reset link';
             this.forgotForm.reset();
           },
           error: (err) => {
-            this.message = 'Error: ' + err.error.message;
+            console.log(err);
+            this.errorMessage = 'Error: ' + err.error.message;
           },
         });
     } else {

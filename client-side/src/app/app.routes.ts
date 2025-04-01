@@ -25,10 +25,9 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/profile/setting/setting.component';
 import { OrdersComponent } from './Components/profile/orders/orders.component';
 import { FavoritesItemsComponent } from './Components/shared/favorites-items/favorites-items.component';
-import { PrivacyPolicyComponent } from './Components/privacy-policy/privacy-policy.component';
-import { ReturnsComponent } from './Components/returns/returns.component';
-// import { PaymentComponent } from './Components/payment/payment.component';
-import { StepperComponent } from './Components/shared/stepper/stepper.component';
+import { PrivacyPolicyComponent } from './Components/help/privacy-policy/privacy-policy.component';
+import { ReturnsComponent } from './Components/help/returns/returns.component';
+import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +60,7 @@ export const routes: Routes = [
       { path: 'favorites', component: FavoritesComponent },
       { path: 'privacypolicy', component: PrivacyPolicyComponent },
       { path: 'returns', component: ReturnsComponent },
+      { path: 'paymentoptions', component: PaymentOptionsComponent },
       {
         path: 'profile',
         component: ProfileComponent,

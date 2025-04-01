@@ -17,6 +17,7 @@ import {
   animate,
   state,
 } from '@angular/animations';
+
 @Component({
   selector: 'app-login',
   imports: [ReactiveFormsModule, InputComponent, RouterModule, ButtonComponent],
@@ -32,52 +33,49 @@ import {
 })
 export class LoginComponent {
   errorMessage: string = '';
-  form = new FormGroup({
+  loginForm = new FormGroup({
     email: new FormControl(null, [Validators.required, Validators.email]),
     password: new FormControl(null, [
       Validators.required,
       Validators.minLength(8),
     ]),
-    agree: new FormControl(false),
+    rememberme: new FormControl(false),
   });
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
+    // Handle Google login token from query params
     this.route.queryParams.subscribe((params) => {
       const token = params['token'];
       if (token) {
-        this.authService.handleGoogleLogin(token);
+        this.authService.handleGoogleLogin(token, false);
         this.router.navigate(['/']);
       }
     });
   }
+
   onSubmit() {
-    this.form.controls.email.markAsTouched();
-    this.form.controls.password.markAsTouched();
-    this.form.controls.agree.markAsTouched();
-    if (this.form.valid) {
-      this.authService.login(this.form.value).subscribe({
+    this.loginForm.markAllAsTouched();
+    if (this.loginForm.valid) {
+      const { email, password, rememberme } = this.loginForm.value;
+
+      this.authService.login({ email, password }, rememberme!).subscribe({
         next: (res) => {
-          this.form.reset();
-          localStorage.setItem('token', res.data.token);
-          const decoded: any = jwtDecode(res.data.token);
-          localStorage.setItem('role', decoded.role);
-          if (decoded.role === 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/']);
-          }
+          this.loginForm.reset();
         },
         error: (err) => {
-          this.errorMessage = err.error.error;
+          this.errorMessage =
+            err.error?.error || 'Login failed. Please try again.';
         },
       });
     } else {
       console.error('Form invalid');
     }
   }
+
   onGoogleSignIn() {
     this.authService.googleSignIn();
   }

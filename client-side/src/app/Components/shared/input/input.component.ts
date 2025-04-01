@@ -29,5 +29,4 @@ export class InputComponent {
   @Input() control!: FormControl;
   @Input() bgC: string = '';
   @Input() width: string = '';
-  @Input() labelClass: string = '';
 }

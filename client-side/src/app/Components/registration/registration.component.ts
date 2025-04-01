@@ -1,10 +1,26 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { filter, map, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-registration',
-  imports: [RouterOutlet],
   templateUrl: './registration.component.html',
-  styleUrl: './registration.component.css',
+  styleUrls: ['./registration.component.css'],
+  standalone: true,
+  imports: [RouterModule, CommonModule],
 })
-export class RegistrationComponent {}
+export class RegistrationComponent {
+  isSignUp$: Observable<boolean>;
+
+  constructor(private router: Router) {
+    this.isSignUp$ = this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      startWith(this.router),
+      map(() => {
+        return this.router.url.endsWith('/signup');
+      })
+    );
+  }
+}

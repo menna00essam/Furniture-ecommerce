@@ -13,9 +13,8 @@ export class ButtonComponent {
     | 'primary-fill'
     | 'secondary-fill'
     | 'primary-outline'
-    | 'semi-black-outline'
-    | 'plainBtn'
-    | 'black-outline' = 'primary-fill';
+    | 'black-outline'
+    | 'plain' = 'primary-fill';
   @Input() btnPadding: string = '10px';
   @Input() btnWidth: string = '150px';
 }
