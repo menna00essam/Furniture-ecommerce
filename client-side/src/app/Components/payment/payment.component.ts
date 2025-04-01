@@ -9,31 +9,34 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CheckoutService } from '../../Services/checkout.service';
-import { InputComponent } from '../shared/input/input.component'; 
+import { InputComponent } from '../shared/input/input.component';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent], 
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent],
   templateUrl: './payment.component.html',
-  styleUrl: './payment.component.css',
 })
 export class PaymentComponent {
-  paymentForm: FormGroup;
+  paymentForm = new FormGroup({
+    cardNumber: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{16}$/),
+    ]),
+    expiry: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/),
+    ]),
+    cvc: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d{3,4}$/),
+    ]),
+  });
 
   constructor(
     private fb: FormBuilder,
     private checkoutService: CheckoutService
-  ) {
-    this.paymentForm = this.fb.group({
-      cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
-      expiry: [
-        '',
-        [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)],
-      ],
-      cvc: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
-    });
-  }
+  ) {}
 
   // Getter methods for form controls
   get cardNumber(): FormControl {

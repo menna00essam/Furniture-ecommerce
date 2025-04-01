@@ -21,15 +21,15 @@ import {
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
-import { NgToastModule, NgToastService } from 'ng-angular-popup';
-import { ToasterPosition } from 'ng-angular-popup';
+import { NgToastService } from 'ng-angular-popup';
+import { productCart } from '../../../Models/productCart.model';
 
 @Component({
   selector: 'app-product-item',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterModule, NgToastModule],
+  imports: [CommonModule, ButtonComponent, RouterModule],
   providers: [CurrencyPipe],
   templateUrl: './product-item.component.html',
   animations: [
@@ -47,19 +47,15 @@ export class ProductItemComponent implements OnInit {
   isHovered = false;
   disableAnimation = false;
 
-  cart$!: Observable<product[]>;
-
-  ToasterPosition = ToasterPosition;
+  cart$!: Observable<productCart[]>;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
-    private cartService: CartService,
-    private toast: NgToastService
+    private cartService: CartService
   ) {}
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-    this.cartService.getCart().subscribe();
   }
 
   onMouseEnter() {
@@ -70,27 +66,16 @@ export class ProductItemComponent implements OnInit {
     if (!this.disableAnimation) this.isHovered = false;
   }
 
-  addToFavourites() {
-    if (this.isFavorite(this.product.id)) {
-      this.favoriteService.removeFavorite(this.product.id);
-    } else {
-      this.favoriteService.addFavorite(this.product);
-    }
+  toggleFavourites() {
+    this.favoriteService.toggleFavourite(this.product.id).subscribe();
     this.cdr.detectChanges();
   }
 
-  addToCart() {
-    console.log(1);
+  toggleCart() {
     if (this.cartService.isInCart(this.product.id)) {
       this.cartService.removeProduct(this.product.id);
-      this.toast.success(
-        'Product removed Succeffully from cart',
-        'SUCCESS',
-        1000
-      );
     } else {
       this.cartService.addProduct(this.product);
-      this.toast.success('Product Added Succeffully to cart', 'SUCCESS', 1000);
     }
     this.cdr.detectChanges();
   }
@@ -104,7 +89,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   isFavorite(productId: string): boolean {
-    return this.favoriteService.getFavorites().some((p) => p.id === productId);
+    return this.favoriteService.isInFavorites(productId);
   }
 
   isInCart(productId: string): boolean {

@@ -57,57 +57,43 @@
         (ngSubmit)="onSubmit()"
         class="flex flex-col space-y-4"
       >
-        <!-- Name Field -->
-        <label for="name" class="text-base font-medium">Your Name</label>
-        <input
-          id="name"
-          formControlName="name"
-          type="text"
-          class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
+        <app-input
+          label="Name *"
           placeholder="Enter Your Name"
-          required
-        />
-        @if (contactForm.get('name')?.invalid &&
-        contactForm.get('name')?.touched) {
-        <p class="text-red-light text-sm">Name is required.</p>
-        }
-
-        <!-- Email Field -->
-        <label for="email" class="text-base font-medium">Your Email</label>
-        <input
-          id="email"
-          formControlName="email"
-          type="email"
-          class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
-          placeholder="Enter Your Email"
-          required
-        />
-        @if (contactForm.get('email')?.invalid &&
-        contactForm.get('email')?.touched) {
-        <p class="text-red-light text-sm">Please enter a valid email.</p>
-        }
-
-        <!-- Subject Field -->
-        <label for="subject" class="text-base font-medium"
-          >Subject (Optional)</label
-        >
-        <input
-          id="subject"
-          formControlName="subject"
           type="text"
-          class="border-2 border-gray px-4 py-2 rounded-md w-full h-13"
-          placeholder="Enter a Subject"
-        />
+          bgC="secondary"
+          width="full"
+          [control]="contactForm.controls['name']"
+        ></app-input>
+
+        <app-input
+          label="Email *"
+          placeholder="Enter your email"
+          type="text"
+          bgC="secondary"
+          width="full"
+          [control]="contactForm.controls['email']"
+        ></app-input>
+
+        <app-input
+          label="Subject"
+          placeholder="Enter a subject"
+          type="text"
+          bgC="secondary"
+          width="full"
+          [control]="contactForm.controls['subject']"
+        ></app-input>
 
         <!-- Message Field -->
         <label for="message" class="text-base font-medium">Your Message</label>
         <textarea
           id="message"
           formControlName="message"
-          class="border-2 border-gray px-4 py-2 rounded-md w-full h-28"
+          class="w-full outline-0 rounded-md p-2 ps-2 bg-secondary"
           placeholder="Write Your Message"
           required
         ></textarea>
+
         @if (contactForm.get('message')?.invalid &&
         contactForm.get('message')?.touched) {
         <p class="text-red-light text-sm">Message cannot be empty.</p>
@@ -128,6 +114,7 @@
       >
         {{ message }}
       </h2>
+
       }
     </div>
   </div>
