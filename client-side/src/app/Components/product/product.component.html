@@ -32,18 +32,30 @@
     </div>
     <!-- Product Details -->
     <div class="flex-1 lg:w-2/5 max-w-xl space-y-3 lg:space-y-6">
-      <h1 class="text-3xl lg:text-4xl font-light">{{ product.productName }}</h1>
-      <p class="text-sm lg:text-base text-black">
-        {{ product.productDescription }}
+      <h1 class="text-3xl lg:text-4xl font-light text-[var(--color-black)]">
+        {{ product.productName }}
+      </h1>
+
+      <p class="text-sm lg:text-base text-[var(--color-black)]">
+        {{ product.productSubtitle }}
+      </p>
+
+      <p class="text-lg lg:text-xl font-meduim text-[var(--color-gray-dark)]">
+        Brand: {{ product.brand }}
       </p>
       <!-- Prices -->
-      <div class="space-y-2">
-        <p class="text-gray-500 text-lg lg:text-xl font-medium"> {{ originalPrice | currency}}</p>
-        <span class="text-gray text-sm lg:text-base font-semibold ">Previous price: <p class="line-through inline">{{
-            salePrice |
-            currency }}</p>
-        </span>
-      </div>
+      <p class="text-lg lg:text-xl font-medium text-[var(--color-gray-dark)]">
+        Price: {{ originalPrice | currency }}
+      </p>
+
+      <p class="text-sm lg:text-base font-semibold text-[var(--color-gray)]">
+        Previous price:
+        <span class="line-through text-[var(--color-gray)]">{{ salePrice | currency }}</span>
+      </p>
+      <p class="text-sm lg:text-base font-semibold" [class.text-[var(--color-green-light)]]="stockStatus === 'In Stock'"
+        [class.text-[var(--color-red-light)]]="stockStatus === 'Out of Stock'">
+        {{ stockStatus }}
+      </p>
 
       <!-- Color Selection -->
       @if (product && product.colors && product.colors.length > 0) {
@@ -60,28 +72,47 @@
       }
 
       <!-- Buttons Section -->
-      <div class="flex flex-col sm:flex-row gap-3 lg:gap-4">
-        <!-- Quantity Selector -->
-        <div class="flex w-full sm:w-[140px] p-1 items-center justify-between border rounded-lg">
-          <button class="w-8 h-8 hover:bg-gray-100 rounded" (click)="decrease()">-</button>
-          <span class="text-sm font-semibold">{{ count }}</span>
-          <button class="w-8 h-8 hover:bg-gray-100 rounded" (click)="increase()">+</button>
+      <div class="flex flex-col w-full  gap-3 lg:gap-4 items-start">
+        <div class="flex flex-col sm:flex-row gap-3 lg:gap-4 w-full sm:w-auto items-start">
+          <!-- Quantity Selector -->
+          <div class="flex w-full sm:w-[140px] p-1 items-center justify-between border rounded-lg">
+            <button class="w-8 h-8 hover:bg-gray-100 rounded" (click)="decrease()">-</button>
+            <span class="text-sm font-semibold">{{ count }}</span>
+            <button class="w-8 h-8 hover:bg-gray-100 rounded" (click)="increase()">+</button>
+          </div>
+          <!-- Action Buttons -->
+          <app-button class="flex-1 sm:flex-none w-full sm:w-auto" [type]="'black-outline'">Add To Cart</app-button>
+          <app-button class="flex-1 sm:flex-none w-full sm:w-auto" [type]="'black-outline'">
+            <span class="flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Comparison
+            </span>
+          </app-button>
         </div>
 
-        <!-- Action Buttons -->
-        <app-button class="flex-1" [type]="'black-outline'">Add To Cart</app-button>
-        <app-button class="flex-1" [type]="'black-outline'">
-          <span class="flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Comparison
-          </span>
-        </app-button>
+        <!-- Warning Message (Now Aligned) -->
+        @if(warningMessage){
+        <p
+          class="text-red-600 text-sm bg-red-100 p-2 rounded-lg border border-red-400 sm:w-auto text-center flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12" y2="16"></line>
+          </svg>
+          {{ warningMessage }}
+        </p>
+        }
+
       </div>
+
+
     </div>
+
   </div>
 </div>
 

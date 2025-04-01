@@ -22,12 +22,10 @@
   --color-black-transparent: #00000073;
 
   --color-red-light: #e97171;
-
   --color-green-light: #2ec1ac;
 }
 
-
-body{
+body {
   accent-color: var(--color-primary);
 }
 ::-webkit-scrollbar {

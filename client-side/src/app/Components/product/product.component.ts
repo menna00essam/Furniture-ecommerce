@@ -26,11 +26,14 @@ import { ProductItemComponent } from '../shared/product-item/product-item.compon
 export class ProductComponent implements OnInit {
   productId: string | null = null;
   product!: ProductDetails;
+  warningMessage: string | null = null;
   colors: {
     name: string;
     hex: string;
     mainImage?: string | null;
     galleryImages?: string[];
+    quantity?: number;
+    sku?: string;
   }[] = [];
   selectedColorIndex: number = 0;
   selectedImage: string | null = null;
@@ -68,6 +71,7 @@ export class ProductComponent implements OnInit {
                 galleryImages: Array.isArray(c.galleryImages)
                   ? c.galleryImages.slice(0, 6)
                   : [],
+                quantity: c.quantity ?? 0,
               }))
             : [];
 
@@ -123,6 +127,14 @@ export class ProductComponent implements OnInit {
       this.setSelectedColor(index);
     }
   }
+  get stockStatus(): string {
+    if (!this.selectedColor?.quantity || this.selectedColor.quantity <= 0) {
+      console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
+      return 'Out of Stock';
+    }
+    console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
+    return 'In Stock';
+  }
 
   getMappedProduct(): any {
     return {
@@ -134,10 +146,25 @@ export class ProductComponent implements OnInit {
   }
 
   increase() {
-    this.count++;
+    if (
+      this.selectedColor?.quantity &&
+      this.count < this.selectedColor.quantity
+    ) {
+      this.count++;
+      this.warningMessage = null;
+    } else {
+      this.warningMessage = 'You have reached the maximum available quantity!';
+    }
   }
 
   decrease() {
-    if (this.count > 1) this.count--;
+    if (
+      this.count > 1 &&
+      this.selectedColor?.quantity &&
+      this.count <= this.selectedColor.quantity
+    ) {
+      this.warningMessage = null;
+      this.count--;
+    }
   }
 }
