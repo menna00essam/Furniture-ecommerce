@@ -12,7 +12,11 @@ const UserSchema = new mongoose.Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
-    thumbnail: { type: String, default: process.env.DEFAULT_THUMBNAIL },
+    thumbnail: {
+      type: String,
+      default:
+        "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png",
+    },
     resetToken: String,
     resetTokenExpiry: Date,
   },
