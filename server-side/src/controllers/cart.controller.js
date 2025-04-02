@@ -141,7 +141,7 @@ const addToCart = asyncWrapper(async (req, res, next) => {
 // PATCH: Update cart (change quantity or remove a product)
 const updateCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  const { productId, quantity, color } = req.body; // Include color in request
+  const { productId, quantity, color } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0 || !color) {
     return next(
