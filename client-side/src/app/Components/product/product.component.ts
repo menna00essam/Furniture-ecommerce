@@ -144,6 +144,9 @@ export class ProductComponent implements OnInit {
       // Add other required mappings here
     };
   }
+  stringify(obj: any): string {
+    return JSON.stringify(obj);
+  }
 
   increase() {
     if (

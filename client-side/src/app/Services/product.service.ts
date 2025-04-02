@@ -106,7 +106,7 @@ export class ProductService {
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages,
+            images: p.productImages, //now it returns only one image
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,

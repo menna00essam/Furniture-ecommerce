@@ -42,3 +42,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-gray-dark);
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
