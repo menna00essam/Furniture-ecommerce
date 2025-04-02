@@ -1,19 +1,20 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const CartSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     products: [
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Product',
+          ref: "Product",
           required: true,
         },
+        color: { type: String, required: true },
         quantity: { type: Number, required: true, min: 1 },
         subtotal: { type: Number },
       },
@@ -23,9 +24,9 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-CartSchema.pre('save', async function (next) {
+CartSchema.pre("save", async function (next) {
   try {
-    await this.populate('products.productId');
+    await this.populate("products.productId");
 
     this.totalPrice = this.products.reduce((acc, product) => {
       const productPrice = product.productId.productPrice;
@@ -39,4 +40,4 @@ CartSchema.pre('save', async function (next) {
   }
 });
 
-module.exports = mongoose.model('Cart', CartSchema);
+module.exports = mongoose.model("Cart", CartSchema);
