@@ -13,13 +13,14 @@
   </div>
 
   <!-- Search Input -->
-  <app-search
-    (onSelect)="goToProduct($event)"
-  ></app-search>
+  <app-search (onSelect)="goToProduct($event)"></app-search>
 
   <!-- Actions -->
   <div class="hidden md:block">
-    <app-user-actions></app-user-actions>
+    <app-user-actions
+      (openFavorites)="openFavorites.emit()"
+      (openCart)="openCart.emit()"
+    ></app-user-actions>
   </div>
 
   <!-- Menu Button -->
@@ -50,7 +51,11 @@
     (click)="toggleMenu()"
   >
     <app-navigation></app-navigation>
-    <app-user-actions></app-user-actions>
+    <app-user-actions
+      (openFavorites)="openFavorites.emit()"
+      (openCart)="openCart.emit()"
+    >
+    </app-user-actions>
   </div>
   }
 </nav>
