@@ -10,6 +10,8 @@ import { CartService } from '../../../../Services/cart.service';
 import { AuthService } from '../../../../Services/auth.service';
 import { productCart } from '../../../../Models/productCart.model';
 import { productFavorite } from '../../../../Models/productFavorite.model';
+import { user } from '../../../../Models/user.model';
+import { UserService } from '../../../../Services/user.service';
 
 @Component({
   selector: 'app-user-actions',
@@ -34,6 +36,7 @@ import { productFavorite } from '../../../../Models/productFavorite.model';
   ],
 })
 export class UserActionsComponent implements OnInit {
+  user$!: Observable<user | null>;
   cartProductsTotalPrice!: Observable<number>;
   cartLength$!: Observable<number>;
   cart$!: Observable<productCart[]>;
@@ -46,10 +49,15 @@ export class UserActionsComponent implements OnInit {
   constructor(
     private favoriteService: FavoriteService,
     private cartService: CartService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    this.user$ = this.userService.user$;
+    this.userService.getUser().subscribe((user) => {
+      console.log(user.thumbnail);
+    });
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
@@ -84,6 +92,6 @@ export class UserActionsComponent implements OnInit {
 
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
-    document.body.style.width = isOpen ? 'calc(100% - 10px)' : '';
+    document.body.style.width = isOpen ? 'calc(100%)' : '';
   }
 }

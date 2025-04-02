@@ -1,6 +1,6 @@
 export interface productFavorite {
   id: string;
-  images: string[];
+  image: string;
   name: string;
   subTitle: string;
 }

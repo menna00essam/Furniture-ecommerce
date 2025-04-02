@@ -54,15 +54,49 @@ const updatedImages = async (req, res) => {
 };
 
 // Route to get images from db
+// const getImages = async (req, res) => {
+//   try {
+//     const images = await Image.find({}, { __v: false });
+//     res.json(images);
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ error: "Failed to display images" });
+//   }
+// };
+
+
 const getImages = async (req, res) => {
   try {
-    const images = await Image.find({}, { __v: false });
-    res.json(images);
+    const { product, color } = req.query;
+
+    if (!product || !color) {
+      return res.status(400).json({ error: "Product and color are required" });
+    }
+
+    const allImages = await cloudinary.api.resources({
+      type: 'upload',
+      max_results: 500
+    });
+
+    const filterImages = allImages.resources.filter(img => {
+      const splitPAth = img.public_id.split('/');
+      return splitPAth.length >= 4 && 
+             splitPAth[splitPAth.length-3].toLowerCase() === product.toLowerCase() && 
+             splitPAth[splitPAth.length-2].toLowerCase() === color.toLowerCase();
+    });
+
+    const images = filterImages.map((img) => ({
+      public_id: img.public_id,
+      url: img.secure_url,
+    }));
+
+    res.json({ images });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Failed to display images" });
+    console.error("Error fetching images:", error);
+    res.status(500).json({ error: "Failed to fetch images" });
   }
 };
+
 
 setInterval(async () => {
   try {

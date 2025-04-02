@@ -106,7 +106,7 @@ export class ProductService {
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages, //now it returns only one image
+            image: p.productImage,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
@@ -144,12 +144,19 @@ export class ProductService {
         ),
         map(({ data }) => ({
           id: data.product._id,
-          productName: data.product.productName,
-          productSubtitle: data.product.productSubtitle,
-          productPrice: data.product.productPrice,
-          productDate: data.product.productDate,
-          productSale: data.product.productSale,
-          productDescription: data.product.productDescription,
+          name: data.product.productName,
+          image: data.product.productImages,
+          subTitle: data.product.productSubtitle,
+          price: data.product.productPrice,
+          quantity: data.product.productQuantity,
+          categories: data.product.productCategories.map(
+            (cat: { catName: string }) => cat.catName
+          ),
+          date: data.product.productDate,
+          sale: data.product.productSale,
+          description: data.product.productDescription,
+          colors: data.product.colors,
+          sizes: data.product.sizes,
           brand: data.product.brand,
 
           productCategories: data.product.productCategories.map(

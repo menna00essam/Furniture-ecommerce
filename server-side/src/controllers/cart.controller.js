@@ -1,49 +1,65 @@
-const mongoose = require('mongoose');
-const httpStatusText = require('../utils/httpStatusText');
-const AppError = require('../utils/appError');
-const Cart = require('../models/cart.model');
-const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
-const Product = require('../models/product.model');
+const mongoose = require("mongoose");
+const httpStatusText = require("../utils/httpStatusText");
+const AppError = require("../utils/appError");
+const Cart = require("../models/cart.model");
+const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
+const Product = require("../models/product.model");
 
 // GET: Retrieve user cart
 const getUserCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
+  console.log("my cart user :", userId);
   const cart = await Cart.findOne({ userId })
     .populate(
-      'products.productId',
-      '_id productName productImages productPrice productSale'
+      "products.productId",
+      "_id productName colors productPrice productSale"
     )
     .lean();
 
   if (!cart) {
-    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
+    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
   }
 
-  const products = cart.products.map(({ productId, quantity }) => {
-    // Determine the correct effective price
-    const effectivePrice = productId.productSale
-      ? productId.productPrice * (1 - productId.productSale / 100) // If sale is a percentage
-      : productId.productPrice; // Otherwise, use the original price
+  const products = cart.products
+    .map(({ productId, quantity, color }) => {
+      if (!productId) {
+        return null; // Product was removed from DB
+      }
 
-    return {
-      _id: productId._id,
-      quantity,
-      productName: productId.productName,
-      productImages: productId.productImages,
-      productPrice: effectivePrice, // Use the effective price
-      productQuantity: quantity,
-      subtotal: quantity * effectivePrice, // Calculate subtotal correctly
-    };
-  });
+      const colorVariant = productId.colors.find((c) => c.name === color);
 
-  // Calculate the total price
+      if (!colorVariant) {
+        return null;
+      }
+
+      const availableQuantity = colorVariant.quantity;
+
+      const finalQuantity = Math.min(quantity, availableQuantity);
+
+      const effectivePrice = productId.productSale
+        ? productId.productPrice * (1 - productId.productSale / 100)
+        : productId.productPrice;
+
+      return {
+        _id: productId._id,
+        quantity: finalQuantity,
+        productName: productId.productName,
+        productImage:
+          colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
+        productPrice: effectivePrice,
+        productQuantity: availableQuantity,
+        subtotal: finalQuantity * effectivePrice,
+      };
+    })
+    .filter((product) => product !== null);
+
   const totalPrice = products.reduce((sum, item) => sum + item.subtotal, 0);
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
       products,
-      totalPrice, // Return the correctly calculated total price
+      totalPrice,
     },
   });
 });
@@ -54,14 +70,21 @@ const addToCart = asyncWrapper(async (req, res, next) => {
   const items = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
-    return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
+    return next(new AppError("Invalid cart items.", 400, httpStatusText.FAIL));
   }
 
   for (const item of items) {
-    if (!mongoose.Types.ObjectId.isValid(item.productId) || item.quantity < 1) {
-      console.log(item.productId, item.quantity);
+    if (
+      !mongoose.Types.ObjectId.isValid(item.productId) ||
+      item.quantity < 1 ||
+      !item.color
+    ) {
       return next(
-        new AppError('Invalid productId or quantity.', 400, httpStatusText.FAIL)
+        new AppError(
+          "Invalid productId, quantity, or missing color.",
+          400,
+          httpStatusText.FAIL
+        )
       );
     }
   }
@@ -72,30 +95,41 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     cart = new Cart({ userId, products: [] });
   }
 
-  for (const { productId, quantity } of items) {
+  for (const { productId, quantity, color } of items) {
+    const product = await Product.findById(productId).lean();
+
+    if (!product) {
+      return next(new AppError("Product not found.", 404, httpStatusText.FAIL));
+    }
+
+    // Find the color variant in the product
+    const colorVariant = product.colors.find((c) => c.name === color);
+    if (!colorVariant) {
+      return next(
+        new AppError(`Color ${color} not available.`, 400, httpStatusText.FAIL)
+      );
+    }
+
+    // Ensure requested quantity does not exceed available stock
+    const availableQuantity = colorVariant.quantity;
+    const finalQuantity = Math.min(quantity, availableQuantity);
+
     const existingProduct = cart.products.find(
-      (p) => p.productId.toString() === productId
+      (p) => p.productId.toString() === productId && p.color === color
     );
+
     if (existingProduct) {
-      const product = await Product.findById(productId);
       existingProduct.quantity = Math.min(
-        product.productQuantity,
-        existingProduct.quantity + quantity
+        availableQuantity,
+        existingProduct.quantity + finalQuantity
       );
     } else {
-      cart.products.push({ productId, quantity });
+      cart.products.push({ productId, quantity: finalQuantity, color });
     }
   }
 
   await cart.save();
-  await cart.populate(
-    'products.productId',
-    '_id productName productImages productPrice'
-  );
-  await cart.populate(
-    'products.productId',
-    '_id productName productImages productPrice'
-  );
+  await cart.populate("products.productId", "_id productName productPrice");
 
   res.status(201).json({
     status: httpStatusText.SUCCESS,
@@ -106,29 +140,35 @@ const addToCart = asyncWrapper(async (req, res, next) => {
 // PATCH: Update cart (change quantity or remove a product)
 const updateCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log(req);
-  const { productId, quantity } = req.body;
+  const { productId, quantity, color } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0) {
-    console.log(productId, quantity);
+  if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0 || !color) {
     return next(
-      new AppError('Invalid productId or quantity.', 400, httpStatusText.FAIL)
+      new AppError(
+        "Invalid productId, quantity, or color.",
+        400,
+        httpStatusText.FAIL
+      )
     );
   }
 
   const cart = await Cart.findOne({ userId });
 
   if (!cart) {
-    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
+    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
   }
 
   const productIndex = cart.products.findIndex(
-    (p) => p.productId.toString() === productId
+    (p) => p.productId.toString() === productId && p.color === color
   );
 
   if (productIndex === -1) {
     return next(
-      new AppError('Product not found in cart.', 404, httpStatusText.FAIL)
+      new AppError(
+        "Product with this color not found in cart.",
+        404,
+        httpStatusText.FAIL
+      )
     );
   }
 
@@ -140,8 +180,8 @@ const updateCart = asyncWrapper(async (req, res, next) => {
 
   await cart.save();
   await cart.populate(
-    'products.productId',
-    '_id productName productImages productPrice'
+    "products.productId",
+    "_id productName colors productPrice"
   );
 
   res.status(200).json({

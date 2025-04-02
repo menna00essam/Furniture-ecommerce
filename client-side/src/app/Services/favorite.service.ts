@@ -114,7 +114,7 @@ export class FavoriteService {
     return apiFavorites.map((p) => ({
       id: p._id,
       name: p.productName,
-      images: p.productImages,
+      image: p.productImage,
       subTitle: p.productSubtitle,
     }));
   }
