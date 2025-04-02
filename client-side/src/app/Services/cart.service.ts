@@ -67,10 +67,7 @@ export class CartService {
           headers: this.getAuthHeaders(),
         })
         .pipe(
-          map(({ data }) => {
-            console.log(data);
-            return data.products.map((p) => this.mapToProductCart(p));
-          }),
+          map(({ data }) => data.products.map((p) => this.mapToProductCart(p))),
           tap((cart) => {
             this.cartSubject.next(cart);
             console.log(cart);
@@ -104,7 +101,6 @@ export class CartService {
   }
 
   addProduct(product: product): void {
-    console.log(product);
     const discountedPrice = product.sale
       ? product.price * (1 - product.sale / 100)
       : product.price;
