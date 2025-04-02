@@ -105,7 +105,7 @@ export class ProductService {
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages,
+            image: p.productImage,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
@@ -144,7 +144,7 @@ export class ProductService {
         map(({ data }) => ({
           id: data.product._id,
           name: data.product.productName,
-          images: data.product.productImages,
+          image: data.product.productImages,
           subTitle: data.product.productSubtitle,
           price: data.product.productPrice,
           quantity: data.product.productQuantity,

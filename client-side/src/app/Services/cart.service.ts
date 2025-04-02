@@ -86,7 +86,7 @@ export class CartService {
     return {
       id: p._id,
       name: p.productName,
-      images: p.productImages,
+      image: p.productImage,
       price: effectivePrice,
       quantity: p.productQuantity,
       subtotal: effectivePrice * p.productQuantity,
@@ -113,7 +113,7 @@ export class CartService {
       cart.push({
         id: product.id,
         name: product.name,
-        images: product.images,
+        image: product.image,
         price: discountedPrice,
         quantity: 1,
         subtotal: discountedPrice,

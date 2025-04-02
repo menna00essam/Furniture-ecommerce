@@ -70,7 +70,7 @@
         [routerLink]="['/product', item.id]"
       >
         <img
-          src="{{ item.images[0] }}"
+          src="{{ item.image }}"
           alt="{{ item.name }}"
           class="w-[80px] rounded-[10px]"
         />
@@ -130,7 +130,7 @@
           [routerLink]="['/product', item.id]"
         >
           <img
-            [src]="item.images[0]"
+            [src]="item.image"
             [alt]="item.name"
             class="w-[80px] rounded-[10px]"
           />

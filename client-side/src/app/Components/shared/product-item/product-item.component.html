@@ -25,9 +25,8 @@
       class="bg-secondary h-[300px] flex justify-center items-center overflow-hidden"
     >
       <img
-        [src]="product.images[0]"
-        (error)="onImageError($event)"
-        class="w-full bg-secondary"
+        [src]="product.image"
+        class="w-full h-full bg-secondary object-cover"
         [alt]="product.name"
         loading="lazy"
       />
