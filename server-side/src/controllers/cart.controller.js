@@ -71,32 +71,55 @@ const addToCart = asyncWrapper(async (req, res, next) => {
   const items = req.body;
   console.log('my cart items :', items);
 
+  // Validate the items array
   if (!Array.isArray(items) || items.length === 0) {
     return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
   }
 
+  // Validate each item in the cart
   for (const item of items) {
-    if (
-      !mongoose.Types.ObjectId.isValid(item.productId) ||
-      item.quantity < 1 ||
-      !item.color
-    ) {
+    const { productId, quantity, color } = item;
+
+    if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 1) {
       return next(
         new AppError(
-          'Invalid productId, quantity, or missing color.',
+          'Invalid productId or quantity. Quantity must be at least 1.',
+          400,
+          httpStatusText.FAIL
+        )
+      );
+    }
+
+    const product = await Product.findById(productId).select('colors');
+    if (!product) {
+      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+    }
+
+    // If no color is provided, use the first available color
+    if (!color && product.colors.length > 0) {
+      item.color = product.colors[0].name;
+    }
+
+    // Validate the color
+    const colorVariant = product.colors.find((c) => c.name === item.color);
+    if (!colorVariant) {
+      return next(
+        new AppError(
+          `Color ${item.color} not available for this product.`,
           400,
           httpStatusText.FAIL
         )
       );
     }
   }
-  console.log('my cart userId :', userId);
-  let cart = await Cart.findOne({ userId });
 
+  // Find or create the user's cart
+  let cart = await Cart.findOne({ userId });
   if (!cart) {
     cart = new Cart({ userId, products: [] });
   }
 
+  // Add or update items in the cart
   for (const { productId, quantity, color } of items) {
     const product = await Product.findById(productId).lean();
 
@@ -111,7 +134,6 @@ const addToCart = asyncWrapper(async (req, res, next) => {
         new AppError(`Color ${color} not available.`, 400, httpStatusText.FAIL)
       );
     }
-    console.log('my cart colorVariant :', colorVariant);
 
     // Ensure requested quantity does not exceed available stock
     const availableQuantity = colorVariant.quantity;
@@ -127,12 +149,11 @@ const addToCart = asyncWrapper(async (req, res, next) => {
         existingProduct.quantity + finalQuantity
       );
     } else {
-      console.log('my cart productId :', productId);
       cart.products.push({ productId, quantity: finalQuantity, color });
-      console.log('my cart products :', cart.products);
     }
   }
 
+  // Save the cart and populate product details
   await cart.save();
   await cart.populate('products.productId', '_id productName productPrice');
 
