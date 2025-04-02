@@ -68,8 +68,14 @@ export class CartService {
           headers: this.getAuthHeaders(),
         })
         .pipe(
-          map(({ data }) => data.products.map((p) => this.mapToProductCart(p))),
-          tap((cart) => this.cartSubject.next(cart)),
+          map(({ data }) => {
+            console.log(data);
+            return data.products.map((p) => this.mapToProductCart(p));
+          }),
+          tap((cart) => {
+            this.cartSubject.next(cart);
+            console.log(cart);
+          }),
           catchError(this.handleError<productCart[]>('getCart', []))
         );
     } else {
@@ -87,9 +93,9 @@ export class CartService {
       id: p._id,
       name: p.productName,
       image: p.productImage,
-      price: effectivePrice,
-      quantity: p.productQuantity,
-      subtotal: effectivePrice * p.productQuantity,
+      price: p.price,
+      quantity: p.quantity,
+      subtotal: p.subTotal,
     };
   }
 
@@ -123,9 +129,13 @@ export class CartService {
     this.updateCart(cart);
     if (this.isLoggedInSubject.getValue()) {
       this.http
-        .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
-          headers: this.getAuthHeaders(),
-        })
+        .post(
+          this.apiUrl,
+          [{ productId: product.id, quantity: 1, color: product.color }],
+          {
+            headers: this.getAuthHeaders(),
+          }
+        )
         .pipe(catchError(this.handleError('addProduct')))
         .subscribe({
           next: (response: any) => {

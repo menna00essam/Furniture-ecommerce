@@ -88,10 +88,11 @@ export class UserActionsComponent implements OnInit {
   toggleCartModal(open: boolean): void {
     this.cartModalShow = open;
     this.toggleBodyScroll(open);
+    console.log('toggleCartModal', open);
   }
 
   private toggleBodyScroll(isOpen: boolean): void {
-    document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
-    document.body.style.width = isOpen ? 'calc(100%)' : '';
+    // document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
+    // document.body.style.width = isOpen ? '100%' : '';
   }
 }
