@@ -181,15 +181,22 @@ const getFilteredProducts = async (
       },
     },
     {
+      $addFields: {
+        firstColor: { $arrayElemAt: ["$colors", 0] },
+      },
+    },
+    {
       $project: {
         _id: 1,
         productName: 1,
         productSubtitle: 1,
-        productImages: 1,
+        productImages: {
+          $arrayElemAt: ["$firstColor.images", 0],
+        },
         productPrice: 1,
         productDate: 1,
         productSale: 1,
-        productQuantity: 1,
+        productQuantity: "$firstColor.quantity",
         effectivePrice: 1,
         productCategories: {
           $map: {
