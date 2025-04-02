@@ -12,7 +12,6 @@ export class CartService {
   private apiUrl = 'http://localhost:5000/cart';
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   private cartSubject = new BehaviorSubject<productCart[]>([]);
   cart$ = this.cartSubject.asObservable();
@@ -105,28 +104,21 @@ export class CartService {
   }
 
   addProduct(product: product): void {
+    console.log(product);
     const discountedPrice = product.sale
       ? product.price * (1 - product.sale / 100)
       : product.price;
     let cart = [...this.cartSubject.getValue()];
-    let existingProduct = cart.find((p) => p.id === product.id);
 
-    if (existingProduct) {
-      existingProduct.quantity++;
-      existingProduct.subtotal =
-        existingProduct.quantity * existingProduct.price;
-    } else {
-      cart.push({
-        id: product.id,
-        name: product.name,
-        image: product.image,
-        price: discountedPrice,
-        quantity: 1,
-        subtotal: discountedPrice,
-      });
-    }
+    cart.push({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price: discountedPrice,
+      quantity: 1,
+      subtotal: discountedPrice,
+    });
 
-    this.updateCart(cart);
     if (this.isLoggedInSubject.getValue()) {
       this.http
         .post(
@@ -140,11 +132,14 @@ export class CartService {
         .subscribe({
           next: (response: any) => {
             if (response.status === 'success') {
+              this.cartSubject.next(cart);
               this.toast.success(`${product.name} added to cart successfully.`);
             }
           },
         });
     } else {
+      this.saveGuestCart(cart);
+      this.cartSubject.next(cart);
       this.toast.success(`${product.name} added to cart successfully.`);
     }
   }
@@ -175,8 +170,6 @@ export class CartService {
       }
     }
 
-    this.updateCart(cart);
-
     if (this.isLoggedInSubject.getValue()) {
       // Logged-in users: Send API request
       this.http
@@ -198,6 +191,7 @@ export class CartService {
         .subscribe({
           next: (response: any) => {
             if (response.status === 'success') {
+              this.cartSubject.next(cart);
               const message = remove
                 ? `${productName} has been removed from the cart.`
                 : `${productName} quantity updated successfully.`;
@@ -206,6 +200,8 @@ export class CartService {
           },
         });
     } else {
+      this.saveGuestCart(cart);
+      this.cartSubject.next(cart);
       const message = remove
         ? `${productName} has been removed from the cart.`
         : `${productName} quantity updated successfully.`;
