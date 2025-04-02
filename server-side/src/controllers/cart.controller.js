@@ -114,7 +114,6 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     const availableQuantity = colorVariant.quantity;
     const finalQuantity = Math.min(quantity, availableQuantity);
 
-    // Check if product already exists in the cart
     const existingProduct = cart.products.find(
       (p) => p.productId.toString() === productId && p.color === color
     );
