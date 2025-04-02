@@ -1,152 +1,205 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { product } from '../Models/product.model';
 import { AuthService } from './auth.service';
+import { productCart } from '../Models/productCart.model';
+import { NgToastService } from 'ng-angular-popup';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CartService implements OnInit {
+@Injectable({ providedIn: 'root' })
+export class CartService {
   private apiUrl = 'http://localhost:5000/cart';
-  isLoggedIn = false;
 
-  private cartSubject = new BehaviorSubject<product[]>([]);
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
+
+  private cartSubject = new BehaviorSubject<productCart[]>([]);
   cart$ = this.cartSubject.asObservable();
 
-  private checkoutSubject = new BehaviorSubject<product[]>([]);
+  private checkoutSubject = new BehaviorSubject<productCart[]>([]);
   checkoutData$ = this.checkoutSubject.asObservable();
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
-
-  ngOnInit(): void {
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private toast: NgToastService
+  ) {
     this.authService.isLoggedIn$.subscribe((status) => {
-      this.isLoggedIn = status;
+      this.isLoggedInSubject.next(status);
+      this.loadCart();
     });
   }
 
+  /*** Helper Methods ***/
+
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
-  private getGuestCart(): product[] {
-    const guestCart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-    return guestCart.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      images: p.images?.length ? p.images : ['/images/products/1.jpg'],
-      subTitle: p.subTitle,
-      price: p.price,
-      quantity: p.quantity,
-      categories: p.categories || [],
-      date: p.date || null,
-      sale: p.sale || 0,
-    }));
+  private getGuestCart(): productCart[] {
+    return JSON.parse(localStorage.getItem('cart') || '[]');
   }
 
-  private saveGuestCart(cart: product[]): void {
-    localStorage.setItem('cart', JSON.stringify(cart));
+  private saveGuestCart(cart: productCart[]): void {
+    cart.length === 0
+      ? localStorage.removeItem('cart')
+      : localStorage.setItem('cart', JSON.stringify(cart));
   }
 
-  getCart(): Observable<product[]> {
-    if (this.isLoggedIn) {
-      return this.http.get<{ data: { products: any[] } }>(this.apiUrl).pipe(
-        map(({ data }) =>
-          data.products.map((p) => ({
-            id: p._id,
-            name: p.productName,
-            images: p.productImages,
-            subTitle: p.productSubtitle,
-            price: p.productPrice,
-            quantity: p.productQuantity,
-            categories: p.productCategories.map(
-              (cat: { catName: string }) => cat.catName
-            ),
-            date: p.productDate,
-            sale: p.productSale,
-          }))
-        ),
-        catchError((error) => {
-          console.error('Error fetching products:', error);
-          return of([]);
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      return of(result as T);
+    };
+  }
+
+  /*** Cart Operations ***/
+
+  private loadCart(): void {
+    this.getCart().subscribe();
+  }
+
+  getCart(): Observable<productCart[]> {
+    if (this.isLoggedInSubject.getValue()) {
+      return this.http
+        .get<{ data: { products: any[] } }>(this.apiUrl, {
+          headers: this.getAuthHeaders(),
         })
-      );
+        .pipe(
+          map(({ data }) => data.products.map((p) => this.mapToProductCart(p))),
+          tap((cart) => this.cartSubject.next(cart)),
+          catchError(this.handleError<productCart[]>('getCart', []))
+        );
     } else {
       const guestCart = this.getGuestCart();
-      if (
-        JSON.stringify(this.cartSubject.getValue()) !==
-        JSON.stringify(guestCart)
-      ) {
-        this.cartSubject.next(guestCart);
-      }
+      this.cartSubject.next(guestCart);
       return of(guestCart);
     }
   }
 
-  updateCart(cart: product[]): void {
-    const currentCart = this.cartSubject.getValue();
-    if (
-      cart.length === currentCart.length &&
-      cart.every((p, i) => p.id === currentCart[i]?.id)
-    ) {
-      return;
-    }
+  private mapToProductCart(p: any): productCart {
+    const effectivePrice = p.productSale
+      ? p.productPrice * (1 - p.productSale / 100)
+      : p.productPrice;
+    return {
+      id: p._id,
+      name: p.productName,
+      images: p.productImages,
+      price: effectivePrice,
+      quantity: p.productQuantity,
+      subtotal: effectivePrice * p.productQuantity,
+    };
+  }
+
+  updateCart(cart: productCart[]): void {
     this.cartSubject.next(cart);
+    if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
   }
 
   addProduct(product: product): void {
-    const cart = [...this.cartSubject.getValue()];
-    if (!cart.some((p) => p.id === product.id)) {
-      cart.push({ ...product, quantity: 1 });
-      this.updateCart(cart);
+    const discountedPrice = product.sale
+      ? product.price * (1 - product.sale / 100)
+      : product.price;
+    let cart = [...this.cartSubject.getValue()];
+    let existingProduct = cart.find((p) => p.id === product.id);
 
-      if (this.isLoggedIn) {
-        this.http
-          .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
-            headers: this.getAuthHeaders(),
-          })
-          .subscribe();
-      } else {
-        this.saveGuestCart(cart);
-      }
+    if (existingProduct) {
+      existingProduct.quantity++;
+      existingProduct.subtotal =
+        existingProduct.quantity * existingProduct.price;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name,
+        images: product.images,
+        price: discountedPrice,
+        quantity: 1,
+        subtotal: discountedPrice,
+      });
+    }
+
+    this.updateCart(cart);
+    if (this.isLoggedInSubject.getValue()) {
+      this.http
+        .post(this.apiUrl, [{ productId: product.id, quantity: 1 }], {
+          headers: this.getAuthHeaders(),
+        })
+        .pipe(catchError(this.handleError('addProduct')))
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              this.toast.success(`${product.name} added to cart successfully.`);
+            }
+          },
+        });
+    } else {
+      this.toast.success(`${product.name} added to cart successfully.`);
     }
   }
 
   removeProduct(productId: string): void {
-    const updatedCart = this.cartSubject
-      .getValue()
-      .filter((p) => p.id !== productId);
-
-    if (updatedCart.length !== this.cartSubject.getValue().length) {
-      this.updateCart(updatedCart);
-      if (!this.isLoggedIn) {
-        this.saveGuestCart(updatedCart);
-      }
-    }
+    this.modifyQuantity(productId, 0, true);
   }
 
-  private modifyQuantity(productId: string, change: number): void {
-    const cart = [...this.cartSubject.getValue()];
+  private modifyQuantity(
+    productId: string,
+    change: number,
+    remove = false
+  ): void {
+    let cart = [...this.cartSubject.getValue()];
+    let productName = '';
+
     const product = cart.find((p) => p.id === productId);
-
     if (product) {
-      product.quantity = Math.max(1, product.quantity + change);
-      this.updateCart(cart);
-
-      if (this.isLoggedIn) {
-        this.http
-          .patch(
-            this.apiUrl,
-            { productId, quantity: product.quantity },
-            { headers: this.getAuthHeaders() }
-          )
-          .subscribe();
+      productName = product.name;
+      if (remove) {
+        cart = cart.filter((p) => p.id !== productId);
       } else {
-        this.saveGuestCart(cart);
+        product.quantity += change;
+        product.subtotal = product.quantity * product.price;
+        if (product.quantity <= 0) {
+          cart = cart.filter((p) => p.id !== productId);
+        }
       }
+    }
+
+    this.updateCart(cart);
+
+    if (this.isLoggedInSubject.getValue()) {
+      // Logged-in users: Send API request
+      this.http
+        .patch(
+          this.apiUrl,
+          { productId, quantity: remove ? 0 : product?.quantity || 0 },
+          { headers: this.getAuthHeaders() }
+        )
+        .pipe(
+          catchError((error) => {
+            this.toast.danger(
+              remove
+                ? `Failed to remove ${productName} from cart.`
+                : `Failed to update ${productName} quantity.`
+            );
+            return this.handleError('modifyQuantity')(error);
+          })
+        )
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              const message = remove
+                ? `${productName} has been removed from the cart.`
+                : `${productName} quantity updated successfully.`;
+              this.toast.success(message);
+            }
+          },
+        });
+    } else {
+      const message = remove
+        ? `${productName} has been removed from the cart.`
+        : `${productName} quantity updated successfully.`;
+      this.toast.success(message);
     }
   }
 
@@ -158,19 +211,23 @@ export class CartService implements OnInit {
     this.modifyQuantity(productId, -1);
   }
 
-  getSubtotal(): number {
-    return this.cartSubject
-      .getValue()
-      .reduce((sum, item) => sum + item.price * item.quantity, 0);
+  getSubtotal(): Observable<number> {
+    return this.cart$.pipe(
+      map((cart) => cart.reduce((sum, item) => sum + item.subtotal, 0))
+    );
   }
+
+  /*** Checkout Operations ***/
 
   setCheckoutData(): void {
     this.checkoutSubject.next([...this.cartSubject.getValue()]);
   }
 
-  getCheckoutData(): product[] {
+  getCheckoutData(): productCart[] {
     return this.checkoutSubject.getValue();
   }
+
+  /*** Utility Methods ***/
 
   isInCart(productId: string): boolean {
     return this.cartSubject.getValue().some((p) => p.id === productId);

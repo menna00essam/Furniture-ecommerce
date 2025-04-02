@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, Injector } from '@angular/core';
+import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+import { product } from '../Models/product.model';
+import { CartService } from './cart.service';
+import { productCart } from '../Models/productCart.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,46 +14,131 @@ export class AuthService {
   private apiUrl = 'http://localhost:5000/auth';
   private isLoggedInSubject: BehaviorSubject<boolean>;
   isLoggedIn$: Observable<boolean>;
-  constructor(private http: HttpClient, private router: Router) {
-    const tokenExists =
-      !!sessionStorage.getItem('token') || !!localStorage.getItem('token');
-    this.isLoggedInSubject = new BehaviorSubject<boolean>(tokenExists);
+  private cartService!: CartService;
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private injector: Injector
+  ) {
+    this.isLoggedInSubject = new BehaviorSubject<boolean>(
+      this.isAuthenticated()
+    );
     this.isLoggedIn$ = this.isLoggedInSubject.asObservable();
   }
 
+  private getCartService(): CartService {
+    if (!this.cartService) {
+      this.cartService = this.injector.get(CartService);
+    }
+    return this.cartService;
+  }
+
+  private handleCartMerge(): void {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (cart.length > 0) {
+      const cartService = this.getCartService();
+      cart.forEach((p: product) => {
+        cartService.addProduct(p);
+      });
+      localStorage.removeItem('cart');
+    }
+  }
+
   signup(user: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, user);
+    return this.http
+      .post(`${this.apiUrl}/signup`, user)
+      .pipe(catchError((error) => this.handleError(error)));
   }
-  login(user: any): Observable<any> {
-    this.isLoggedInSubject.next(true);
-    return this.http.post(`${this.apiUrl}/login`, user);
+
+  login(user: any, rememberMe: boolean): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, user).pipe(
+      tap((response: any) => {
+        if (response?.data.token) {
+          this.storeToken(response.data.token, rememberMe);
+          this.isLoggedInSubject.next(true);
+          this.handleCartMerge();
+          this.navigateToDashboard();
+        }
+      }),
+      catchError((error) => this.handleError(error))
+    );
   }
+
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    this.clearToken();
+    this.isLoggedInSubject.next(false);
     this.router.navigate(['/auth/login']);
   }
-  googleSignIn() {
+
+  googleSignIn(): void {
     window.location.href = `${this.apiUrl}/google`;
   }
-  handleGoogleLogin(token: string): void {
-    localStorage.setItem('token', token);
-    this.isLoggedInSubject.next(true);
+
+  handleGoogleLogin(token: string, rememberme: boolean): void {
+    if (token) {
+      this.storeToken(token, rememberme);
+      this.isLoggedInSubject.next(true);
+      this.handleCartMerge();
+      this.navigateToDashboard();
+    }
   }
+
+  getToken(): string | null {
+    return sessionStorage.getItem('token') || localStorage.getItem('token');
+  }
+
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    const token = this.getToken();
+    return !!token;
   }
-  isLoggedIn(): boolean {
-    this.isLoggedInSubject.next(false);
-    return !!localStorage.getItem('token');
-  }
+
   getRole(): string | null {
-    return localStorage.getItem('role');
+    return sessionStorage.getItem('role') || localStorage.getItem('role');
   }
+
   forgotPassword(email: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
+    return this.http
+      .post(`${this.apiUrl}/forgot-password`, { email })
+      .pipe(catchError((error) => this.handleError(error)));
   }
+
   resetPassword(password: string, token: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reset-password`, { password, token });
+    return this.http
+      .post(`${this.apiUrl}/reset-password`, { password, token })
+      .pipe(catchError((error) => this.handleError(error)));
+  }
+
+  private storeToken(token: string, rememberMe: boolean): void {
+    try {
+      const decoded: any = jwtDecode(token);
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('token', token);
+      storage.setItem('role', decoded.role);
+    } catch (error) {
+      console.error('Invalid token received', error);
+    }
+  }
+
+  private clearToken(): void {
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    localStorage.removeItem('role');
+    sessionStorage.removeItem('role');
+  }
+
+  private navigateToDashboard(): void {
+    const role = this.getRole();
+    const targetRoute = role === 'ADMIN' ? '/admin' : '/';
+    if (this.router.url !== targetRoute) {
+      this.router.navigate([targetRoute]);
+    }
+  }
+
+  private handleError(error: any): Observable<never> {
+    console.error('API Error:', error);
+    return throwError(
+      () => new Error(error?.error?.message || 'An error occurred')
+    );
   }
 }

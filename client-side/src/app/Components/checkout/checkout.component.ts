@@ -1,7 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidatorFn,
+  ReactiveFormsModule,
+  FormsModule,
+  FormControl,
+} from '@angular/forms';
 import {
   trigger,
   state,
@@ -9,30 +18,24 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { ButtonComponent } from '../shared/button/button.component';
-import { CartService } from '../../Services/cart.service';
-import { CurrencyPipe } from '@angular/common';
+
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { PaymentComponent } from '../payment/payment.component';
-import { CheckoutService } from '../../Services/checkout.service';
+import { ButtonComponent } from '../shared/button/button.component';
 import { StepperComponent } from '../shared/stepper/stepper.component';
-import { RouterModule } from '@angular/router';
 import { InputComponent } from '../shared/input/input.component';
 
+import { CartService } from '../../Services/cart.service';
+import { CheckoutService } from '../../Services/checkout.service';
+import { Observable } from 'rxjs';
 
+// Custom Validator: No Numbers
 export function noNumbersValidator(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
-    const hasNumber = /\d/.test(control.value);
-    return hasNumber ? { hasNumber: { value: control.value } } : null;
+    return /\d/.test(control.value)
+      ? { hasNumber: { value: control.value } }
+      : null;
   };
 }
 
@@ -53,7 +56,6 @@ export function noNumbersValidator(): ValidatorFn {
     InputComponent,
   ],
   templateUrl: './checkout.component.html',
-  // styleUrl: './checkout.component.css',
   animations: [
     trigger('slideUpDown', [
       state('in', style({ height: '*', opacity: 1 })),
@@ -63,111 +65,89 @@ export function noNumbersValidator(): ValidatorFn {
   ],
 })
 export class CheckoutComponent {
-  checkoutForm: FormGroup;
+  checkoutForm = new FormGroup({
+    firstName: new FormControl('', [Validators.required, noNumbersValidator()]),
+    lastName: new FormControl('', [Validators.required, noNumbersValidator()]),
+    companyName: new FormControl(''),
+    country: new FormControl('', Validators.required),
+    address: new FormControl('', Validators.required),
+    city: new FormControl('', [Validators.required, noNumbersValidator()]),
+    zip: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d+$/),
+    ]),
+    phone: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d+$/),
+    ]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    additionalInfo: new FormControl(''),
+    paymentMethod: new FormControl('', Validators.required),
+  });
+
   selectedPayment: string = '';
   cartItems: any[] = [];
-  subtotal: number = 0;
+  subtotal!: Observable<number>;
+
   @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
 
   constructor(
-    private fb: FormBuilder,
     private checkoutService: CheckoutService,
     private cartService: CartService
   ) {
-    this.checkoutForm = this.fb.group({
-      firstName: ['', [Validators.required, noNumbersValidator()]],
-      lastName: ['', [Validators.required, noNumbersValidator()]],
-      companyName: [''],
-      country: ['', Validators.required],
-      address: ['', Validators.required],
-      city: ['', [Validators.required, noNumbersValidator()]],
-      zip: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-      email: ['', [Validators.required, Validators.email]],
-      additionalInfo: [''],
-      paymentMethod: ['', Validators.required], 
-    });
+    this.loadCartData();
+  }
+
+  /** Load cart data on component initialization */
+  private loadCartData(): void {
     this.cartItems = this.cartService.getCheckoutData();
     this.subtotal = this.cartService.getSubtotal();
   }
 
-  get firstName(): FormControl {
-    return this.checkoutForm.get('firstName') as FormControl;
-  }
-
-  get lastName(): FormControl {
-    return this.checkoutForm.get('lastName') as FormControl;
-  }
-
-  get companyName(): FormControl {
-    return this.checkoutForm.get('companyName') as FormControl;
-  }
-
-  get country(): FormControl {
-    return this.checkoutForm.get('country') as FormControl;
-  }
-
-  get address(): FormControl {
-    return this.checkoutForm.get('address') as FormControl;
-  }
-
-  get city(): FormControl {
-    return this.checkoutForm.get('city') as FormControl;
-  }
-
-  get zip(): FormControl {
-    return this.checkoutForm.get('zip') as FormControl;
-  }
-
-  get phone(): FormControl {
-    return this.checkoutForm.get('phone') as FormControl;
-  }
-
-  get email(): FormControl {
-    return this.checkoutForm.get('email') as FormControl;
-  }
-
-  onSubmit() {
-    const billingValues = this.checkoutForm.value;
-    const paymentValues = this.paymentComponent?.paymentForm?.value; 
-  
-
-    const billingValidation = this.checkoutService.validateCheckoutForm(billingValues);
-    const paymentValidation = this.checkoutService.validatePaymentForm(paymentValues);
-  
-
-    let errors: string[] = [...billingValidation.errors];
-  
-
-    if (billingValues.paymentMethod === 'bank') {
-      errors = [...errors, ...paymentValidation.errors];
-    }
+  /** Handle form submission */
+  onSubmit(): void {
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
       return;
     }
 
+    const billingValues = this.checkoutForm.value;
+    const paymentValues = this.paymentComponent?.paymentForm?.value || {};
+
+    const billingValidation =
+      this.checkoutService.validateCheckoutForm(billingValues);
+    const paymentValidation =
+      billingValues.paymentMethod === 'bank'
+        ? this.checkoutService.validatePaymentForm(paymentValues)
+        : { errors: [] };
+
+    const errors: string[] = [
+      ...billingValidation.errors,
+      ...paymentValidation.errors,
+    ];
+
     if (errors.length > 0) {
-      console.error("Validation failed:", errors);
+      console.error('Validation failed:', errors);
       this.checkoutForm.markAllAsTouched();
       this.paymentComponent?.paymentForm?.markAllAsTouched();
       return;
     }
-    this.selectedPayment = billingValues.paymentMethod;
-  // console.log("Payment Method>>>>>", this.selectedPayment);
-    // console.log("payment details>>>>>", { billingDetails: billingValues, paymentDetails: paymentValues });
-    //*** reste forms ***/ 
-  this.checkoutForm.reset();
-  this.paymentComponent?.paymentForm?.reset();
-  this.selectedPayment = '';
 
-  //*** reste cart And product price ***/ 
-  this.cartItems = [];
-  this.subtotal = 0;
-  this.cartService.clearCart();
-
-    this.checkoutService.processOrder(billingValues,paymentValues);
+    this.processOrder(billingValues, paymentValues);
   }
-  
-  
+
+  /** Process the order after successful validation */
+  private processOrder(billingValues: any, paymentValues: any): void {
+    this.selectedPayment = billingValues.paymentMethod;
+    this.checkoutService.processOrder(billingValues, paymentValues);
+
+    // Reset forms
+    this.checkoutForm.reset();
+    this.paymentComponent?.paymentForm?.reset();
+    this.selectedPayment = '';
+
+    // Clear cart
+    this.cartItems = [];
+    this.cartService.clearCart();
+  }
 }

@@ -3,6 +3,7 @@ import { OrderService } from '../../../Services/order.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DropdownComponent } from '../../shared/dropdown/dropdown.component';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 
 interface Order {
   orderNumber: string;
@@ -18,91 +19,72 @@ interface Order {
   imports: [CommonModule, FormsModule, DropdownComponent],
 })
 export class OrdersComponent implements OnInit {
-  orders: Order[] = [];
-  filteredOrders: Order[] = [];
-  displayedOrders: Order[] = [];
+  orders$!: Observable<Order[]>;
+  totalOrders$!: Observable<number>;
+  totalPages$!: Observable<number>;
+
+  itemsPerPage$ = new BehaviorSubject<number>(10);
+  pageSizes = ['10', '20', '50', '100'];
+  currentPage = 1;
+  pageSizesMenuOpen = false;
 
   pendingChecked = false;
   succeededChecked = false;
-  pageSizesMenuOpen = false;
-
-  totalItems = 0;
-  itemsPerPage = '10';
-  pageSizes = ['10', '20', '50', '100'];
-  currentPage = 1;
-
-  get totalPages(): number {
-    return Math.max(
-      1,
-      Math.ceil(this.filteredOrders.length / +this.itemsPerPage)
-    );
-  }
 
   constructor(private orderService: OrderService) {}
 
   ngOnInit(): void {
+    this.orders$ = this.orderService.orders$;
+    this.totalOrders$ = this.orderService.totalOrders$;
+
+    // 🔹 Make totalPages$ reactive
+    this.totalPages$ = combineLatest([
+      this.totalOrders$,
+      this.itemsPerPage$,
+    ]).pipe(
+      map(([totalOrders, itemsPerPage]) =>
+        Math.max(1, Math.ceil(totalOrders / itemsPerPage))
+      )
+    );
+
     this.fetchOrders();
   }
 
   fetchOrders(): void {
-    this.orderService.getOrders().subscribe((data) => {
-      this.orders = data;
-      this.applyFilters();
-    });
-  }
-
-  applyFilters(): void {
-    this.filteredOrders = this.orders.filter((order) => {
-      return (
-        (this.pendingChecked && order.status === 'Pending') ||
-        (this.succeededChecked && order.status === 'Succeeded') ||
-        (!this.pendingChecked && !this.succeededChecked)
-      );
-    });
-
-    this.totalItems = this.filteredOrders.length;
-    this.currentPage = 1;
-    this.updateDisplayedOrders();
+    this.orderService.getOrders(this.itemsPerPage$.value, this.currentPage);
   }
 
   updatePageSize(pageSize: { id: string; value: string }): void {
+    this.itemsPerPage$.next(+pageSize.value);
     this.currentPage = 1;
-    this.itemsPerPage = pageSize.value;
     this.pageSizesMenuOpen = false;
-    this.updateDisplayedOrders();
+    this.fetchOrders();
   }
 
-  updateDisplayedOrders(): void {
-    const startIndex = (this.currentPage - 1) * +this.itemsPerPage;
-    const endIndex = startIndex + +this.itemsPerPage;
-    this.displayedOrders = this.filteredOrders.slice(startIndex, endIndex);
+  goToPage(page: number): void {
+    this.totalPages$.subscribe((totalPages) => {
+      if (page >= 1 && page <= totalPages) {
+        this.currentPage = page;
+        this.fetchOrders();
+      }
+    });
   }
 
   goToFirstPage(): void {
-    this.currentPage = 1;
-    this.updateDisplayedOrders();
+    this.goToPage(1);
   }
-
   goToPreviousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.updateDisplayedOrders();
-    }
+    this.goToPage(this.currentPage - 1);
   }
 
   goToNextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.updateDisplayedOrders();
-    }
+    this.goToPage(this.currentPage + 1);
   }
-
   goToLastPage(): void {
-    this.currentPage = this.totalPages;
-    this.updateDisplayedOrders();
+    this.totalPages$.subscribe((totalPages) => this.goToPage(totalPages));
   }
 
-  togglePageSizesMenuOpen(open: boolean) {
+  togglePageSizesMenuOpen(): void {
     this.pageSizesMenuOpen = !this.pageSizesMenuOpen;
   }
 }

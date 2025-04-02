@@ -1,6 +1,6 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20');
-const User = require('../models/user.model');
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20");
+const User = require("../models/user.model");
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -18,26 +18,27 @@ passport.use(
       // options for the google strategy
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/redirect',
-      scope: ['profile', 'email'],
+      callbackURL: "/auth/google/redirect",
+      scope: ["profile", "email"],
     },
     (accessToken, refreshToken, profile, done) => {
       // passport callback function
-      console.log('passport callback function fired');
+      console.log("passport callback function fired");
       console.log(profile);
       User.findOne({ googleId: profile.id }).then((currentUser) => {
         if (currentUser) {
-          console.log('user is: ' + currentUser);
+          console.log("user is: " + currentUser);
           done(null, currentUser);
         } else {
           new User({
             username: profile.displayName,
             googleId: profile.id,
             email: profile.emails[0].value,
+            thumbnail: profile._json.picture,
           })
             .save()
             .then((newUser) => {
-              console.log('new user created: ' + newUser);
+              console.log("new user created: " + newUser);
               done(null, newUser);
             });
         }
