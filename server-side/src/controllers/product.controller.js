@@ -190,8 +190,8 @@ const getFilteredProducts = async (
         _id: 1,
         productName: 1,
         productSubtitle: 1,
-        productImages: {
-          $arrayElemAt: ["$firstColor.images", 0],
+        productImage: {
+          $arrayElemAt: ["$firstColor.images.url", 0],
         },
         productPrice: 1,
         productDate: 1,
