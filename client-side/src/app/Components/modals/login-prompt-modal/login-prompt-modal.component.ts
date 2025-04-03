@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component,Input } from '@angular/core';
 import { ButtonComponent } from '../../shared/button/button.component';
 import { MatDialogClose } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,10 +15,10 @@ import { RouterModule } from '@angular/router';
           <img src="/icons/warning.svg" alt="warning-icon" />
         </div>
         <p class="text-lg font-medium text-gray-800">
-          You need to log in to add favorites!
+         {{ mainMessage }}
         </p>
         <p class="text-sm text-gray-600">
-          Please sign in to save your favorite items for later.
+        {{ subMessage }}
         </p>
       </div>
 
@@ -36,4 +36,7 @@ import { RouterModule } from '@angular/router';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginPromptModalComponent {}
+export class LoginPromptModalComponent {
+  @Input() mainMessage: string = 'You need to log in to perform this action!';
+  @Input() subMessage: string = 'Please sign in to continue.';
+}

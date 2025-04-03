@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { product } from '../Models/product.model';
 import { CartService } from './cart.service';
-import { productCart } from '../Models/productCart.model';
+import { productCart } from '../models/productCart.model';
 
 @Injectable({
   providedIn: 'root',
