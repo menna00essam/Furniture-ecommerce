@@ -1,4 +1,11 @@
-import { Component, HostListener, ElementRef, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  ElementRef,
+  OnInit,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,5 +40,15 @@ export class HeaderComponent {
 
   goToProduct(id: string) {
     this.router.navigate([`/product/${id}`]);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (
+      this.isActive &&
+      !this.elementRef.nativeElement.contains(event.target)
+    ) {
+      this.isActive = false;
+    }
   }
 }
