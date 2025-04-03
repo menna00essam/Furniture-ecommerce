@@ -7,7 +7,7 @@ import { HeaderBannerComponent } from '../shared/header-banner/header-banner.com
 import { CartService } from '../../Services/cart.service';
 import { Observable, map } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
-import { productCart } from '../../models/productCart.model';
+import { productCart } from '../../Models/productCart.model';
 import { ButtonComponent } from '../shared/button/button.component';
 import { Router } from '@angular/router';
 

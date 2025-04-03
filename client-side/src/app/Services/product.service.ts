@@ -4,6 +4,7 @@ import { ProductDetails } from '../Models/product-details.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, tap, take, map, switchMap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 enum SortOptions {
   Default = 'Default',
@@ -19,8 +20,9 @@ enum SortOptions {
   providedIn: 'root',
 })
 export class ProductService {
+  private apiUrl = `${environment.apiUrl}/products`;
+
   private productsSubject = new BehaviorSubject<product[]>([]);
-  apiUrl = 'http://localhost:5000/products';
   products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) {}

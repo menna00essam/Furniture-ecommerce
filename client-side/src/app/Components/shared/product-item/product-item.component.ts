@@ -27,7 +27,6 @@ import { Observable } from 'rxjs';
 import { NgToastService } from 'ng-angular-popup';
 import { productCart } from '../../../Models/productCart.model';
 
-
 @Component({
   selector: 'app-product-item',
   standalone: true,

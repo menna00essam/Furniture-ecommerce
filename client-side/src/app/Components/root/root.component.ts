@@ -6,7 +6,7 @@ import { NgToastModule } from 'ng-angular-popup';
 import { ToasterPosition } from 'ng-angular-popup';
 import { map, Observable } from 'rxjs';
 import { user } from '../../Models/user.model';
-import { productCart } from '../../models/productCart.model';
+import { productCart } from '../../Models/productCart.model';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { AuthService } from '../../Services/auth.service';
