@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
 import { Observable, map } from 'rxjs';
 import { FavoriteService } from '../../../Services/favorite.service';
-import { productCart } from '../../../Models/productCart.model';
+import { productCart } from '../../../models/productCart.model';
 import { productFavorite } from '../../../Models/productFavorite.model';
 @Component({
   selector: 'app-favorites-items',

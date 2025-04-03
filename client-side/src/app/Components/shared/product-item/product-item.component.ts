@@ -24,7 +24,9 @@ import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
 import { Observable } from 'rxjs';
 
+import { NgToastService } from 'ng-angular-popup';
 import { productCart } from '../../../Models/productCart.model';
+
 
 @Component({
   selector: 'app-product-item',

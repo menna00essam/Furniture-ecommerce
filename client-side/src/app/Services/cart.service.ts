@@ -4,12 +4,13 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { product } from '../Models/product.model';
 import { AuthService } from './auth.service';
-import { productCart } from '../Models/productCart.model';
+import { productCart } from '../models/productCart.model';
 import { NgToastService } from 'ng-angular-popup';
+import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private apiUrl = 'http://localhost:5000/cart';
+  private apiUrl =  `${environment.apiUrl}/cart`;
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   private cartSubject = new BehaviorSubject<productCart[]>([]);
@@ -140,7 +141,7 @@ export class CartService {
                 existingProduct.quantity++;
                 existingProduct.subtotal =
                   existingProduct.quantity * existingProduct.price;
-              } else {
+                } else {
                 cart.push({
                   id: product.id,
                   name: product.name,
@@ -294,8 +295,10 @@ export class CartService {
 
   clearCart(): void {
     console.log('[CartService] Clearing cart...');
+
     this.cartSubject.next([]);
     this.checkoutSubject.next([]);
     localStorage.removeItem('cart');
+    this.cartSubtotalSubject.next(0);
   }
 }
