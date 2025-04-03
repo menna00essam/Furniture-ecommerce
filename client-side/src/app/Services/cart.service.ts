@@ -52,7 +52,7 @@ export class CartService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(`${operation} failed:`, error);
+      if (error.status !== 404) console.error(`${operation} failed:`, error);
       return of(result as T);
     };
   }
@@ -61,7 +61,6 @@ export class CartService {
 
   private loadCart(): void {
     this.getCart().subscribe();
-    console.log(9);
   }
 
   getCart(): Observable<productCart[]> {
@@ -72,21 +71,17 @@ export class CartService {
         })
         .pipe(
           map(({ data }) => {
-            console.log(data);
             this.cartSubtotalSubject.next(data.totalPrice);
-            console.log(this.cartSubtotalSubject.getValue());
             return data.products.map((p) => this.mapToProductCart(p));
           }),
           tap((cart) => {
             this.cartSubject.next(cart);
-            console.log(cart);
           }),
           catchError(this.handleError<productCart[]>('getCart', []))
         );
     } else {
       const guestCart = this.getGuestCart();
       this.cartSubject.next(guestCart);
-      console.log(guestCart);
       this.cartSubtotalSubject.next(
         guestCart.reduce((sum, p) => sum + p.subtotal, 0)
       );
@@ -95,7 +90,6 @@ export class CartService {
   }
 
   private mapToProductCart(p: any): productCart {
-    console.log('x', p);
     return {
       id: p._id,
       name: p.productName,
@@ -132,24 +126,22 @@ export class CartService {
                 ? product.price * (1 - product.sale / 100)
                 : product.price;
 
-               let existingProduct = cart.find((p) => p.id === product.id);
+              let existingProduct = cart.find((p) => p.id === product.id);
 
-               if (existingProduct) {
-                 existingProduct.quantity++;
-                 existingProduct.subtotal =
-                   existingProduct.quantity * existingProduct.price;
-               } else {
-                 cart.push({
-                   id: product.id,
-                   name: product.name,
-                   image: product.image,
-                   price: discountedPrice,
-                   quantity: 1,
-                   subtotal: discountedPrice,
-                 });
-               }
-
-             
+              if (existingProduct) {
+                existingProduct.quantity++;
+                existingProduct.subtotal =
+                  existingProduct.quantity * existingProduct.price;
+              } else {
+                cart.push({
+                  id: product.id,
+                  name: product.name,
+                  image: product.image,
+                  price: discountedPrice,
+                  quantity: 1,
+                  subtotal: discountedPrice,
+                });
+              }
 
               this.cartSubject.next(cart);
               this.cartSubtotalSubject.next(
