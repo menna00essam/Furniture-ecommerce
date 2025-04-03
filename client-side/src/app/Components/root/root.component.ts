@@ -76,7 +76,7 @@ export class RootComponent {
 
     this.cart$ = this.cartService.cart$;
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
-    this.cartProductsTotalPrice = this.cartService.getSubtotal();
+    this.cartProductsTotalPrice = this.cartService.cartSubtotal$;
 
     this.favorites$ = this.favoriteService.favorites$;
     this.favoritesLength$ = this.favoriteService.favorites$.pipe(
