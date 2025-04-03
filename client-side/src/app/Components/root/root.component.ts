@@ -100,7 +100,6 @@ export class RootComponent {
   toggleCartModal(open: boolean): void {
     this.cartModalShow = open;
     this.toggleBodyScroll(open);
-    console.log('toggleCartModal', open);
   }
 
   private toggleBodyScroll(isOpen: boolean): void {
