@@ -42,18 +42,19 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
 
       return {
         _id: productId._id,
-        quantity: finalQuantity,
+        productQuantity: finalQuantity,
         productName: productId.productName,
         productImage:
           colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
         productPrice: effectivePrice,
-        productQuantity: availableQuantity,
-        subtotal: finalQuantity * effectivePrice,
+        productSubtotal: finalQuantity * effectivePrice,
       };
     })
     .filter((product) => product !== null);
-
-  const totalPrice = products.reduce((sum, item) => sum + item.subtotal, 0);
+  const totalPrice = products.reduce(
+    (sum, item) => sum + item.productSubtotal,
+    0
+  );
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,

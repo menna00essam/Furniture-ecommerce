@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { product } from '../Models/product.model';
 import { AuthService } from './auth.service';
 import { productCart } from '../Models/productCart.model';
@@ -15,6 +15,9 @@ export class CartService {
 
   private cartSubject = new BehaviorSubject<productCart[]>([]);
   cart$ = this.cartSubject.asObservable();
+
+  private cartSubtotalSubject = new BehaviorSubject<number>(0);
+  cartSubtotal$ = this.cartSubtotalSubject.asObservable();
 
   private checkoutSubject = new BehaviorSubject<productCart[]>([]);
   checkoutData$ = this.checkoutSubject.asObservable();
@@ -58,16 +61,22 @@ export class CartService {
 
   private loadCart(): void {
     this.getCart().subscribe();
+    console.log(9);
   }
 
   getCart(): Observable<productCart[]> {
     if (this.isLoggedInSubject.getValue()) {
       return this.http
-        .get<{ data: { products: any[] } }>(this.apiUrl, {
+        .get<{ data: { products: any[]; totalPrice: number } }>(this.apiUrl, {
           headers: this.getAuthHeaders(),
         })
         .pipe(
-          map(({ data }) => data.products.map((p) => this.mapToProductCart(p))),
+          map(({ data }) => {
+            console.log(data);
+            this.cartSubtotalSubject.next(data.totalPrice);
+            console.log(this.cartSubtotalSubject.getValue());
+            return data.products.map((p) => this.mapToProductCart(p));
+          }),
           tap((cart) => {
             this.cartSubject.next(cart);
             console.log(cart);
@@ -77,21 +86,23 @@ export class CartService {
     } else {
       const guestCart = this.getGuestCart();
       this.cartSubject.next(guestCart);
+      console.log(guestCart);
+      this.cartSubtotalSubject.next(
+        guestCart.reduce((sum, p) => sum + p.subtotal, 0)
+      );
       return of(guestCart);
     }
   }
 
   private mapToProductCart(p: any): productCart {
-    const effectivePrice = p.productSale
-      ? p.productPrice * (1 - p.productSale / 100)
-      : p.productPrice;
+    console.log('x', p);
     return {
       id: p._id,
       name: p.productName,
       image: p.productImage,
-      price: p.price,
-      quantity: p.quantity,
-      subtotal: p.subTotal,
+      price: p.productPrice,
+      quantity: p.productQuantity,
+      subtotal: p.productSubtotal,
     };
   }
 
@@ -101,41 +112,73 @@ export class CartService {
   }
 
   addProduct(product: product): void {
-    const discountedPrice = product.sale
-      ? product.price * (1 - product.sale / 100)
-      : product.price;
-    let cart = [...this.cartSubject.getValue()];
-
-    cart.push({
-      id: product.id,
-      name: product.name,
-      image: product.image,
-      price: discountedPrice,
-      quantity: 1,
-      subtotal: discountedPrice,
-    });
-
     if (this.isLoggedInSubject.getValue()) {
-      this.http
-        .post(
-          this.apiUrl,
-          [{ productId: product.id, quantity: 1, color: product.color }],
-          {
-            headers: this.getAuthHeaders(),
-          }
+      this.getCart()
+        .pipe(
+          switchMap(() =>
+            this.http.post(
+              this.apiUrl,
+              [{ productId: product.id, quantity: 1, color: product.color }],
+              { headers: this.getAuthHeaders() }
+            )
+          ),
+          catchError(this.handleError('addProduct'))
         )
-        .pipe(catchError(this.handleError('addProduct')))
         .subscribe({
           next: (response: any) => {
             if (response.status === 'success') {
+              let cart = [...this.cartSubject.getValue()];
+              const discountedPrice = product.sale
+                ? product.price * (1 - product.sale / 100)
+                : product.price;
+
+               let existingProduct = cart.find((p) => p.id === product.id);
+
+               if (existingProduct) {
+                 existingProduct.quantity++;
+                 existingProduct.subtotal =
+                   existingProduct.quantity * existingProduct.price;
+               } else {
+                 cart.push({
+                   id: product.id,
+                   name: product.name,
+                   image: product.image,
+                   price: discountedPrice,
+                   quantity: 1,
+                   subtotal: discountedPrice,
+                 });
+               }
+
+             
+
               this.cartSubject.next(cart);
+              this.cartSubtotalSubject.next(
+                cart.reduce((sum, p) => sum + p.subtotal, 0)
+              );
               this.toast.success(`${product.name} added to cart successfully.`);
             }
           },
         });
     } else {
+      let cart = [...this.cartSubject.getValue()];
+      const discountedPrice = product.sale
+        ? product.price * (1 - product.sale / 100)
+        : product.price;
+
+      cart.push({
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: discountedPrice,
+        quantity: 1,
+        subtotal: discountedPrice,
+      });
+
       this.saveGuestCart(cart);
       this.cartSubject.next(cart);
+      this.cartSubtotalSubject.next(
+        cart.reduce((sum, p) => sum + p.subtotal, 0)
+      );
       this.toast.success(`${product.name} added to cart successfully.`);
     }
   }
@@ -188,6 +231,10 @@ export class CartService {
           next: (response: any) => {
             if (response.status === 'success') {
               this.cartSubject.next(cart);
+              this.cartSubtotalSubject.next(
+                cart.reduce((sum, p) => sum + p.subtotal, 0)
+              );
+
               const message = remove
                 ? `${productName} has been removed from the cart.`
                 : `${productName} quantity updated successfully.`;
@@ -198,6 +245,9 @@ export class CartService {
     } else {
       this.saveGuestCart(cart);
       this.cartSubject.next(cart);
+      this.cartSubtotalSubject.next(
+        cart.reduce((sum, p) => sum + p.subtotal, 0)
+      );
       const message = remove
         ? `${productName} has been removed from the cart.`
         : `${productName} quantity updated successfully.`;
@@ -211,12 +261,6 @@ export class CartService {
 
   decreaseQuantity(productId: string): void {
     this.modifyQuantity(productId, -1);
-  }
-
-  getSubtotal(): Observable<number> {
-    return this.cart$.pipe(
-      map((cart) => cart.reduce((sum, item) => sum + item.subtotal, 0))
-    );
   }
 
   /*** Checkout Operations ***/

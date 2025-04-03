@@ -87,7 +87,7 @@ export class CheckoutComponent {
 
   selectedPayment: string = '';
   cartItems: any[] = [];
-  subtotal!: Observable<number>;
+  subtotal$!: Observable<number>;
 
   @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
 
@@ -101,7 +101,7 @@ export class CheckoutComponent {
   /** Load cart data on component initialization */
   private loadCartData(): void {
     this.cartItems = this.cartService.getCheckoutData();
-    this.subtotal = this.cartService.getSubtotal();
+    this.subtotal$ = this.cartService.cartSubtotal$;
   }
 
   /** Handle form submission */

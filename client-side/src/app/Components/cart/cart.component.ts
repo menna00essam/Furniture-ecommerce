@@ -5,10 +5,11 @@ import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.c
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { CartService } from '../../Services/cart.service';
-import { product } from '../../Models/product.model';
 import { Observable, map } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
 import { productCart } from '../../Models/productCart.model';
+import { ButtonComponent } from '../shared/button/button.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -28,16 +29,11 @@ import { productCart } from '../../Models/productCart.model';
 export class CartComponent implements OnInit {
   cart$!: Observable<productCart[]>;
   cartLength$!: Observable<number>;
-  subtotal$!: Observable<number>;
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-    this.cart$.subscribe((cart) => {
-      console.log(cart);
-    });
-    this.subtotal$ = this.cartService.getSubtotal();
     this.cartLength$ = this.cart$.pipe(map((cart) => cart.length));
   }
 
@@ -51,5 +47,10 @@ export class CartComponent implements OnInit {
 
   decreaseQuantity(productId: string) {
     this.cartService.decreaseQuantity(productId);
+  }
+
+  goToCheckout() {
+    this.cartService.setCheckoutData();
+    this.router.navigate(['/checkout']);
   }
 }
