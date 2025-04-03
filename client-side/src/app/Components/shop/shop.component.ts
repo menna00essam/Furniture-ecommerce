@@ -141,8 +141,8 @@ export class ShopComponent implements OnInit {
     this.priceMax$ = this.productService.getMaxPrice();
     combineLatest([this.priceMin$, this.priceMax$]).subscribe(([min, max]) => {
       console.log(`Price range initialized: ${min} - ${max}`);
-      this.minPrice = min;
-      this.maxPrice = max;
+      this.minPrice = Math.floor(min);
+      this.maxPrice = Math.ceil(max);
     });
   }
 
@@ -188,8 +188,8 @@ export class ShopComponent implements OnInit {
   onPriceChange(event: Event, isMin: boolean): void {
     const value = Number((event.target as HTMLInputElement).value);
     isMin
-      ? (this.minPrice = Math.min(value, this.maxPrice - 1))
-      : (this.maxPrice = Math.max(value, this.minPrice + 1));
+      ? (this.minPrice = Math.floor(Math.min(value, this.maxPrice - 1)))
+      : (this.maxPrice = Math.ceil(Math.max(value, this.minPrice + 1)));
     console.log(
       `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
     );
