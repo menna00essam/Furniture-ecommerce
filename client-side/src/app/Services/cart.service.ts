@@ -263,7 +263,9 @@ export class CartService {
   }
 
   getCheckoutData(): productCart[] {
-    return this.checkoutSubject.getValue();
+    return this.checkoutSubject.getValue().length > 0 
+      ? this.checkoutSubject.getValue() 
+      : this.cartSubject.getValue();
   }
 
   /*** Utility Methods ***/
@@ -275,7 +277,7 @@ export class CartService {
   clearCart(): void {
     console.log(">>>>>>>>>clear cart fired");
     this.cartSubject.next([]);
-    this.checkoutSubject.next([]);
+    // this.checkoutSubject.next([]);
     localStorage.removeItem('cart');
     this.cartSubtotalSubject.next(0);
   }

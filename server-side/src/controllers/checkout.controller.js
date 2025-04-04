@@ -21,15 +21,23 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
   if (!cart || cart.products.length === 0) {
     return next(new AppError("Cart is empty", 400, httpStatusText.FAIL));
   }
-  
-  const orderItems = cart.products.map((item) => ({
-    productId: item.productId._id,
-    productName:item.productId.productName,
-    quantity: item.quantity,
-    price: item.productId.productPrice,
-    subtotal: item.subtotal,
-  }));
+  const orderItems = cart.products.map((item) => {
+    const effectivePrice = item.productId.productPrice * (1 - item.productId.productSale / 100);
+    return {
+      productId: item.productId._id,
+      productName: item.productId.productName,
+      quantity: item.quantity,
+      price: effectivePrice,
+      subtotal: effectivePrice * item.quantity,
+    };
+  });
+  console.log("-----------------------------");
+  console.log("cart.products>>>>>>>>>>>",cart.products); 
+  console.log("-----------------------------");
   console.log("orderItems>>>>>>>>>>>",orderItems); 
+  console.log("-----------------------------");
+  console.log("cart>>>>>>>>>>>",cart); 
+
 
   for (const item of cart.products) {
     console.log("quantiti", item.quantity, item.productId.productQuantity);
@@ -43,12 +51,12 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
       );
     }
   }
-
+  const totalAmount = orderItems.reduce((acc, item) => acc + item.subtotal, 0);
   const order = new Order({
     userId,
     orderItems,
     shippingAddress,
-    totalAmount: cart.totalPrice,
+    totalAmount,
     paymentMethod,
     transactionId,
   });

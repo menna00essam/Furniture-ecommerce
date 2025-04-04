@@ -1,39 +1,5 @@
 <div class="flex flex-col gap-4">
-  <form
-    [formGroup]="paymentForm"
-    (ngSubmit)="validatePaymentForm()"
-    class="flex flex-col gap-4"
-  >
-    <!--*** Card-number-input ***-->
-    <app-input
-      label="Card Number *"
-      placeholder="Card Number"
-      type="text"
-      bgC="secondary"
-      width="full"
-      [control]="paymentForm.controls['cardNumber']"
-    ></app-input>
-
-    <!--*** Expiry-date-input ***-->
-    <app-input
-      label="Expiry Date (MM/YY) *"
-      placeholder="MM/YY"
-      type="text"
-      bgC="secondary"
-      width="full"
-      [control]="paymentForm.controls['expiry']"
-    ></app-input>
-
-    <!--*** cvc-input ***-->
-    <app-input
-      label="CVC *"
-      placeholder="CVC"
-      type="text"
-      bgC="secondary"
-      width="full"
-      [control]="paymentForm.controls['cvc']"
-    ></app-input>
-  </form>
+    <div #cardElement></div> 
 
   <!--*** email-subscription ***-->
   <div class="flex items-center gap-2">

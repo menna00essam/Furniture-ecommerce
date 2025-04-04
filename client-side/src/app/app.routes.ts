@@ -28,6 +28,7 @@ import { FavoritesItemsComponent } from './Components/shared/favorites-items/fav
 import { PrivacyPolicyComponent } from './Components/help/privacy-policy/privacy-policy.component';
 import { ReturnsComponent } from './Components/help/returns/returns.component';
 import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
+import { OrderSuccessComponent } from './Components/order-success/order-success.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +62,7 @@ export const routes: Routes = [
       { path: 'privacypolicy', component: PrivacyPolicyComponent },
       { path: 'returns', component: ReturnsComponent },
       { path: 'paymentoptions', component: PaymentOptionsComponent },
+      { path: 'order-success', component: OrderSuccessComponent },
       {
         path: 'profile',
         component: ProfileComponent,
@@ -87,6 +89,11 @@ export const routes: Routes = [
       {
         path: 'checkout',
         component: CheckoutComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'order-success',
+        component: OrderSuccessComponent,
         canActivate: [authGuard],
       },
       {

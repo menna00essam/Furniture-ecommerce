@@ -12,7 +12,7 @@ import { Router, NavigationEnd } from '@angular/router';
   imports: [MatButtonModule, MatInputModule, CommonModule],
 })
 export class StepperComponent {
-    steps = ['cart', 'checkout', 'order-complete'];
+    steps = ['cart', 'checkout', 'order-success'];
     stepIndex = 0;
   
     constructor(private router: Router) {
@@ -24,8 +24,12 @@ export class StepperComponent {
     }
   
     updateStep(url: string) {
-      // Extract last part of URL to determine the step
       const currentStep = url.split('/').pop();
       this.stepIndex = this.steps.indexOf(currentStep || 'cart');
+    }
+    navigateToStep(index: number) {
+      if (index < this.stepIndex) { 
+        this.router.navigate([`/${this.steps[index]}`]);
+      }
     }
   }

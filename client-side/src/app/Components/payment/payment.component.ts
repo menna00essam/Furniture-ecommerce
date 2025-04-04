@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {  Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -10,56 +10,71 @@ import {
 import { CommonModule } from '@angular/common';
 import { CheckoutService } from '../../Services/checkout.service';
 import { InputComponent } from '../shared/input/input.component';
-
+import { loadStripe, Stripe, StripeCardElement, StripeElements } from '@stripe/stripe-js';
+import { ModalService } from '../../Services/modal.service'; 
+import { PaymentFailedModalComponent } from '../modals/payment-failed-modal/payment-failed-modal.component';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputComponent,PaymentFailedModalComponent],
   templateUrl: './payment.component.html',
 })
-export class PaymentComponent {
-  paymentForm = new FormGroup({
-    cardNumber: new FormControl('', [
-      Validators.required,
-      Validators.pattern(/^\d{16}$/),
-    ]),
-    expiry: new FormControl('', [
-      Validators.required,
-      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/),
-    ]),
-    cvc: new FormControl('', [
-      Validators.required,
-      Validators.pattern(/^\d{3,4}$/),
-    ]),
-  });
+export class PaymentComponent implements OnInit {
+
+  @ViewChild('cardElement') cardElement!: ElementRef;
+  stripe: Stripe | null = null;
+  elements: StripeElements | null = null;
+  card: StripeCardElement | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private checkoutService: CheckoutService
+    private checkoutService: CheckoutService,
+    private modalService: ModalService,
   ) {}
-
-  // Getter methods for form controls
-  get cardNumber(): FormControl {
-    return this.paymentForm.get('cardNumber') as FormControl;
+   async ngOnInit() {
+    this.stripe = await loadStripe(environment.stripePublishableKey);
+    if (this.stripe) {
+      this.elements = this.stripe.elements();
+      this.card = this.elements.create('card');
+      this.card.mount(this.cardElement.nativeElement);
+    }
   }
-
-  get expiry(): FormControl {
-    return this.paymentForm.get('expiry') as FormControl;
-  }
-
-  get cvc(): FormControl {
-    return this.paymentForm.get('cvc') as FormControl;
-  }
-
-  validatePaymentForm() {
-    const paymentValidation = this.checkoutService.validatePaymentForm(
-      this.paymentForm.value
+  async validatePaymentForm() {
+    if (!this.stripe || !this.elements || !this.card) {
+      console.error('Stripe.js not initialized.');
+      return;
+    }
+    console.log('Client Secret:', this.checkoutService.clientSecret);
+    const { paymentIntent, error } = await this.stripe.confirmCardPayment(
+      this.checkoutService.clientSecret, 
+      {
+        payment_method: {
+          card: this.card,
+        },
+      }
     );
 
-    if (paymentValidation.isValid) {
-      console.log('Payment Form is valid:', this.paymentForm.value);
-    } else {
-      console.error('Payment invalid:', paymentValidation.errors);
+     if (error) {
+      // console.error('Payment failed:', error);
+      if (error.code === 'card_declined') {
+        this.modalService.show(PaymentFailedModalComponent);
+      } else {
+        console.error('Other payment error:', error);
+      }
+    }else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      console.log('Payment succeeded!');
+      this.checkoutService.paymentIntentId = paymentIntent.id;
+      this.checkoutService.paymentCompleted.next(true);
+    }
+  }
+
+  resetCardElement() {
+    if (this.card) {
+      this.card.destroy(); 
+      this.card = this.elements?.create('card') || null; 
+      if (this.card) {
+        this.card.mount(this.cardElement.nativeElement); 
+      }
     }
   }
 }

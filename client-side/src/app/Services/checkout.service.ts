@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, of, throwError } from 'rxjs';
+import { Observable, catchError, Subject , throwError } from 'rxjs';
 import { CheckoutData } from '../models/checkout.model';
 import { AuthService } from './auth.service';
 import { NgToastService } from 'ng-angular-popup';
@@ -14,6 +14,10 @@ import { environment } from '../environments/environment';
 export class CheckoutService {
   private apiUrl = `${environment.apiUrl}/checkout`;
   private paymentApiUrl = `${environment.apiUrl}/payments/payment`;
+  paymentIntentId: string = ''; 
+  clientSecret: string = '';
+  paymentCompleted = new Subject<boolean>(); 
+  checkoutSubject: any;
   constructor(
     private http: HttpClient,
     private authService: AuthService,
