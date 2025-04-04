@@ -1,23 +1,23 @@
-const mongoose = require("mongoose");
-const httpStatusText = require("../utils/httpStatusText");
-const AppError = require("../utils/appError");
-const Cart = require("../models/cart.model");
-const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
-const Product = require("../models/product.model");
+const mongoose = require('mongoose');
+const httpStatusText = require('../utils/httpStatusText');
+const AppError = require('../utils/appError');
+const Cart = require('../models/cart.model');
+const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
+const Product = require('../models/product.model');
 
 // GET: Retrieve user cart
 const getUserCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log("my cart user :", userId);
+  console.log('my cart user :', userId);
   const cart = await Cart.findOne({ userId })
     .populate(
-      "products.productId",
-      "_id productName colors productPrice productSale"
+      'products.productId',
+      '_id productName colors productPrice productSale'
     )
     .lean();
 
   if (!cart) {
-    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
+    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
   }
 
   const products = cart.products
@@ -42,18 +42,19 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
 
       return {
         _id: productId._id,
-        quantity: finalQuantity,
+        productQuantity: finalQuantity,
         productName: productId.productName,
         productImage:
           colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
         productPrice: effectivePrice,
-        productQuantity: availableQuantity,
-        subtotal: finalQuantity * effectivePrice,
+        productSubtotal: finalQuantity * effectivePrice,
       };
     })
     .filter((product) => product !== null);
-
-  const totalPrice = products.reduce((sum, item) => sum + item.subtotal, 0);
+  const totalPrice = products.reduce(
+    (sum, item) => sum + item.productSubtotal,
+    0
+  );
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
@@ -67,21 +68,45 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
 // POST: Add products to cart
 const addToCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
+  console.log('my cart user :', userId);
   const items = req.body;
+  console.log('my cart items :', items);
 
+  // Validate the items array
   if (!Array.isArray(items) || items.length === 0) {
-    return next(new AppError("Invalid cart items.", 400, httpStatusText.FAIL));
+    return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
   }
 
+  // Validate each item in the cart
   for (const item of items) {
-    if (
-      !mongoose.Types.ObjectId.isValid(item.productId) ||
-      item.quantity < 1 ||
-      !item.color
-    ) {
+    const { productId, quantity, color } = item;
+
+    if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 1) {
       return next(
         new AppError(
-          "Invalid productId, quantity, or missing color.",
+          'Invalid productId or quantity. Quantity must be at least 1.',
+          400,
+          httpStatusText.FAIL
+        )
+      );
+    }
+
+    const product = await Product.findById(productId).select('colors');
+    if (!product) {
+      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+    }
+
+    // If no color is provided, use the first available color
+    if (!color && product.colors.length > 0) {
+      item.color = product.colors[0].name;
+    }
+
+    // Validate the color
+    const colorVariant = product.colors.find((c) => c.name === item.color);
+    if (!colorVariant) {
+      return next(
+        new AppError(
+          `Color ${item.color} not available for this product.`,
           400,
           httpStatusText.FAIL
         )
@@ -89,17 +114,18 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     }
   }
 
+  // Find or create the user's cart
   let cart = await Cart.findOne({ userId });
-
   if (!cart) {
     cart = new Cart({ userId, products: [] });
   }
 
+  // Add or update items in the cart
   for (const { productId, quantity, color } of items) {
     const product = await Product.findById(productId).lean();
 
     if (!product) {
-      return next(new AppError("Product not found.", 404, httpStatusText.FAIL));
+      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
     }
 
     // Find the color variant in the product
@@ -128,8 +154,9 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     }
   }
 
+  // Save the cart and populate product details
   await cart.save();
-  await cart.populate("products.productId", "_id productName productPrice");
+  await cart.populate('products.productId', '_id productName productPrice');
 
   res.status(201).json({
     status: httpStatusText.SUCCESS,
@@ -140,22 +167,29 @@ const addToCart = asyncWrapper(async (req, res, next) => {
 // PATCH: Update cart (change quantity or remove a product)
 const updateCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  const { productId, quantity, color } = req.body;
+  let { productId, quantity, color } = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0 || !color) {
+  if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0) {
     return next(
       new AppError(
-        "Invalid productId, quantity, or color.",
+        'Invalid productId, quantity, or color.',
         400,
         httpStatusText.FAIL
       )
     );
   }
+  const product = await Product.findById(productId).select('colors');
+  if (!product) {
+    return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+  }
 
+  if (!color && product.colors.length > 0) {
+    color = product.colors[0].name;
+  }
   const cart = await Cart.findOne({ userId });
 
   if (!cart) {
-    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
+    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
   }
 
   const productIndex = cart.products.findIndex(
@@ -165,7 +199,7 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   if (productIndex === -1) {
     return next(
       new AppError(
-        "Product with this color not found in cart.",
+        'Product with this color not found in cart.',
         404,
         httpStatusText.FAIL
       )
@@ -180,8 +214,8 @@ const updateCart = asyncWrapper(async (req, res, next) => {
 
   await cart.save();
   await cart.populate(
-    "products.productId",
-    "_id productName colors productPrice"
+    'products.productId',
+    '_id productName colors productPrice'
   );
 
   res.status(200).json({

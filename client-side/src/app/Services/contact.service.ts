@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class ContactService {
   } | null>(null);
   message$ = this.messageSubject.asObservable();
 
-  private apiUrl = 'http://localhost:5000/contact/send-message';
+  private apiUrl = `${environment.apiUrl}/contact/send-message`;
 
   constructor(private http: HttpClient) {}
 

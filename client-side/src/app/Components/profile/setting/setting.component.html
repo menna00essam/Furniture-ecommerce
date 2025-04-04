@@ -39,12 +39,41 @@
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             for=":r14:-form-item"
             >Name</label
-          ><input
-            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-            value="{{ user.name }}"
-            name="name"
-          />
+          >
+          <div
+            class="flex h-10 w-full rounded-md bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+            placeholder="joedoe"
+            autocomplete="off"
+            disabled=""
+            id=":r17:-form-item"
+            aria-describedby=":r17:-form-item-description"
+            aria-invalid="false"
+            name="email"
+          >
+            {{ user.name }}
+          </div>
         </div>
+        <button data-state="closed">
+          <div class="space-y-2 flex flex-col">
+            <label
+              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 self-start"
+              for=":r17:-form-item"
+              >Email</label
+            >
+            <div
+              class="flex h-10 w-full rounded-md bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              placeholder="joedoe"
+              autocomplete="off"
+              disabled=""
+              id=":r17:-form-item"
+              aria-describedby=":r17:-form-item-description"
+              aria-invalid="false"
+              name="email"
+            >
+              {{ user.email }}
+            </div>
+          </div>
+        </button>
         <div class="space-y-2">
           <label
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -88,74 +117,48 @@
             name="image"
           />
         </div>
-        <button data-state="closed">
-          <div class="space-y-2 flex flex-col">
-            <label
-              class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 self-start"
-              for=":r17:-form-item"
-              >Email</label
-            ><input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-              placeholder="joedoe"
-              autocomplete="off"
-              disabled=""
-              id=":r17:-form-item"
-              aria-describedby=":r17:-form-item-description"
-              aria-invalid="false"
-              value="{{ user.email }}"
-              name="email"
-            />
-          </div>
-        </button>
 
-        <div class="space-y-2">
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            for=":r18:-form-item"
-            >New password</label
-          >
-          <div class="relative">
-            <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm hide-password-toggle pr-10"
-              placeholder="********"
-              autocomplete="off"
-              type="password"
-              value=""
-              name="password"
-            /><button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none hover:text-accent-foreground rounded-md absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              type="button"
-              disabled=""
-            >
-              <img src="/icons/eye-off.svg" alt="" class="w-[16px] h-[16px]" />
-              <span class="sr-only">Show password</span>
-            </button>
-          </div>
+        <app-input
+          placeholder="Password"
+          label="New Password"
+          type="password"
+          bgC="secondary"
+          width="full"
+          [control]="changePasswordForm.controls['password']"
+        ></app-input>
+        <app-input
+          placeholder="Password"
+          label="Confirm Password"
+          type="password"
+          bgC="secondary"
+          width="full"
+          [control]="changePasswordForm.controls['confirmPassword']"
+        ></app-input>
+        @if(changePasswordForm.controls['password'].value
+        &&changePasswordForm.errors?.['passwordMismatch'] &&
+        changePasswordForm.touched){
+
+        <div
+          class="text-red-light text-center"
+          [@slideUpDown]="
+            changePasswordForm.errors?.['passwordMismatch'] && changePasswordForm.touched  ? 'in' : 'out'
+          "
+        >
+          Passwords do not match
         </div>
-        <div class="space-y-2">
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            for=":r19:-form-item"
-            >Confirm password</label
-          >
-          <div class="relative">
-            <input
-              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm hide-password-toggle pr-10"
-              placeholder="********"
-              autocomplete="off"
-              type="password"
-              value=""
-              name="confirmPassword"
-            /><button
-              class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none hover:text-accent-foreground rounded-md absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              type="button"
-            >
-              <img src="/icons/eye-off.svg" alt="" class="w-[16px] h-[16px]" />
-              <span class="sr-only">Show password</span>
-            </button>
-          </div>
-        </div>
-        <div class="space-y-2">
+        } @if(errorMessage == staticMessages){
+        <p class="text-red-light text-center">{{ staticMessages }}</p>
+
+        }@else if(errorMessage) {
+        <p class="text-green-light text-center">password changed successfuly</p>
+        }
+
+        <app-button (click)="update($event)">Update</app-button>
+      </form>
+    </div>
+  </div>
+</section>
+<!--  <div class="space-y-2">
           <label
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             for=":r1a:-form-item"
@@ -197,9 +200,4 @@
               height: 24px;
             "
           />
-        </div>
-        <app-button>Update</app-button>
-      </form>
-    </div>
-  </div>
-</section>
+        </div> -->

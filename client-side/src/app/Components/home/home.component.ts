@@ -35,6 +35,14 @@ import { product } from '../../Models/product.model';
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   products$!: Observable<product[]>;
+  productsImages = [
+    { image: '/images/products/1.png' },
+    { image: '/images/products/2.png' },
+    { image: '/images/products/3.png' },
+    { image: '/images/products/4.png' },
+    { image: '/images/products/5.png' },
+    { image: '/images/products/6.png' },
+  ];
 
   @ViewChild('swiperRef', { static: false }) swiperRef!: ElementRef;
   @ViewChild('imageSwiper', { static: false }) imageSwiper!: ElementRef;
@@ -78,7 +86,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     new Swiper(this.imageSwiper.nativeElement, {
       modules: [Pagination, Autoplay],
-      slidesPerView: 5,
+      slidesPerView: 4,
       spaceBetween: 20,
       grid: {
         rows: 1,
@@ -93,7 +101,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     new Swiper(this.imageSwiper2.nativeElement, {
       modules: [Pagination, Autoplay],
-      slidesPerView: 5,
+      slidesPerView: 4,
       spaceBetween: 20,
       effect: 'slide',
       grid: {

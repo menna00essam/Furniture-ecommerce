@@ -137,15 +137,15 @@ const getFilteredProducts = async (
     { $limit: limit },
     {
       $lookup: {
-        from: "categories",
-        localField: "productCategories",
-        foreignField: "_id",
-        as: "productCategories",
+        from: 'categories',
+        localField: 'productCategories',
+        foreignField: '_id',
+        as: 'productCategories',
       },
     },
     {
       $addFields: {
-        firstColor: { $arrayElemAt: ["$colors", 0] },
+        firstColor: { $arrayElemAt: ['$colors', 0] },
       },
     },
     {
@@ -154,18 +154,19 @@ const getFilteredProducts = async (
         productName: 1,
         productSubtitle: 1,
         productImage: {
-          $arrayElemAt: ["$firstColor.images.url", 0],
+          $arrayElemAt: ['$firstColor.images.url', 0],
         },
         productPrice: 1,
         productDate: 1,
         productSale: 1,
-        productQuantity: "$firstColor.quantity",
+        productQuantity: '$firstColor.quantity',
         effectivePrice: 1,
+        mainColor: '$firstColor.name',
         productCategories: {
           $map: {
-            input: "$productCategories",
-            as: "category",
-            in: { _id: "$$category._id", catName: "$$category.catName" },
+            input: '$productCategories',
+            as: 'category',
+            in: { _id: '$$category._id', catName: '$$category.catName' },
           },
         },
       },

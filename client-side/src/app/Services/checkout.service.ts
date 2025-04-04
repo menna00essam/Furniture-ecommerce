@@ -1,10 +1,56 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, of, throwError } from 'rxjs';
+import { CheckoutData } from '../Models/checkout.model';
+import { AuthService } from './auth.service';
+import { NgToastService } from 'ng-angular-popup';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CheckoutService {
-  constructor() {}
+  private apiUrl = `${environment.apiUrl}/checkout`;
+  private paymentApiUrl = `${environment.apiUrl}/payments/payment`;
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private toast: NgToastService
+  ) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+  placeOrder(checkoutData: CheckoutData): Observable<any> {
+    return this.http
+      .post(this.apiUrl, checkoutData, {
+        headers: this.getAuthHeaders(),
+      })
+      .pipe(
+        catchError((error) => {
+          this.toast.danger('Failed to place order. Please try again.');
+          return throwError(() => error);
+        })
+      );
+  }
+
+  createPaymentIntent(amount: number): Observable<any> {
+    return this.http
+      .post(
+        this.paymentApiUrl,
+        { amount },
+        {
+          headers: this.getAuthHeaders(),
+        }
+      )
+      .pipe(
+        catchError((error) => {
+          this.toast.danger('Payment processing failed.');
+          return throwError(() => error);
+        })
+      );
+  }
 
   //*** validation for billing-details ***/
   validateCheckoutForm(formValues: any): {
@@ -63,7 +109,8 @@ export class CheckoutService {
       errors,
     };
   }
-  processOrder(billingValues: any,paymentValues: any) {
+
+  processOrder(billingValues: any, paymentValues: any) {
     console.log('payment details>>>>>', { billingValues, paymentValues });
   }
 

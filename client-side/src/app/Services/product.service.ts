@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { product } from '../Models/product.model';
-import { ProductDetails } from '../models/product-details.model';
+import { ProductDetails } from '../Models/product-details.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, tap, take, map, switchMap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 enum SortOptions {
   Default = 'Default',
@@ -19,8 +20,9 @@ enum SortOptions {
   providedIn: 'root',
 })
 export class ProductService {
+  private apiUrl = `${environment.apiUrl}/products`;
+
   private productsSubject = new BehaviorSubject<product[]>([]);
-  apiUrl = 'http://localhost:5000/products';
   products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) {}
@@ -115,6 +117,7 @@ export class ProductService {
             ),
             date: p.productDate,
             sale: p.productSale,
+            color: p.mainColor,
           }));
 
           console.log(
@@ -144,19 +147,12 @@ export class ProductService {
         ),
         map(({ data }) => ({
           id: data.product._id,
-          name: data.product.productName,
-          image: data.product.productImages,
-          subTitle: data.product.productSubtitle,
-          price: data.product.productPrice,
-          quantity: data.product.productQuantity,
-          categories: data.product.productCategories.map(
-            (cat: { catName: string }) => cat.catName
-          ),
-          date: data.product.productDate,
-          sale: data.product.productSale,
-          description: data.product.productDescription,
-          colors: data.product.colors,
-          sizes: data.product.sizes,
+          productName: data.product.productName,
+          productSubtitle: data.product.productSubtitle,
+          productPrice: data.product.productPrice,
+          productDate: data.product.productDate,
+          productSale: data.product.productSale,
+          productDescription: data.product.productDescription,
           brand: data.product.brand,
 
           productCategories: data.product.productCategories.map(

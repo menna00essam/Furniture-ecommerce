@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { NgToastService } from 'ng-angular-popup';
+import { environment } from '../environments/environment';
 
 interface Order {
   orderNumber: string;
@@ -16,7 +17,7 @@ interface Order {
   providedIn: 'root',
 })
 export class OrderService {
-  private apiUrl = 'http://localhost:5000/orders';
+  private apiUrl = `${environment.apiUrl}/orders`;
 
   private ordersSubject = new BehaviorSubject<Order[]>([]);
   orders$ = this.ordersSubject.asObservable();

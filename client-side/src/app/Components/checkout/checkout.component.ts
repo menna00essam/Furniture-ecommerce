@@ -1,8 +1,20 @@
 import { Component, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../Services/auth.service';
+import { ModalService } from '../../Services/modal.service';
+import { LoginPromptModalComponent } from '../modals/login-prompt-modal/login-prompt-modal.component';
+import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
+import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
+import { PaymentComponent } from '../payment/payment.component';
+import { ButtonComponent } from '../shared/button/button.component';
+import { StepperComponent } from '../shared/stepper/stepper.component';
+import { InputComponent } from '../shared/input/input.component';
+import { NgToastService } from 'ng-angular-popup';
+import { CartService } from '../../Services/cart.service';
+import { CheckoutService } from '../../Services/checkout.service';
+import { first, Observable, of } from 'rxjs';
 import {
-  FormBuilder,
   FormGroup,
   Validators,
   AbstractControl,
@@ -18,17 +30,11 @@ import {
   transition,
   animate,
 } from '@angular/animations';
-
-import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
-import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
-import { PaymentComponent } from '../payment/payment.component';
-import { ButtonComponent } from '../shared/button/button.component';
-import { StepperComponent } from '../shared/stepper/stepper.component';
-import { InputComponent } from '../shared/input/input.component';
-
-import { CartService } from '../../Services/cart.service';
-import { CheckoutService } from '../../Services/checkout.service';
-import { Observable } from 'rxjs';
+import {
+  CheckoutData,
+  OrderItem,
+  ShippingAddress,
+} from '../../Models/checkout.model';
 
 // Custom Validator: No Numbers
 export function noNumbersValidator(): ValidatorFn {
@@ -87,13 +93,16 @@ export class CheckoutComponent {
 
   selectedPayment: string = '';
   cartItems: any[] = [];
-  subtotal!: Observable<number>;
-
+  subtotal$!: Observable<number>;
+  isLoading = false;
   @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
 
   constructor(
     private checkoutService: CheckoutService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService,
+    private modalService: ModalService,
+    private toast: NgToastService
   ) {
     this.loadCartData();
   }
@@ -101,53 +110,109 @@ export class CheckoutComponent {
   /** Load cart data on component initialization */
   private loadCartData(): void {
     this.cartItems = this.cartService.getCheckoutData();
-    this.subtotal = this.cartService.getSubtotal();
+    this.subtotal$ = this.cartService.cartSubtotal$;
   }
 
   /** Handle form submission */
   onSubmit(): void {
-    if (this.checkoutForm.invalid) {
-      this.checkoutForm.markAllAsTouched();
-      return;
-    }
+    this.authService.isLoggedIn$.pipe(first()).subscribe((isLoggedIn) => {
+      if (!isLoggedIn) {
+        this.modalService.show(LoginPromptModalComponent);
+        return;
+      }
+      if (this.checkoutForm.invalid) {
+        this.checkoutForm.markAllAsTouched();
+        return;
+      }
 
-    const billingValues = this.checkoutForm.value;
-    const paymentValues = this.paymentComponent?.paymentForm?.value || {};
+      const billingValues = this.checkoutForm.value;
+      const paymentValues = this.paymentComponent?.paymentForm?.value || {};
 
-    const billingValidation =
-      this.checkoutService.validateCheckoutForm(billingValues);
-    const paymentValidation =
-      billingValues.paymentMethod === 'bank'
-        ? this.checkoutService.validatePaymentForm(paymentValues)
-        : { errors: [] };
+      const billingValidation =
+        this.checkoutService.validateCheckoutForm(billingValues);
+      const paymentValidation =
+        billingValues.paymentMethod === 'bank'
+          ? this.checkoutService.validatePaymentForm(paymentValues)
+          : { errors: [] };
 
-    const errors: string[] = [
-      ...billingValidation.errors,
-      ...paymentValidation.errors,
-    ];
+      const errors: string[] = [
+        ...billingValidation.errors,
+        ...paymentValidation.errors,
+      ];
 
-    if (errors.length > 0) {
-      console.error('Validation failed:', errors);
-      this.checkoutForm.markAllAsTouched();
-      this.paymentComponent?.paymentForm?.markAllAsTouched();
-      return;
-    }
+      if (errors.length > 0) {
+        console.error('Validation failed:', errors);
+        this.checkoutForm.markAllAsTouched();
+        this.paymentComponent?.paymentForm?.markAllAsTouched();
+        return;
+      }
 
-    this.processOrder(billingValues, paymentValues);
+      this.processOrder(billingValues, paymentValues);
+    });
   }
-
   /** Process the order after successful validation */
   private processOrder(billingValues: any, paymentValues: any): void {
+    this.isLoading = true;
     this.selectedPayment = billingValues.paymentMethod;
-    this.checkoutService.processOrder(billingValues, paymentValues);
 
-    // Reset forms
-    this.checkoutForm.reset();
-    this.paymentComponent?.paymentForm?.reset();
-    this.selectedPayment = '';
-
-    // Clear cart
-    this.cartItems = [];
-    this.cartService.clearCart();
+    // this.checkoutService.processOrder(billingValues, paymentValues);
+    const shippingAddress: ShippingAddress = {
+      firstName: billingValues.firstName,
+      lastName: billingValues.lastName,
+      companyName: billingValues.companyName,
+      country: billingValues.country,
+      address: billingValues.address,
+      city: billingValues.city,
+      zipCode: billingValues.zip,
+      phone: billingValues.phone,
+      email: billingValues.email,
+      additionalInfo: billingValues.additionalInfo,
+      // province: billingValues.city,
+    };
+    console.log('cartItems>>>>>>>>>>', this.cartItems);
+    const orderItems: OrderItem[] = this.cartItems.map((item) => ({
+      productId: item.productId,
+      productName: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      subtotal: item.price * item.quantity,
+    }));
+    const checkoutData: CheckoutData = {
+      shippingAddress,
+      paymentMethod: billingValues.paymentMethod,
+      orderItems,
+    };
+    console.log('checkoutData>>>>>>>>>', checkoutData);
+    if (billingValues.paymentMethod === 'bank') {
+      this.cartService.cartSubtotal$.pipe(first()).subscribe((totalAmount) => {
+        this.checkoutService
+          .createPaymentIntent(totalAmount)
+          .subscribe((paymentIntentResponse) => {
+            checkoutData.transactionId =
+              paymentIntentResponse.data.paymentIntentId;
+            this.sendOrder(checkoutData);
+          });
+      });
+    } else {
+      this.sendOrder(checkoutData);
+    }
+  }
+  private sendOrder(checkoutData: CheckoutData) {
+    this.checkoutService.placeOrder(checkoutData).subscribe({
+      next: () => {
+        // this.checkoutService.showSuccess('Order placed successfully!');
+        this.toast.success('Order placed successfully!');
+        this.checkoutForm.reset();
+        this.paymentComponent?.paymentForm?.reset();
+        this.selectedPayment = '';
+        this.cartItems = [];
+        this.cartService.clearCart();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Order placement failed:', error);
+        this.isLoading = false;
+      },
+    });
   }
 }
