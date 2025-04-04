@@ -9,6 +9,8 @@ import { ProductDetails } from '../../Models/product-details.model';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { FavoriteService } from '../../Services/favorite.service';
+import { Observable } from 'rxjs/internal/Observable';
+import { product } from '../../Models/product.model';
 
 @Component({
   selector: 'app-product',
@@ -26,6 +28,7 @@ import { FavoriteService } from '../../Services/favorite.service';
 export class ProductComponent implements OnInit {
   productId: string | null = null;
   product!: ProductDetails;
+  products$!: Observable<product[]>;
   warningMessage: string | null = null;
   colors: {
     name: string;
@@ -54,6 +57,8 @@ export class ProductComponent implements OnInit {
     if (this.productId) {
       this.fetchProduct(this.productId);
     }
+    this.products$ = this.productService.products$;
+    this.productService.getProducts(1, 5).subscribe();
   }
   toggleFavourites() {
     this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
