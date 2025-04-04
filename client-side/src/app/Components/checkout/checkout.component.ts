@@ -169,7 +169,6 @@ export class CheckoutComponent {
       additionalInfo: billingValues.additionalInfo,
       // province: billingValues.city,
     };
-    console.log('cartItems>>>>>>>>>>', this.cartItems);
     const orderItems: OrderItem[] = this.cartItems.map((item) => ({
       productId: item.productId,
       productName: item.name,
@@ -182,7 +181,6 @@ export class CheckoutComponent {
       paymentMethod: billingValues.paymentMethod,
       orderItems,
     };
-    console.log('checkoutData>>>>>>>>>', checkoutData);
     if (billingValues.paymentMethod === 'bank') {
       this.cartService.cartSubtotal$.pipe(first()).subscribe((totalAmount) => {
         this.checkoutService

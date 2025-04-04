@@ -293,7 +293,6 @@ const getMinEffectivePrice = asyncWrapper(async (req, res, next) => {
 });
 
 const getMaxEffectivePrice = asyncWrapper(async (req, res, next) => {
-  console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
   const maxPrice = await Product.aggregate([
     {
       $addFields: {

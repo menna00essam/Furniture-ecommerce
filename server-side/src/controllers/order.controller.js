@@ -5,7 +5,6 @@ const Order = require("../models/order.model");
 
 const getOrders = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log("User ID:", userId); // Debugging
 
   let { limit = 10, page = 1 } = req.query;
 
