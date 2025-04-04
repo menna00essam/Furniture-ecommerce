@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import { ProductService } from '../../Services/product.service';
-import { ProductNavigationComponent } from '../products-components/product-navigation/product-navigation.component';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
 import { ButtonComponent } from '../shared/button/button.component';
@@ -10,7 +14,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
-import { Observable, BehaviorSubject, map } from 'rxjs';
+import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
 import { product } from '../../Models/product.model';
 
 @Component({
@@ -41,7 +45,7 @@ export class ProductComponent implements OnInit {
     sku?: string;
   }[] = [];
   selectedColorIndex: number = 0;
-  selectedImage: string | null = null;
+  selectedImage!: string;
   selectedColor: {
     name: string;
     hex: string;
@@ -56,15 +60,27 @@ export class ProductComponent implements OnInit {
   isInCartState: boolean = false;
   isFavoriteState: boolean = false;
 
+  private routeSub: Subscription = new Subscription();
+
   constructor(
     private cdr: ChangeDetectorRef,
     private productService: ProductService,
     private favoriteService: FavoriteService,
     private cartService: CartService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.routeSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loadProduct();
+      }
+    });
+    this.loadProduct();
+  }
+
+  loadProduct(): void {
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.fetchProduct(this.productId);
@@ -168,13 +184,9 @@ export class ProductComponent implements OnInit {
 
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;
-    this.selectedImage = this.colors[index]?.mainImage || null;
+    this.selectedImage = this.colors[index]?.mainImage || 'default-image.jpg';
     this.selectedColor = this.colors[this.selectedColorIndex];
   }
-
-  // get selectedColor() {
-  //   return this.colors[this.selectedColorIndex] || null;
-  // }
 
   selectThumbnail(image: string) {
     this.selectedImage = image;
