@@ -34,7 +34,7 @@ import {
   CheckoutData,
   OrderItem,
   ShippingAddress,
-} from '../../models/checkout.model';
+} from '../../Models/checkout.model';
 
 // Custom Validator: No Numbers
 export function noNumbersValidator(): ValidatorFn {

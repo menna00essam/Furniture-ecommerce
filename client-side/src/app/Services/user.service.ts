@@ -3,18 +3,17 @@ import { user } from '../Models/user.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
-import { jwtDecode } from 'jwt-decode';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  private apiUrl = `${environment.apiUrl}/users/profile`;
 
   private userSubject = new BehaviorSubject<user | null>(null);
-
-  apiUrl = 'http://localhost:5000/users/profile';
   user$ = this.userSubject.asObservable();
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getUser(): Observable<user> {
     return this.http
