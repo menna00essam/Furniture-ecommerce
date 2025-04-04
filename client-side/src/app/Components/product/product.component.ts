@@ -43,9 +43,7 @@ export class ProductComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute
-  ) {
-    console.log(5);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id');

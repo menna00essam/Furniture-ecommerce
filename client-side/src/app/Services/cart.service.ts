@@ -13,7 +13,6 @@ export class CartService {
   private apiUrl =  `${environment.apiUrl}/cart`;
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-
   private cartSubject = new BehaviorSubject<productCart[]>([]);
   cart$ = this.cartSubject.asObservable();
 
@@ -30,57 +29,67 @@ export class CartService {
   ) {
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedInSubject.next(status);
+      console.log(`[CartService] User login status: ${status}`);
       this.loadCart();
     });
   }
 
   /*** Helper Methods ***/
-
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   private getGuestCart(): productCart[] {
-    return JSON.parse(localStorage.getItem('cart') || '[]');
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    console.log('[CartService] Loaded guest cart:', cart);
+    return cart;
   }
 
   private saveGuestCart(cart: productCart[]): void {
-    cart.length === 0
-      ? localStorage.removeItem('cart')
-      : localStorage.setItem('cart', JSON.stringify(cart));
+    if (cart.length === 0) {
+      console.log('[CartService] Guest cart cleared.');
+      localStorage.removeItem('cart');
+    } else {
+      console.log('[CartService] Guest cart saved:', cart);
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      if (error.status !== 404) console.error(`${operation} failed:`, error);
+      console.error(`[CartService] ${operation} failed:`, error);
       return of(result as T);
     };
   }
 
   /*** Cart Operations ***/
-
   private loadCart(): void {
+    console.log('[CartService] Loading cart...');
     this.getCart().subscribe();
   }
 
   getCart(): Observable<productCart[]> {
     if (this.isLoggedInSubject.getValue()) {
+      console.log('[CartService] Fetching cart for logged-in user...');
       return this.http
         .get<{ data: { products: any[]; totalPrice: number } }>(this.apiUrl, {
           headers: this.getAuthHeaders(),
         })
         .pipe(
           map(({ data }) => {
+            console.log('[CartService] Cart data received:', data);
             this.cartSubtotalSubject.next(data.totalPrice);
             return data.products.map((p) => this.mapToProductCart(p));
           }),
           tap((cart) => {
+            console.log('[CartService] Updated cart:', cart);
             this.cartSubject.next(cart);
           }),
           catchError(this.handleError<productCart[]>('getCart', []))
         );
     } else {
+      console.log('[CartService] Fetching guest cart...');
       const guestCart = this.getGuestCart();
       this.cartSubject.next(guestCart);
       this.cartSubtotalSubject.next(
@@ -97,30 +106,29 @@ export class CartService {
       image: p.productImage,
       price: p.productPrice,
       quantity: p.productQuantity,
-      subtotal: p.productSubtotal,
+      subtotal: p.productPrice * p.productQuantity, // Fixed subtotal calculation
     };
   }
 
   updateCart(cart: productCart[]): void {
+    console.log('[CartService] Cart updated:', cart);
     this.cartSubject.next(cart);
     if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
   }
 
   addProduct(product: product): void {
+    console.log(`[CartService] Adding product to cart: ${product.name}`);
     if (this.isLoggedInSubject.getValue()) {
-      this.getCart()
-        .pipe(
-          switchMap(() =>
-            this.http.post(
-              this.apiUrl,
-              [{ productId: product.id, quantity: 1, color: product.color }],
-              { headers: this.getAuthHeaders() }
-            )
-          ),
-          catchError(this.handleError('addProduct'))
+      this.http
+        .post(
+          this.apiUrl,
+          [{ productId: product.id, quantity: 1, color: product.color }],
+          { headers: this.getAuthHeaders() }
         )
+        .pipe(catchError(this.handleError('addProduct')))
         .subscribe({
           next: (response: any) => {
+            console.log('[CartService] Add product response:', response);
             if (response.status === 'success') {
               let cart = [...this.cartSubject.getValue()];
               const discountedPrice = product.sale
@@ -148,6 +156,7 @@ export class CartService {
               this.cartSubtotalSubject.next(
                 cart.reduce((sum, p) => sum + p.subtotal, 0)
               );
+              console.log('[CartService] Product added:', cart);
               this.toast.success(`${product.name} added to cart successfully.`);
             }
           },
@@ -172,11 +181,13 @@ export class CartService {
       this.cartSubtotalSubject.next(
         cart.reduce((sum, p) => sum + p.subtotal, 0)
       );
+      console.log('[CartService] Product added for guest user:', cart);
       this.toast.success(`${product.name} added to cart successfully.`);
     }
   }
 
   removeProduct(productId: string): void {
+    console.log(`[CartService] Removing product ID: ${productId}`);
     this.modifyQuantity(productId, 0, true);
   }
 
@@ -249,16 +260,24 @@ export class CartService {
   }
 
   increaseQuantity(productId: string): void {
+    console.log(
+      `[CartService] Increasing quantity for product ID: ${productId}`
+    );
     this.modifyQuantity(productId, 1);
   }
 
   decreaseQuantity(productId: string): void {
+    console.log(
+      `[CartService] Decreasing quantity for product ID: ${productId}`
+    );
     this.modifyQuantity(productId, -1);
   }
 
-  /*** Checkout Operations ***/
-
   setCheckoutData(): void {
+    console.log(
+      '[CartService] Checkout data set:',
+      this.cartSubject.getValue()
+    );
     this.checkoutSubject.next([...this.cartSubject.getValue()]);
   }
 
@@ -268,14 +287,17 @@ export class CartService {
       : this.cartSubject.getValue();
   }
 
-  /*** Utility Methods ***/
-
   isInCart(productId: string): boolean {
-    return this.cartSubject.getValue().some((p) => p.id === productId);
+    const exists = this.cartSubject.getValue().some((p) => p.id === productId);
+    console.log(
+      `[CartService] Checking if product ${productId} is in cart: ${exists}`
+    );
+    return exists;
   }
 
   clearCart(): void {
-    console.log(">>>>>>>>>clear cart fired");
+    console.log('[CartService] Clearing cart...');
+
     this.cartSubject.next([]);
     // this.checkoutSubject.next([]);
     localStorage.removeItem('cart');

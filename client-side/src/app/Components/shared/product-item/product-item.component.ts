@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
+  HostListener,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
@@ -24,7 +25,8 @@ import { product } from '../../../Models/product.model';
 import { Observable } from 'rxjs';
 
 import { NgToastService } from 'ng-angular-popup';
-import { productCart } from '../../../models/productCart.model';
+import { productCart } from '../../../Models/productCart.model';
+
 
 @Component({
   selector: 'app-product-item',
@@ -45,39 +47,59 @@ export class ProductItemComponent implements OnInit {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
-  disableAnimation = false;
+  showActions = false;
 
   cart$!: Observable<productCart[]>;
+  isInCartState = false;
+  isFavoriteState = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
     private cartService: CartService
   ) {}
+
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-  }
 
-  onMouseEnter() {
-    if (!this.disableAnimation) this.isHovered = true;
-  }
-
-  onMouseLeave() {
-    if (!this.disableAnimation) this.isHovered = false;
+    // Initialize state
+    this.isInCartState = this.cartService.isInCart(this.product.id);
+    this.isFavoriteState = this.favoriteService.isInFavorites(this.product.id);
   }
 
   toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe();
-    this.cdr.detectChanges();
+    this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
+      this.isFavoriteState = this.favoriteService.isInFavorites(
+        this.product.id
+      );
+      this.cdr.markForCheck();
+    });
   }
 
   toggleCart() {
-    if (this.cartService.isInCart(this.product.id)) {
+    if (this.isInCartState) {
       this.cartService.removeProduct(this.product.id);
     } else {
       this.cartService.addProduct(this.product);
     }
-    this.cdr.detectChanges();
+    this.isInCartState = !this.isInCartState;
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('mouseenter')
+  onMouseEnter() {
+    if (!this.showActions) {
+      this.isHovered = true;
+      this.cdr.markForCheck(); // Marks component for update without full re-render
+    }
+  }
+
+  @HostListener('mouseleave')
+  onMouseLeave() {
+    if (!this.showActions) {
+      this.isHovered = false;
+      this.cdr.markForCheck();
+    }
   }
 
   isNewProduct(): boolean {
