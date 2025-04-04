@@ -1,9 +1,10 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { AccordionComponent } from '../../shared/accordion/accordion.component';
 
 @Component({
   selector: 'app-product-description',
-  imports: [TitleCasePipe],
+  imports: [TitleCasePipe, AccordionComponent],
   providers: [],
   templateUrl: './product-description.component.html',
 })
