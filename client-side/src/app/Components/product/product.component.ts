@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -17,6 +17,7 @@ import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
 import { product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
+import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 
 @Component({
   selector: 'app-product',
@@ -26,9 +27,11 @@ import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.co
     ButtonComponent,
     ThumbnailComponent,
     RouterModule,
+    AsyncPipe,
     ProductDescriptionComponent,
     ProductItemComponent,
     ProductSkeletonComponent,
+    ProductItemSkeletonComponent,
   ],
   templateUrl: './product.component.html',
 })

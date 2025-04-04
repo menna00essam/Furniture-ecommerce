@@ -1,3 +1,4 @@
+@if (additionalInfo && description) {
 <div class="w-full min-h-screen bg-white flex flex-col items-center py-8 lg:py-12">
   <!-- Upper Border -->
   <div class="w-full border-t border-gray-medium"></div>
@@ -96,3 +97,6 @@
     }
   </div>
 </div>
+}@else {
+<app-product-description-skeleton />
+}
