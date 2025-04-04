@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
 import { ProductNavigationComponent } from '../products-components/product-navigation/product-navigation.component';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
@@ -10,15 +10,15 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { product } from '../../Models/product.model';
 
 @Component({
   selector: 'app-product',
+  standalone: true,
   imports: [
     CommonModule,
     ButtonComponent,
-    ProductNavigationComponent,
     ThumbnailComponent,
     RouterModule,
     ProductDescriptionComponent,
@@ -28,8 +28,9 @@ import { product } from '../../Models/product.model';
 })
 export class ProductComponent implements OnInit {
   productId: string | null = null;
-  product!: ProductDetails;
-  products$!: Observable<product[]>;
+  private productSubject = new BehaviorSubject<ProductDetails | null>(null);
+  product$ = this.productSubject.asObservable(); // Observable for the product
+  relatedProducts$!: Observable<product[]>;
   warningMessage: string | null = null;
   colors: {
     name: string;
@@ -41,13 +42,19 @@ export class ProductComponent implements OnInit {
   }[] = [];
   selectedColorIndex: number = 0;
   selectedImage: string | null = null;
+  selectedColor: {
+    name: string;
+    hex: string;
+    mainImage?: string | null;
+    galleryImages?: string[];
+    quantity?: number;
+    sku?: string;
+  } | null = null;
   count: number = 1;
   originalPrice: number = 0;
   salePrice: number = 0;
   isInCartState: boolean = false;
   isFavoriteState: boolean = false;
-
-  cart$: any;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -61,99 +68,82 @@ export class ProductComponent implements OnInit {
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.fetchProduct(this.productId);
+      this.relatedProducts$ = this.productService.products$;
+      this.productService.getProducts(1, 5).subscribe();
+    } else {
+      console.error('Product ID not found in route parameters.');
     }
-    this.products$ = this.productService.products$;
-    this.isInCartState = this.cartService.isInCart(this.product.id);
-    this.cart$ = this.cartService.cart$;
-    this.productService.getProducts(1, 5).subscribe();
   }
-  toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
-      this.isFavoriteState = this.favoriteService.isInFavorites(
-        this.product.id
-      );
-      this.cdr.markForCheck();
+
+  toggleFavorite() {
+    this.product$.subscribe((product) => {
+      if (product) {
+        this.favoriteService.toggleFavourite(product.id).subscribe(() => {
+          this.isFavoriteState = this.favoriteService.isInFavorites(product.id);
+          this.cdr.markForCheck();
+        });
+      }
     });
   }
-  // In your ProductComponent class
 
-  getMappedProduct(): product {
-    if (!this.selectedColor) {
-      throw new Error('Please select a color first');
-    }
+  getMappedProduct$(): Observable<product | null> {
+    return this.product$.pipe(
+      map((product) => {
+        if (!product || !this.selectedColor) return null;
 
-    return {
-      id: this.product.id,
-      name: this.product.productName,
-      image: this.selectedColor.mainImage || 'default-image.jpg',
-      subTitle: this.product.productSubtitle,
-      price: this.salePrice,
-      color: this.selectedColor.name,
-      quantity: this.count,
-      categories: this.product.productCategories || [],
-      date: this.product.productDate,
-      sale: this.product.productSale,
-      colors: [this.selectedColor.hex],
-      sizes: [],
-      brand: this.product.brand,
-    };
+        return {
+          id: product.id,
+          name: product.productName,
+          image: this.selectedColor.mainImage || 'default-image.jpg',
+          subTitle: product.productSubtitle,
+          price: this.salePrice,
+          color: this.selectedColor.name,
+          quantity: this.count,
+          categories: product.productCategories || [],
+          date: product.productDate,
+          sale: product.productSale,
+          colors: [this.selectedColor.hex],
+          sizes: [],
+          brand: product.brand,
+        };
+      })
+    );
   }
 
   toggleCart() {
-    try {
-      const productToAdd = this.getMappedProduct();
-      const variantId = `${this.product.id}`;
+    this.getMappedProduct$().subscribe((productToAdd) => {
+      if (!productToAdd) {
+        this.warningMessage = 'Please select a color first';
+        return;
+      }
+
+      const variantId = String(productToAdd.id);
 
       if (this.isInCartState) {
         this.cartService.removeProduct(variantId);
       } else {
-        // Clone the product to prevent reference issues
-        const cartProduct = {
-          ...productToAdd,
-          id: variantId,
-          color: this.selectedColor!.name,
-        };
-        this.cartService.addProduct(cartProduct, this.count);
+        this.cartService.addProduct(
+          { ...productToAdd, id: variantId },
+          this.count
+        );
       }
 
       this.isInCartState = !this.isInCartState;
       this.cdr.markForCheck();
-    } catch (error) {
-      console.error('Error:', error);
-      this.warningMessage =
-        error instanceof Error ? error.message : 'Error updating cart';
-      setTimeout(() => (this.warningMessage = null), 3000);
-    }
+    });
   }
 
   fetchProduct(productId: string) {
     this.productService.getProduct(productId).subscribe({
       next: (productData) => {
-        console.log('[ProductComponent] Received Product:', productData);
-
         if (productData) {
-          this.product = productData as ProductDetails;
+          this.productSubject.next(productData);
           this.updatePrices();
-
-          // Ensure colors array exists and map correctly
-          this.colors = Array.isArray(productData.colors)
-            ? productData.colors.map((c: any) => ({
-                name: c.name || 'Unknown',
-                hex: c.hex || '#000000',
-                mainImage: c.mainImage || c.galleryImages?.[0] || null,
-                galleryImages: Array.isArray(c.galleryImages)
-                  ? c.galleryImages.slice(0, 6)
-                  : [],
-                quantity: c.quantity ?? 0,
-              }))
-            : [];
-
-          if (this.colors.length > 0) {
-            this.setSelectedColor(0);
-          }
-          this.isInCartState = this.cartService.isInCart(this.product.id);
+          this.colors = productData.colors || [];
+          if (this.colors.length > 0) this.setSelectedColor(0);
+          this.isInCartState = this.cartService.isInCart(productData.id);
           this.isFavoriteState = this.favoriteService.isInFavorites(
-            this.product.id
+            productData.id
           );
           this.cdr.detectChanges();
         } else {
@@ -165,28 +155,27 @@ export class ProductComponent implements OnInit {
       },
     });
   }
+
   updatePrices() {
-    this.originalPrice = this.product.productPrice;
-    console.log('original price :', this.originalPrice);
-    const salePercentage = this.product.productSale || 0;
-    this.salePrice = this.originalPrice * (1 - salePercentage / 100) || 0;
-    console.log('saleprice :', this.salePrice);
+    this.product$.subscribe((product) => {
+      if (product) {
+        this.originalPrice = product.productPrice;
+        this.salePrice =
+          this.originalPrice * (1 - (product.productSale || 0) / 100);
+      }
+    });
   }
 
-  /**
-   * Sets the selected color and updates images accordingly.
-   */
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;
     this.selectedImage = this.colors[index]?.mainImage || null;
-  }
-  get selectedColor() {
-    return this.colors[this.selectedColorIndex] || null;
+    this.selectedColor = this.colors[this.selectedColorIndex];
   }
 
-  /**
-   * Updates the main image when clicking a thumbnail.
-   */
+  // get selectedColor() {
+  //   return this.colors[this.selectedColorIndex] || null;
+  // }
+
   selectThumbnail(image: string) {
     this.selectedImage = image;
   }
@@ -202,13 +191,11 @@ export class ProductComponent implements OnInit {
       this.setSelectedColor(index);
     }
   }
+
   get stockStatus(): string {
-    if (!this.selectedColor?.quantity || this.selectedColor.quantity <= 0) {
-      // console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
-      return 'Out of Stock';
-    }
-    // console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
-    return 'In Stock';
+    return this.selectedColor?.quantity && this.selectedColor.quantity > 0
+      ? 'In Stock'
+      : 'Out of Stock';
   }
 
   stringify(obj: any): string {
