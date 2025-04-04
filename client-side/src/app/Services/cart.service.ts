@@ -282,7 +282,9 @@ export class CartService {
   }
 
   getCheckoutData(): productCart[] {
-    return this.checkoutSubject.getValue();
+    return this.checkoutSubject.getValue().length > 0 
+      ? this.checkoutSubject.getValue() 
+      : this.cartSubject.getValue();
   }
 
   isInCart(productId: string): boolean {
@@ -297,7 +299,7 @@ export class CartService {
     console.log('[CartService] Clearing cart...');
 
     this.cartSubject.next([]);
-    this.checkoutSubject.next([]);
+    // this.checkoutSubject.next([]);
     localStorage.removeItem('cart');
     this.cartSubtotalSubject.next(0);
   }

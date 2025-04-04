@@ -12,6 +12,10 @@ import { environment } from '../environments/environment';
 export class CheckoutService {
   private apiUrl = `${environment.apiUrl}/checkout`;
   private paymentApiUrl = `${environment.apiUrl}/payments/payment`;
+  paymentIntentId: string = ''; 
+  clientSecret: string = '';
+  paymentCompleted = new Subject<boolean>(); 
+  checkoutSubject: any;
   constructor(
     private http: HttpClient,
     private authService: AuthService,
