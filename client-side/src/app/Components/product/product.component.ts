@@ -16,6 +16,7 @@ import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
 import { product } from '../../Models/product.model';
+import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 
 @Component({
   selector: 'app-product',
@@ -27,6 +28,7 @@ import { product } from '../../Models/product.model';
     RouterModule,
     ProductDescriptionComponent,
     ProductItemComponent,
+    ProductSkeletonComponent,
   ],
   templateUrl: './product.component.html',
 })

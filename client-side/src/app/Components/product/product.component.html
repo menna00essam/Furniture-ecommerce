@@ -1,6 +1,8 @@
 <!-- Product-navigation -->
 
 <div class="w-full h-full">
+  @if (product$ | async; as product) {
+
   <div
     class="w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6 lg:gap-12 justify-center mx-auto">
     <!-- Images Section -->
@@ -122,6 +124,9 @@
       </div>
     </div>
   </div>
+  }@else {
+  <app-product-skeleton />
+  }
 </div>
 
 <!-- End product -->
