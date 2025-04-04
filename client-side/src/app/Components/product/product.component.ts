@@ -9,6 +9,7 @@ import { ProductDetails } from '../../Models/product-details.model';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { FavoriteService } from '../../Services/favorite.service';
+import { CartService } from '../../Services/cart.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { product } from '../../Models/product.model';
 
@@ -43,12 +44,16 @@ export class ProductComponent implements OnInit {
   count: number = 1;
   originalPrice: number = 0;
   salePrice: number = 0;
+  isInCartState: boolean = false;
   isFavoriteState: boolean = false;
+
+  cart$: any;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private productService: ProductService,
     private favoriteService: FavoriteService,
+    private cartService: CartService,
     private route: ActivatedRoute
   ) {}
 
@@ -58,6 +63,7 @@ export class ProductComponent implements OnInit {
       this.fetchProduct(this.productId);
     }
     this.products$ = this.productService.products$;
+    this.cart$ = this.cartService.cart$;
     this.productService.getProducts(1, 5).subscribe();
   }
   toggleFavourites() {
@@ -67,6 +73,51 @@ export class ProductComponent implements OnInit {
       );
       this.cdr.markForCheck();
     });
+  }
+  // In your ProductComponent class
+
+  getMappedProduct(): product {
+    if (!this.selectedColor) {
+      throw new Error('Please select a color first');
+    }
+
+    return {
+      id: this.product.id, // The main product ID
+      name: this.product.productName,
+      image: this.selectedColor.mainImage || 'default-image.jpg',
+      subTitle: this.product.productSubtitle,
+      price: this.salePrice,
+      color: this.selectedColor.name, // Selected color name
+      quantity: this.count,
+      categories: this.product.productCategories || [],
+      date: this.product.productDate,
+      sale: this.product.productSale,
+      colors: [this.selectedColor.hex], // Current color variant
+      sizes: [], // Add sizes if needed
+      brand: this.product.brand,
+    };
+  }
+
+  toggleCart() {
+    try {
+      const productToAdd = this.getMappedProduct();
+
+      if (this.isInCartState) {
+        // Remove by product ID (service limitation)
+        this.cartService.removeProduct(productToAdd.id);
+      } else {
+        // Add with color info in the product object
+        this.cartService.addProduct(productToAdd);
+      }
+
+      this.isInCartState = !this.isInCartState;
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Error:', error);
+      this.warningMessage =
+        error instanceof Error ? error.message : 'An unexpected error occurred';
+      setTimeout(() => (this.warningMessage = null), 3000);
+    }
   }
 
   fetchProduct(productId: string) {
@@ -94,6 +145,7 @@ export class ProductComponent implements OnInit {
           if (this.colors.length > 0) {
             this.setSelectedColor(0);
           }
+          this.isInCartState = this.cartService.isInCart(this.product.id);
           this.isFavoriteState = this.favoriteService.isInFavorites(
             this.product.id
           );
@@ -156,14 +208,6 @@ export class ProductComponent implements OnInit {
     return 'In Stock';
   }
 
-  getMappedProduct(): any {
-    return {
-      name: this.product.productName,
-      subTitle: this.product.productDescription,
-      price: this.product.productPrice,
-      // Add other required mappings here
-    };
-  }
   stringify(obj: any): string {
     return JSON.stringify(obj);
   }
