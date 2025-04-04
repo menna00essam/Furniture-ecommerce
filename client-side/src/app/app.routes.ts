@@ -29,6 +29,7 @@ import { PrivacyPolicyComponent } from './Components/help/privacy-policy/privacy
 import { ReturnsComponent } from './Components/help/returns/returns.component';
 import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
 import { OrderSuccessComponent } from './Components/order-success/order-success.component';
+import { orderGuard } from './Guards/order.guard';
 
 export const routes: Routes = [
   {
@@ -52,8 +53,6 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'shop', component: ShopComponent },
       { path: 'product/:id', component: ProductComponent },
-      { path: 'cart', component: CartComponent },
-      { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
       { path: 'blog/:id', component: BlogComponent },
@@ -62,7 +61,6 @@ export const routes: Routes = [
       { path: 'privacypolicy', component: PrivacyPolicyComponent },
       { path: 'returns', component: ReturnsComponent },
       { path: 'paymentoptions', component: PaymentOptionsComponent },
-      { path: 'order-success', component: OrderSuccessComponent },
       {
         path: 'profile',
         component: ProfileComponent,
@@ -89,17 +87,16 @@ export const routes: Routes = [
       {
         path: 'checkout',
         component: CheckoutComponent,
-        canActivate: [authGuard],
       },
       {
         path: 'order-success',
         component: OrderSuccessComponent,
-        canActivate: [authGuard],
+        canActivate: [orderGuard],
       },
       {
         path: 'order-complete',
         component: OrdersComponent,
-        canActivate: [authGuard],
+        canActivate: [orderGuard],
       },
       { path: '**', component: ErrorComponent },
     ],

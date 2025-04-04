@@ -273,20 +273,6 @@ export class CartService {
     this.modifyQuantity(productId, -1);
   }
 
-  setCheckoutData(): void {
-    console.log(
-      '[CartService] Checkout data set:',
-      this.cartSubject.getValue()
-    );
-    this.checkoutSubject.next([...this.cartSubject.getValue()]);
-  }
-
-  getCheckoutData(): productCart[] {
-    return this.checkoutSubject.getValue().length > 0 
-      ? this.checkoutSubject.getValue() 
-      : this.cartSubject.getValue();
-  }
-
   isInCart(productId: string): boolean {
     const exists = this.cartSubject.getValue().some((p) => p.id === productId);
     console.log(
@@ -297,9 +283,7 @@ export class CartService {
 
   clearCart(): void {
     console.log('[CartService] Clearing cart...');
-
     this.cartSubject.next([]);
-    // this.checkoutSubject.next([]);
     localStorage.removeItem('cart');
     this.cartSubtotalSubject.next(0);
   }

@@ -22,7 +22,6 @@ export class CartTotalsComponent {
   }
 
   goToCheckout() {
-    this.cartService.setCheckoutData();
     this.router.navigate(['/checkout']);
   }
 }
