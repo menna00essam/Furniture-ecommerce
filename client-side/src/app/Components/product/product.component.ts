@@ -7,8 +7,9 @@ import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.c
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { ProductDetails } from '../../Models/product-details.model';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
+import { FavoriteService } from '../../Services/favorite.service';
 
 @Component({
   selector: 'app-product',
@@ -39,9 +40,12 @@ export class ProductComponent implements OnInit {
   count: number = 1;
   originalPrice: number = 0;
   salePrice: number = 0;
+  isFavoriteState: boolean = false;
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private productService: ProductService,
+    private favoriteService: FavoriteService,
     private route: ActivatedRoute
   ) {}
 
@@ -50,6 +54,14 @@ export class ProductComponent implements OnInit {
     if (this.productId) {
       this.fetchProduct(this.productId);
     }
+  }
+  toggleFavourites() {
+    this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
+      this.isFavoriteState = this.favoriteService.isInFavorites(
+        this.product.id
+      );
+      this.cdr.markForCheck();
+    });
   }
 
   fetchProduct(productId: string) {
@@ -77,6 +89,10 @@ export class ProductComponent implements OnInit {
           if (this.colors.length > 0) {
             this.setSelectedColor(0);
           }
+          this.isFavoriteState = this.favoriteService.isInFavorites(
+            this.product.id
+          );
+          this.cdr.detectChanges();
         } else {
           console.warn('[ProductComponent] No product data received.');
         }
