@@ -63,6 +63,7 @@ export class ProductComponent implements OnInit {
       this.fetchProduct(this.productId);
     }
     this.products$ = this.productService.products$;
+    this.isInCartState = this.cartService.isInCart(this.product.id);
     this.cart$ = this.cartService.cart$;
     this.productService.getProducts(1, 5).subscribe();
   }
@@ -82,18 +83,18 @@ export class ProductComponent implements OnInit {
     }
 
     return {
-      id: this.product.id, // The main product ID
+      id: this.product.id,
       name: this.product.productName,
       image: this.selectedColor.mainImage || 'default-image.jpg',
       subTitle: this.product.productSubtitle,
       price: this.salePrice,
-      color: this.selectedColor.name, // Selected color name
+      color: this.selectedColor.name,
       quantity: this.count,
       categories: this.product.productCategories || [],
       date: this.product.productDate,
       sale: this.product.productSale,
-      colors: [this.selectedColor.hex], // Current color variant
-      sizes: [], // Add sizes if needed
+      colors: [this.selectedColor.hex],
+      sizes: [],
       brand: this.product.brand,
     };
   }
@@ -101,13 +102,18 @@ export class ProductComponent implements OnInit {
   toggleCart() {
     try {
       const productToAdd = this.getMappedProduct();
+      const variantId = `${this.product.id}`;
 
       if (this.isInCartState) {
-        // Remove by product ID (service limitation)
-        this.cartService.removeProduct(productToAdd.id);
+        this.cartService.removeProduct(variantId);
       } else {
-        // Add with color info in the product object
-        this.cartService.addProduct(productToAdd);
+        // Clone the product to prevent reference issues
+        const cartProduct = {
+          ...productToAdd,
+          id: variantId,
+          color: this.selectedColor!.name,
+        };
+        this.cartService.addProduct(cartProduct, this.count);
       }
 
       this.isInCartState = !this.isInCartState;
@@ -115,7 +121,7 @@ export class ProductComponent implements OnInit {
     } catch (error) {
       console.error('Error:', error);
       this.warningMessage =
-        error instanceof Error ? error.message : 'An unexpected error occurred';
+        error instanceof Error ? error.message : 'Error updating cart';
       setTimeout(() => (this.warningMessage = null), 3000);
     }
   }
@@ -185,9 +191,6 @@ export class ProductComponent implements OnInit {
     this.selectedImage = image;
   }
 
-  /**
-   * Handles color selection and updates the displayed image.
-   */
   selectColor(color: {
     name: string;
     hex: string;
@@ -201,10 +204,10 @@ export class ProductComponent implements OnInit {
   }
   get stockStatus(): string {
     if (!this.selectedColor?.quantity || this.selectedColor.quantity <= 0) {
-      console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
+      // console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
       return 'Out of Stock';
     }
-    console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
+    // console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
     return 'In Stock';
   }
 

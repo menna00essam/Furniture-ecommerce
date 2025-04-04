@@ -116,13 +116,13 @@ export class CartService {
     if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
   }
 
-  addProduct(product: product): void {
+  addProduct(product: product, quantity: number = 1): void {
     console.log(`[CartService] Adding product to cart: ${product.name}`);
     if (this.isLoggedInSubject.getValue()) {
       this.http
         .post(
           this.apiUrl,
-          [{ productId: product.id, quantity: 1, color: product.color }],
+          [{ productId: product.id, quantity, color: product.color }],
           { headers: this.getAuthHeaders() }
         )
         .pipe(catchError(this.handleError('addProduct')))
@@ -147,7 +147,7 @@ export class CartService {
                   name: product.name,
                   image: product.image,
                   price: discountedPrice,
-                  quantity: 1,
+                  quantity: quantity,
                   subtotal: discountedPrice,
                 });
               }
@@ -172,7 +172,7 @@ export class CartService {
         name: product.name,
         image: product.image,
         price: discountedPrice,
-        quantity: 1,
+        quantity: quantity,
         subtotal: discountedPrice,
       });
 
