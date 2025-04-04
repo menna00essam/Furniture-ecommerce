@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
-
 import { ProductNavigationComponent } from '../products-components/product-navigation/product-navigation.component';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
@@ -18,6 +17,7 @@ import { FavoriteService } from '../../Services/favorite.service';
     ButtonComponent,
     ProductNavigationComponent,
     ThumbnailComponent,
+    RouterModule,
     ProductDescriptionComponent,
     ProductItemComponent,
   ],
