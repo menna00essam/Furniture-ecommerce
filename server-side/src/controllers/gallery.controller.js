@@ -1,6 +1,5 @@
-const cloudinary = require("cloudinary").v2;
-const Image = require("../models/gallary.model");
-
+const cloudinary = require('cloudinary').v2;
+const Image = require('../models/gallary.model');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -10,15 +9,14 @@ cloudinary.config({
 
 const updateImagesInDatabase = async () => {
   try {
-   
-      const result = await cloudinary.api.resources({
-        type: "upload",
-       max_results: 100,
+    const result = await cloudinary.api.resources({
+      type: 'upload',
+      max_results: 100,
     });
 
     const images = result.resources.map((img) => ({
       public_id: img.public_id,
-        url: img.secure_url,
+      url: img.secure_url,
     }));
 
     for (const image of images) {
@@ -29,13 +27,16 @@ const updateImagesInDatabase = async () => {
           { upsert: true }
         );
       } catch (err) {
-        console.error(`Error in updating or inserting image ${image.public_id}:`, err);
+        console.error(
+          `Error in updating or inserting image ${image.public_id}:`,
+          err
+        );
       }
     }
     // console.log("Images updated successfully");
     return images;
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.error('Error fetching images:', error);
     throw error;
   }
 };
@@ -44,12 +45,10 @@ const updateImagesInDatabase = async () => {
 const updatedImages = async (req, res) => {
   try {
     const images = await updateImagesInDatabase();
-    //   console.log("tsss>>>>>>>",images)
-    //   console.log("tsssssssssssssssss")
-    res.status(201).json({ message: "Images updated", images });
+    res.status(201).json({ message: 'Images updated', images });
   } catch (error) {
-    console.error("Error updating images:", error);
-    res.status(500).json({ error: "Failed to update images" });
+    console.error('Error updating images:', error);
+    res.status(500).json({ error: 'Failed to update images' });
   }
 };
 
@@ -64,25 +63,27 @@ const updatedImages = async (req, res) => {
 //   }
 // };
 
-
 const getImages = async (req, res) => {
   try {
     const { product, color } = req.query;
 
     if (!product || !color) {
-      return res.status(400).json({ error: "Product and color are required" });
+      return res.status(400).json({ error: 'Product and color are required' });
     }
 
     const allImages = await cloudinary.api.resources({
       type: 'upload',
-      max_results: 500
+      max_results: 500,
     });
 
-    const filterImages = allImages.resources.filter(img => {
+    const filterImages = allImages.resources.filter((img) => {
       const splitPAth = img.public_id.split('/');
-      return splitPAth.length >= 4 && 
-             splitPAth[splitPAth.length-3].toLowerCase() === product.toLowerCase() && 
-             splitPAth[splitPAth.length-2].toLowerCase() === color.toLowerCase();
+      return (
+        splitPAth.length >= 4 &&
+        splitPAth[splitPAth.length - 3].toLowerCase() ===
+          product.toLowerCase() &&
+        splitPAth[splitPAth.length - 2].toLowerCase() === color.toLowerCase()
+      );
     });
 
     const images = filterImages.map((img) => ({
@@ -92,17 +93,16 @@ const getImages = async (req, res) => {
 
     res.json({ images });
   } catch (error) {
-    console.error("Error fetching images:", error);
-    res.status(500).json({ error: "Failed to fetch images" });
+    console.error('Error fetching images:', error);
+    res.status(500).json({ error: 'Failed to fetch images' });
   }
 };
-
 
 setInterval(async () => {
   try {
     await updateImagesInDatabase();
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
   }
 }, 60000);
 

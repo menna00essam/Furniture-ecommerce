@@ -33,7 +33,6 @@ const contactRouter = require("./src/routes/contact.routes");
 const orderRouter = require("./src/routes/order.routes");
 const paymentRouter = require("./src/routes/payment.routes");
 
-
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB

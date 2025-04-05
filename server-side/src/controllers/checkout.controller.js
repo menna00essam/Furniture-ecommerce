@@ -1,12 +1,12 @@
-const mongoose = require("mongoose");
-const httpStatusText = require("../utils/httpStatusText");
-const AppError = require("../utils/appError");
+const mongoose = require('mongoose');
+const httpStatusText = require('../utils/httpStatusText');
+const AppError = require('../utils/appError');
 
-const Cart = require("../models/cart.model");
-const Order = require("../models/order.model");
-const Product = require("../models/product.model");
+const Cart = require('../models/cart.model');
+const Order = require('../models/order.model');
+const Product = require('../models/product.model');
 
-const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
+const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
 
 const placeOrder = asyncWrapper(async (req, res, next) => {
   try{
@@ -38,17 +38,30 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
   console.log("-----------------------------");
   console.log("cart>>>>>>>>>>>",cart); 
 
+    const cart = await Cart.findOne({ userId }).populate('products.productId');
+    if (!cart || cart.products.length === 0) {
+      return next(new AppError('Cart is empty', 400, httpStatusText.FAIL));
+    }
 
-  for (const item of cart.products) {
-    console.log("quantiti", item.quantity, item.productId.productQuantity);
-    if (item.quantity > item.productId.productQuantity) {
-      return next(
-        new AppError(
-          `Not enough stock for ${item.productId.productName}. Available: ${item.productId.productQuantity} Requested: ${item.quantity}`,
-          400,
-          httpStatusText.FAIL
-        )
-      );
+    const orderItems = cart.products.map((item) => ({
+      productId: item.productId._id,
+      productName: item.productId.productName,
+      quantity: item.quantity,
+      price: item.productId.productPrice,
+      subtotal: item.subtotal,
+    }));
+
+    for (const item of cart.products) {
+      console.log('quantiti', item.quantity, item.productId.productQuantity);
+      if (item.quantity > item.productId.productQuantity) {
+        return next(
+          new AppError(
+            `Not enough stock for ${item.productId.productName}. Available: ${item.productId.productQuantity} Requested: ${item.quantity}`,
+            400,
+            httpStatusText.FAIL
+          )
+        );
+      }
     }
   }
   const totalAmount = orderItems.reduce((acc, item) => acc + item.subtotal, 0);
@@ -59,25 +72,26 @@ const placeOrder = asyncWrapper(async (req, res, next) => {
     totalAmount,
     paymentMethod,
     transactionId,
-  });
 
-  await order.save();
 
-  const updatePromises = cart.products.map((item) =>
-    Product.updateOne(
-      { _id: item.productId._id },
-      { $inc: { productQuantity: -item.quantity } }
-    )
-  );
+    await order.save();
 
-  await Promise.all(updatePromises);
-  await Cart.findOneAndDelete({ userId });
+    const updatePromises = cart.products.map((item) =>
+      Product.updateOne(
+        { _id: item.productId._id },
+        { $inc: { productQuantity: -item.quantity } }
+      )
+    );
 
-  res.status(201).json({ message: "Order placed successfully!", order });
-}
-  catch (error) {
-    console.error("Error placing order:", error);
-    return next(new AppError("Failed to place order", 500, httpStatusText.ERROR));
+    await Promise.all(updatePromises);
+    await Cart.findOneAndDelete({ userId });
+
+    res.status(201).json({ message: 'Order placed successfully!', order });
+  } catch (error) {
+    console.error('Error placing order:', error);
+    return next(
+      new AppError('Failed to place order', 500, httpStatusText.ERROR)
+    );
   }
 });
 
