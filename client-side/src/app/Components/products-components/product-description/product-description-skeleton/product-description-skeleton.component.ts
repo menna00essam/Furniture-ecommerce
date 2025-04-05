@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-product-description-skeleton',
   standalone: true,
-  imports: [NgxSkeletonLoaderModule],
+  imports: [NgxSkeletonLoaderModule, CommonModule],
   template: `
     <div
       class="w-full min-h-screen bg-white flex flex-col items-center py-8 lg:py-12"

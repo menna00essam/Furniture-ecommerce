@@ -1,4 +1,5 @@
 import { TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { AccordionComponent } from '../../shared/accordion/accordion.component';
 import { ProductDescriptionSkeletonComponent } from './product-description-skeleton/product-description-skeleton.component';
@@ -7,6 +8,7 @@ import { ProductDescriptionSkeletonComponent } from './product-description-skele
   selector: 'app-product-description',
   imports: [
     TitleCasePipe,
+    CommonModule,
     AccordionComponent,
     ProductDescriptionSkeletonComponent,
   ],

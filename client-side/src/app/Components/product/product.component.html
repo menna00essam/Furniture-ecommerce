@@ -1,7 +1,7 @@
 <!-- Product-navigation -->
-
+@if (product$ | async; as product) {
 <div class="w-full h-full">
-  @if (product$ | async; as product) {
+
 
   <div
     class="w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6 lg:gap-12 justify-center mx-auto">
@@ -10,7 +10,7 @@
       <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
         <!-- Vertical Thumbnails (Hidden on Mobile) -->
         <div class="hidden lg:flex flex-col gap-3 lg:gap-4">
-          @for (img of selectedColor?.galleryImages; track img) {
+          @for (img of selectedColor?.galleryImages | slice:0:6; track img) {
           <app-thumbnail [image]="img" (click)="selectThumbnail(img)"></app-thumbnail>
           }
         </div>
@@ -124,9 +124,6 @@
       </div>
     </div>
   </div>
-  }@else {
-  <app-product-skeleton />
-  }
 </div>
 
 <!-- End product -->
@@ -150,3 +147,6 @@
 
   <app-button type="primary-outline" routerLink="/shop">Show More</app-button>
 </div>
+}@else {
+<app-product-skeleton />
+}
