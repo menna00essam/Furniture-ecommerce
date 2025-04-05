@@ -50,4 +50,8 @@ export class UserActionsComponent implements OnInit {
   showCartModal() {
     this.openCart.emit();
   }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = '/images/user.png';
+  }
 }

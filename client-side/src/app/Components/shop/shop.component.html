@@ -3,32 +3,32 @@ async); @let productsMaxPrice = (priceMax$ | async);
 
 <app-header-banner bannerTitle="Shop"></app-header-banner>
 
-<div class="bg-secondary px-5">
+<div class="bg-secondary px-1 md:px-5 text-sm sm:text-base">
   <div
-    class="flex items-center justify-between max-w-[1240px] m-auto flex-wrap gap-2 p-5"
+    class="flex items-center justify-between max-w-[1240px] m-auto gap-2 p-2 sm:p-5 lg:p-10"
   >
     <!-- Left Section: Filter & Results Info -->
     <div class="flex gap-4 items-center">
-      <div class="flex gap-2 cursor-pointer" (click)="toggleShowFilter()">
+      <div class="flex gap-2 cursor-pointer items-center" (click)="toggleShowFilter()">
         <img src="icons/filter.svg" alt="Filter Icon" />
         <p>Filter</p>
       </div>
       <div class="hidden sm:block border border-gray-medium self-stretch"></div>
-      <p class="hidden text-sm sm:block">
+      <p class="hidden sm:block">
         {{ getDisplayedResultsRange() }}
       </p>
     </div>
    
 
     <!-- Right Section: Sorting Dropdown -->
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2">
       <p>Sort By</p>
       <div class="relative" #sortMenu>
         <button
-          class="bg-white h-14 flex items-center px-5 cursor-pointer w-full min-w-48 border border-gray-medium rounded-md focus:outline-none"
+          class="bg-white h-10 md:h-14 flex items-center px-5 cursor-pointer w-full min-w-24 md:min-w-48 border border-gray-medium rounded-md focus:outline-none"
           (click)="toggleDropdown(true)"
         >
-          <span class="text-gray-dark">{{ selectedSortValue$ | async }}</span>
+          <span class="text-gray-dark overflow-ellipsis whitespace-nowrap overflow-hidden">{{ selectedSortValue$ | async }}</span>
         </button>
         @if(showSortMenu && sortMenuItems.length > 0){
         <app-dropdown
@@ -106,7 +106,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
       class="grid gap-6 w-full h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
       [ngClass]="{
         'lg:grid-cols-3': showFilters,
-        'lg:grid-cols-5': !showFilters
+        'lg:grid-cols-4': !showFilters
       }"
     >
       @for (item of (products$ | async) ?? []; track item?.id) {
@@ -125,7 +125,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
       class="grid gap-6 w-full h-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
       [ngClass]="{
         'lg:grid-cols-3': showFilters,
-        'lg:grid-cols-5': !showFilters
+        'lg:grid-cols-4': !showFilters
       }"
     >
       <div *ngFor="let item of skeletonArr">
