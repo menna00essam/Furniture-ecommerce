@@ -5,7 +5,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
 
 <div class="bg-secondary px-1 md:px-5 text-sm sm:text-base">
   <div
-    class="flex items-center justify-between max-w-[1240px] m-auto gap-2 p-2 sm:p-5 lg:p-10"
+    class="flex items-center justify-between max-w-[1240px] m-auto gap-2 p-2 sm:p-4 lg:p-5"
   >
     <!-- Left Section: Filter & Results Info -->
     <div class="flex gap-4 items-center">
@@ -25,7 +25,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
       <p>Sort By</p>
       <div class="relative" #sortMenu>
         <button
-          class="bg-white h-10 md:h-14 flex items-center px-5 cursor-pointer w-full min-w-24 md:min-w-48 border border-gray-medium rounded-md focus:outline-none"
+          class="bg-white h-10 md:h-14 flex items-center px-5 cursor-pointer w-full min-w-40 md:min-w-48 border border-gray-medium rounded-md focus:outline-none"
           (click)="toggleDropdown(true)"
         >
           <span class="text-gray-dark overflow-ellipsis whitespace-nowrap overflow-hidden">{{ selectedSortValue$ | async }}</span>
