@@ -5,7 +5,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
 
 <div class="bg-secondary px-5">
   <div
-    class="h-[100px] flex items-center justify-between max-w-[1240px] m-auto"
+    class="flex items-center justify-between max-w-[1240px] m-auto flex-wrap gap-2 p-5"
   >
     <!-- Left Section: Filter & Results Info -->
     <div class="flex gap-4 items-center">
@@ -18,6 +18,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
         {{ getDisplayedResultsRange() }}
       </p>
     </div>
+   
 
     <!-- Right Section: Sorting Dropdown -->
     <div class="flex items-center gap-4">
@@ -52,6 +53,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
     class="fixed lg:relative top-0 left-0 w-full h-full lg:h-auto bg-white max-w-[300px] lg:max-w-auto lg:min-w-[300px] p-[25px] lg:pl-0 lg:pt-0 flex flex-col gap-[25px] z-[1000] lg:z-0 border-r border-gray-medium"
     [@slideInOut]="showFilters ? 'in' : 'out'"
   >
+   <app-search (onSelect)="goToProduct($event)"></app-search>
     <app-filter-option title="Category">
       <div class="flex flex-col gap-2">
         <div
