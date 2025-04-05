@@ -1,13 +1,16 @@
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../Services/auth.service';
 import { inject } from '@angular/core';
+import { CheckoutService } from '../Services/checkout.service';
 
 export const orderGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
   const router = inject(Router);
-  if (authService.isAuthenticated()) {
+  const checkoutService = inject(CheckoutService);
+
+  if (checkoutService.hasCompletedCheckout()) {
     return true;
+  } else {
+    // Redirect if accessed directly
+    router.navigate(['/cart']);
+    return false;
   }
-  router.navigate(['/home']);
-  return false;
 };
