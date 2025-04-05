@@ -1,6 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
 import { ModalService } from '../../Services/modal.service';
 import { LoginPromptModalComponent } from '../modals/login-prompt-modal/login-prompt-modal.component';
@@ -13,7 +13,7 @@ import { InputComponent } from '../shared/input/input.component';
 import { NgToastService } from 'ng-angular-popup';
 import { CartService } from '../../Services/cart.service';
 import { CheckoutService } from '../../Services/checkout.service';
-import { first, Observable, of } from 'rxjs';
+import { first, Observable, Subject, takeUntil } from 'rxjs';
 import {
   FormGroup,
   Validators,
@@ -70,7 +70,7 @@ export function noNumbersValidator(): ValidatorFn {
     ]),
   ],
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnDestroy {
   checkoutForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, noNumbersValidator()]),
     lastName: new FormControl('', [Validators.required, noNumbersValidator()]),
@@ -96,20 +96,28 @@ export class CheckoutComponent {
   subtotal$!: Observable<number>;
   isLoading = false;
   @ViewChild(PaymentComponent) paymentComponent!: PaymentComponent;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private checkoutService: CheckoutService,
     private cartService: CartService,
     private authService: AuthService,
     private modalService: ModalService,
-    private toast: NgToastService
+    private toast: NgToastService,
+    private router: Router
   ) {
     this.loadCartData();
+  }
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /** Load cart data on component initialization */
   private loadCartData(): void {
-    this.cartItems = this.cartService.getCheckoutData();
+    this.cartService.getCart().subscribe(cartItems => {
+      this.cartItems = cartItems;
+    });
     this.subtotal$ = this.cartService.cartSubtotal$;
   }
 
@@ -126,36 +134,43 @@ export class CheckoutComponent {
       }
 
       const billingValues = this.checkoutForm.value;
-      const paymentValues = this.paymentComponent?.paymentForm?.value || {};
 
       const billingValidation =
         this.checkoutService.validateCheckoutForm(billingValues);
-      const paymentValidation =
-        billingValues.paymentMethod === 'bank'
-          ? this.checkoutService.validatePaymentForm(paymentValues)
-          : { errors: [] };
-
-      const errors: string[] = [
-        ...billingValidation.errors,
-        ...paymentValidation.errors,
-      ];
-
+      const errors: string[] = [...billingValidation.errors];
       if (errors.length > 0) {
         console.error('Validation failed:', errors);
         this.checkoutForm.markAllAsTouched();
-        this.paymentComponent?.paymentForm?.markAllAsTouched();
         return;
       }
 
-      this.processOrder(billingValues, paymentValues);
+      if (billingValues.paymentMethod === 'bank') {
+        try {
+          const paymentSuccess = this.paymentComponent.validatePaymentForm();
+          if (!paymentSuccess) {
+            this.toast.danger(
+              'Payment failed. Please check your card details.'
+            );
+            return;
+          }
+          this.processOrder(billingValues);
+        } catch (error) {
+          console.error('Payment error:', error);
+          this.toast.danger('Payment processing failed. Please try again.');
+          return;
+        }
+      } else {
+        // For non-bank payments, proceed directly
+        this.processOrder(billingValues);
+      }
     });
   }
+
   /** Process the order after successful validation */
-  private processOrder(billingValues: any, paymentValues: any): void {
+  private processOrder(billingValues: any): void {
     this.isLoading = true;
     this.selectedPayment = billingValues.paymentMethod;
 
-    // this.checkoutService.processOrder(billingValues, paymentValues);
     const shippingAddress: ShippingAddress = {
       firstName: billingValues.firstName,
       lastName: billingValues.lastName,
@@ -169,6 +184,9 @@ export class CheckoutComponent {
       additionalInfo: billingValues.additionalInfo,
       // province: billingValues.city,
     };
+
+    console.log('cartItems>>>>>>>>>>', this.cartItems);
+    
     const orderItems: OrderItem[] = this.cartItems.map((item) => ({
       productId: item.productId,
       productName: item.name,
@@ -181,14 +199,33 @@ export class CheckoutComponent {
       paymentMethod: billingValues.paymentMethod,
       orderItems,
     };
+    console.log('checkoutData>>>>>>>>>', checkoutData);
     if (billingValues.paymentMethod === 'bank') {
       this.cartService.cartSubtotal$.pipe(first()).subscribe((totalAmount) => {
         this.checkoutService
           .createPaymentIntent(totalAmount)
           .subscribe((paymentIntentResponse) => {
-            checkoutData.transactionId =
-              paymentIntentResponse.data.paymentIntentId;
-            this.sendOrder(checkoutData);
+            // console.log('paymentIntentResponse>>>>>>>:', paymentIntentResponse);
+            this.checkoutService.clientSecret =
+              paymentIntentResponse.data.clientSecret;
+            console.log(
+              'Client Secret in checkout:',
+              this.checkoutService.clientSecret
+            );
+
+            this.checkoutService.paymentCompleted
+              .pipe(takeUntil(this.destroy$))
+              .subscribe((paymentSuccess) => {
+                if (paymentSuccess) {
+                  checkoutData.transactionId =
+                    this.checkoutService.paymentIntentId;
+                  this.sendOrder(checkoutData);
+                } else {
+                  this.isLoading = false;
+                  this.toast.danger('Payment failed. Please try again.');
+                }
+              });
+            this.paymentComponent.validatePaymentForm();
           });
       });
     } else {
@@ -198,14 +235,15 @@ export class CheckoutComponent {
   private sendOrder(checkoutData: CheckoutData) {
     this.checkoutService.placeOrder(checkoutData).subscribe({
       next: () => {
-        // this.checkoutService.showSuccess('Order placed successfully!');
         this.toast.success('Order placed successfully!');
         this.checkoutForm.reset();
-        this.paymentComponent?.paymentForm?.reset();
         this.selectedPayment = '';
         this.cartItems = [];
         this.cartService.clearCart();
+        // this.checkoutService.checkoutSubject.next([]);
         this.isLoading = false;
+        this.paymentComponent?.resetCardElement();
+        this.router.navigate(['/order-success']);
       },
       error: (error) => {
         console.error('Order placement failed:', error);

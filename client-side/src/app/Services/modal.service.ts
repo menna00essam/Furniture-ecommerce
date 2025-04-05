@@ -9,12 +9,8 @@ export class ModalService {
   constructor(private dialog: MatDialog) {}
 
   show(component: ComponentType<unknown>): Promise<boolean> {
-    return new Promise((resolve) => {
-      const dialogRef = this.dialog.open(component);
-
-      dialogRef.afterClosed().subscribe((result) => {
-        resolve(result);
-      });
+    return new Promise(() => {
+      this.dialog.open(component);
     });
   }
 }

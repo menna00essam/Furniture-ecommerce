@@ -58,7 +58,8 @@ export class CartService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(`[CartService] ${operation} failed:`, error);
+      if (error.status != 404)
+        console.error(`[CartService] ${operation} failed:`, error);
       return of(result as T);
     };
   }
@@ -273,18 +274,6 @@ export class CartService {
     this.modifyQuantity(productId, -1);
   }
 
-  setCheckoutData(): void {
-    console.log(
-      '[CartService] Checkout data set:',
-      this.cartSubject.getValue()
-    );
-    this.checkoutSubject.next([...this.cartSubject.getValue()]);
-  }
-
-  getCheckoutData(): productCart[] {
-    return this.checkoutSubject.getValue();
-  }
-
   isInCart(productId: string): boolean {
     const exists = this.cartSubject.getValue().some((p) => p.id === productId);
     console.log(
@@ -295,9 +284,7 @@ export class CartService {
 
   clearCart(): void {
     console.log('[CartService] Clearing cart...');
-
     this.cartSubject.next([]);
-    this.checkoutSubject.next([]);
     localStorage.removeItem('cart');
     this.cartSubtotalSubject.next(0);
   }

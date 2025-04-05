@@ -36,7 +36,7 @@ export class SignupComponent {
     username: new FormControl(null, [
       Validators.required,
       Validators.minLength(3),
-      Validators.pattern('^[a-zA-Z]*$'),
+      Validators.pattern('^[a-zA-Z ]*$'),
     ]),
     phone: new FormControl(null, [
       Validators.required,

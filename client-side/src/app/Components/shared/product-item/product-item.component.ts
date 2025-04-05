@@ -36,7 +36,10 @@ import { productCart } from '../../../Models/productCart.model';
   animations: [
     trigger('slideInOut', [
       state('in', style({ transform: 'translateY(0%)', opacity: 1 })),
-      state('out', style({ transform: 'translateY(100%)', opacity: 0 })),
+      state(
+        'out',
+        style({ transform: 'translateY(100%)', opacity: 0, display: 'none' })
+      ),
       transition('in <=> out', [animate('300ms ease-in-out')]),
     ]),
   ],
@@ -67,21 +70,21 @@ export class ProductItemComponent implements OnInit {
   }
 
   toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
-      this.isFavoriteState = this.favoriteService.isInFavorites(
-        this.product.id
-      );
-      this.cdr.markForCheck();
+    this.favoriteService.toggleFavourite(this.product.id).subscribe({
+      next: () => {
+        this.isFavoriteState = this.favoriteService.isInFavorites(
+          this.product.id
+        );
+        this.cdr.markForCheck();
+      },
     });
   }
 
   toggleCart() {
-    if (this.isInCartState) {
-      this.cartService.removeProduct(this.product.id);
-    } else {
-      this.cartService.addProduct(this.product);
-    }
-    this.isInCartState = !this.isInCartState;
+    this.isInCartState
+      ? this.cartService.removeProduct(this.product.id)
+      : this.cartService.addProduct(this.product);
+    this.isInCartState = this.cartService.isInCart(this.product.id);
     this.cdr.markForCheck();
   }
 
@@ -89,7 +92,7 @@ export class ProductItemComponent implements OnInit {
   onMouseEnter() {
     if (!this.showActions) {
       this.isHovered = true;
-      this.cdr.markForCheck(); // Marks component for update without full re-render
+      this.cdr.markForCheck();
     }
   }
 
@@ -118,6 +121,6 @@ export class ProductItemComponent implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = '/images/products/1.png';
+    (event.target as HTMLImageElement).src = '/images/mainsofa.png';
   }
 }

@@ -20,7 +20,6 @@ import { NavigationComponent } from './navigation/navigation.component';
     RouterModule,
     CommonModule,
     FormsModule,
-    SearchComponent,
     UserActionsComponent,
     NavigationComponent,
   ],
@@ -32,15 +31,13 @@ export class HeaderComponent {
   @Output() openCart = new EventEmitter<void>();
   isActive = false;
 
+
   constructor(private router: Router, private elementRef: ElementRef) {}
 
   toggleMenu() {
     this.isActive = !this.isActive;
   }
 
-  goToProduct(id: string) {
-    this.router.navigate([`/product/${id}`]);
-  }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {

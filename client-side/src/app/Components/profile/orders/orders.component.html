@@ -28,9 +28,9 @@
   </div> -->
 
   <!-- Orders Table -->
-  <div class="rounded-md border">
+  <div class="rounded-md border text-xs">
     <div class="relative w-full overflow-auto">
-      <table class="w-full text-sm">
+      <table class="w-full text-xs sm:text-sm ">
         <thead>
           <tr class="border-b">
             <th class="h-12 px-4 text-left font-medium">Order Number</th>
@@ -64,10 +64,10 @@
   </ng-template>
 
   <!-- Pagination -->
-  <div
+  <!-- <div
     class="flex justify-end p-3 bg-white shadow-md rounded-lg gap-4 md:gap-8"
   >
-    <!-- Per Page Selection -->
+    Per Page Selection
     <div class="flex items-center gap-2 min-w-auto">
       <p class="text-sm font-medium text-gray-700">Per page</p>
       <div class="relative">
@@ -86,12 +86,12 @@
       </div>
     </div>
 
-    <!-- Page Info -->
+    Page Info
     <div class="flex items-center text-sm font-medium text-gray-700">
       Page {{ currentPage }} of {{ totalPages$ | async }}
     </div>
 
-    <!-- Pagination Buttons -->
+    Pagination Buttons
     <div class="flex gap-2 items-center">
       <button
         (click)="goToFirstPage()"
@@ -125,5 +125,5 @@
         >>
       </button>
     </div>
-  </div>
+  </div> -->
 </section>

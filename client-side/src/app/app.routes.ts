@@ -28,6 +28,9 @@ import { FavoritesItemsComponent } from './Components/shared/favorites-items/fav
 import { PrivacyPolicyComponent } from './Components/help/privacy-policy/privacy-policy.component';
 import { ReturnsComponent } from './Components/help/returns/returns.component';
 import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
+import { OrderSuccessComponent } from './Components/order-success/order-success.component';
+import { orderGuard } from './Guards/order.guard';
+import { profileGuard } from './Guards/profile.guard';
 
 export const routes: Routes = [
   {
@@ -51,8 +54,6 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'shop', component: ShopComponent },
       { path: 'product/:id', component: ProductComponent },
-      { path: 'cart', component: CartComponent },
-      { path: 'checkout', component: CheckoutComponent },
       { path: 'contact', component: ContactComponent },
       { path: 'blogs', component: BlogsComponent },
       { path: 'blog/:id', component: BlogComponent },
@@ -64,6 +65,7 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+        canActivate: [profileGuard],
         children: [
           {
             path: '',
@@ -87,12 +89,16 @@ export const routes: Routes = [
       {
         path: 'checkout',
         component: CheckoutComponent,
-        canActivate: [authGuard],
+      },
+      {
+        path: 'order-success',
+        component: OrderSuccessComponent,
+        canActivate: [orderGuard],
       },
       {
         path: 'order-complete',
         component: OrdersComponent,
-        canActivate: [authGuard],
+        canActivate: [orderGuard],
       },
       { path: '**', component: ErrorComponent },
     ],

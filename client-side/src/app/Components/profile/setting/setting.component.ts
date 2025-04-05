@@ -22,6 +22,11 @@ import { InputComponent } from '../../shared/input/input.component';
   styleUrl: './setting.component.css',
 })
 export class SettingComponent {
+  user = {
+    thumbnail:
+      'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png',
+  };
+  imagePreview: string | ArrayBuffer | null = null;
   user$!: Observable<user | null>;
   isChecked: boolean = false;
   activeComponent: string = 'orders';
@@ -43,6 +48,7 @@ export class SettingComponent {
       return password === confirmPassword ? null : { passwordMismatch: true };
     };
   }
+
   ngOnInit(): void {
     this.user$ = this.userService.user$;
     this.userService.getUser().subscribe((user) => {
@@ -84,5 +90,28 @@ export class SettingComponent {
           },
         });
     }
+  }
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+
+      this.userService
+        .updateUserImageLocally(file)
+        .subscribe((imageUrl: string) => {
+          this.user.thumbnail = imageUrl;
+          this.userService.getUser().subscribe((updatedUser) => {
+            this.user = updatedUser;
+          });
+        });
+    }
+  }
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = '/images/user.png';
   }
 }

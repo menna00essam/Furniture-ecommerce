@@ -1,10 +1,10 @@
 export interface BlogPost {
-  id: string;
+  _id: string;
   title: string;
-  excerpt: string;
+  description: string;
   content: string;
-  image: string;
-  users: string;
-  category: string;
+  img: string;
+  user: string;
+  categories: string[];
   date: string;
 }

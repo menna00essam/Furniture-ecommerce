@@ -50,7 +50,6 @@ export class CartComponent implements OnInit {
   }
 
   goToCheckout() {
-    this.cartService.setCheckoutData();
     this.router.navigate(['/checkout']);
   }
 }
