@@ -4,6 +4,13 @@ const AppError = require("../utils/appError");
 const User = require("../models/user.model");
 const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
 const bcrypt = require("bcrypt");
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
 
 const getAllUsers = asyncWrapper(async (req, res, next) => {
   let { limit = 10, page = 1 } = req.query;
@@ -59,7 +66,7 @@ const getUser = asyncWrapper(async (req, res, next) => {
 
 const getProfile = asyncWrapper(async (req, res, next) => {
   const user = req.user;
-
+  const userFounded = await User.findById(user._id);
   if (!user) {
     return next(
       new AppError(
@@ -71,9 +78,33 @@ const getProfile = asyncWrapper(async (req, res, next) => {
   }
   res.status(200).json({
     status: httpStatusText.SUCCESS,
-    data: { user },
+    data: { user: userFounded },
   });
 });
+const changeIMG = asyncWrapper(async (req, res, next) => {
+  const userId = req.user._id;
+  const { thumbnail } = req.body;
+  if (!thumbnail) {
+    return next(new AppError("No image URL provided", 400));
+  }
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { thumbnail },
+    { new: true }
+  );
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Avatar updated successfully",
+    data: { thumbnail: user.thumbnail },
+  });
+});
+
 const changePassword = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   const { password } = req.body;
@@ -235,4 +266,5 @@ module.exports = {
   toggleFavourite,
   getFavourites,
   changePassword,
+  changeIMG,
 };

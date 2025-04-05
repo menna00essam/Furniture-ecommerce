@@ -15,7 +15,7 @@ router
 router
   .route("/profile")
   .get(verifyToken, allowedTo("USER"), userController.getProfile);
-
+router.route("/profile/change-img").put(verifyToken, userController.changeIMG);
 router
   .route("/:userId")
   .get(verifyToken, allowedTo("ADMIN"), userController.getUser)

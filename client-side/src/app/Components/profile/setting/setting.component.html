@@ -96,7 +96,20 @@
               class="flex flex-col items-center justify-center gap-1 scale-75 ut-button:ring-primary ut-button:bg-primary/75 hover:ut-button:bg-primary ut-button:transition-all ut-button:duration-500 ut-label:hidden ut-allowed-content:hidden"
               data-state="ready"
             >
-              <app-button>Change Avatar</app-button>
+              <input
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                class="hidden"
+                id="avatarUpload"
+              />
+              <label
+                class="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-sm font-medium bg-primary text-white rounded-md"
+                for="avatarUpload"
+              >
+                Change Avatar
+              </label>
               <div
                 class="h-[1.25rem] text-xs leading-5 text-gray-600"
                 data-state="ready"
