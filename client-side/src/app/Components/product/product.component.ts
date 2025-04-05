@@ -69,7 +69,6 @@ export class ProductComponent implements OnInit {
   private routeSub: Subscription = new Subscription();
   skeletonArr = Array(4);
 
-  
   productLoading: boolean = true;
   productsLoading: boolean = true;
 
@@ -103,14 +102,15 @@ export class ProductComponent implements OnInit {
   }
 
   toggleFavorite() {
-    this.product$.subscribe((product) => {
-      if (product) {
-        this.favoriteService.toggleFavourite(product.id).subscribe(() => {
+    const product = this.productSubject.getValue();
+    if (product) {
+      this.favoriteService.toggleFavourite(product.id).subscribe({
+        next: () => {
           this.isFavoriteState = this.favoriteService.isInFavorites(product.id);
           this.cdr.markForCheck();
-        });
-      }
-    });
+        },
+      });
+    }
   }
 
   getMappedProduct$(): Observable<product | null> {
