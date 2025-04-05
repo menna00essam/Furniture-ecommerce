@@ -3,7 +3,6 @@ import { user } from '../Models/user.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
-import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -53,5 +52,34 @@ export class UserService {
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  updateUserImageLocally(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'ml_default');
+    const folderPath = 'profileIMGs';
+    formData.append('folder', folderPath);
+    return this.http
+      .post('https://api.cloudinary.com/v1_1/dddhappm3/image/upload', formData)
+      .pipe(
+        tap((res: any) => {
+          const imageUrl = res.secure_url;
+          this.updateUserImage(imageUrl).subscribe(() => {
+            console.log('User image updated!');
+            this.getUser().subscribe((updatedUser) => {
+              this.userSubject.next(updatedUser);
+            });
+          });
+        })
+      );
+  }
+
+  updateUserImage(imageUrl: string) {
+    return this.http.put<{ message: string }>(
+      `${this.apiUrl}/change-img`,
+      { thumbnail: imageUrl },
+      { headers: this.getAuthHeaders() }
+    );
   }
 }

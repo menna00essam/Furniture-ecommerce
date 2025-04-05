@@ -55,9 +55,7 @@ export class UserActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.userService.user$;
-    this.userService.getUser().subscribe((user) => {
-      console.log(user.thumbnail);
-    });
+    this.userService.getUser().subscribe((user) => {});
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
