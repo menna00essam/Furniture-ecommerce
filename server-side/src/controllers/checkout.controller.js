@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const httpStatusText = require("../utils/httpStatusText");
 const AppError = require("../utils/appError");
-
 const Cart = require("../models/cart.model");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
