@@ -30,6 +30,7 @@ import { ReturnsComponent } from './Components/help/returns/returns.component';
 import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
 import { OrderSuccessComponent } from './Components/order-success/order-success.component';
 import { orderGuard } from './Guards/order.guard';
+import { profileGuard } from './Guards/profile.guard';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,7 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+        canActivate: [profileGuard],
         children: [
           {
             path: '',
