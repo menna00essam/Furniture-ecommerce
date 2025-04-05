@@ -1,24 +1,35 @@
 @if (additionalInfo && description) {
-<div class="w-full min-h-screen bg-white flex flex-col items-center py-8 lg:py-12">
+<div class="w-full bg-white flex flex-col items-center py-8 lg:py-12">
   <!-- Upper Border -->
   <div class="w-full border-t border-gray-medium"></div>
 
   <!-- Options (Tabs) -->
   <div
-    class="w-full max-w-2xl px-4 flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8 lg:mt-10 font-poppins justify-center">
-    <span (click)="activeTab = 'description'" [class.text-black]="activeTab === 'description'"
-      [class.text-gray-medium]="activeTab !== 'description'" class="font-medium text-center cursor-pointer">
+    class="w-full max-w-2xl px-4 flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8 lg:mt-10 font-poppins justify-center"
+  >
+    <span
+      (click)="activeTab = 'description'"
+      [class.text-black]="activeTab === 'description'"
+      [class.text-gray-medium]="activeTab !== 'description'"
+      class="font-medium text-center cursor-pointer"
+    >
       Description
     </span>
-    <span (click)="activeTab = 'additionalInfo'" [class.text-black]="activeTab === 'additionalInfo'"
-      [class.text-gray-medium]="activeTab !== 'additionalInfo'" class="hover:text-gray-dark text-center cursor-pointer">
+    <span
+      (click)="activeTab = 'additionalInfo'"
+      [class.text-black]="activeTab === 'additionalInfo'"
+      [class.text-gray-medium]="activeTab !== 'additionalInfo'"
+      class="hover:text-gray-dark text-center cursor-pointer"
+    >
       Additional Information
     </span>
   </div>
 
   <!-- Description Section -->
   @if (activeTab === 'description') {
-  <div class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6">
+  <div
+    class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6"
+  >
     <p class="text-sm sm:text-base leading-relaxed">{{ description }}</p>
   </div>
   }
@@ -26,8 +37,9 @@
   <!-- Additional Information Section -->
   <!-- Additional Information Section -->
   @if (activeTab === 'additionalInfo') {
-  <div class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6">
-
+  <div
+    class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6"
+  >
     <!-- General Information -->
     @if (additionalInfo.general) {
     <app-accordion title="General Information">
@@ -83,16 +95,18 @@
       </table>
     </app-accordion>
     }
-
   </div>
   }
 
   <!-- Image Grid (Always Visible) -->
-  <div class="w-full max-w-6xl px-4 sm:px-6 mt-6 sm:mt-8 flex flex-col sm:flex-row gap-6 sm:gap-8">
+  <div
+    class="w-full max-w-6xl px-4 sm:px-6 mt-6 sm:mt-8 flex flex-col sm:flex-row gap-6 sm:gap-8"
+  >
     @for (imageUrl of (imageUrls ?? []).slice(0, 2); track imageUrl) {
     <div
-      class="w-full sm:w-1/2 h-auto aspect-square sm:aspect-video bg-secondary rounded-lg flex justify-center items-center overflow-hidden">
-      <img [src]="imageUrl" class="w-full  object-cover" alt="Product Image" />
+      class="w-full sm:w-1/2 h-auto aspect-square sm:aspect-video bg-secondary rounded-lg flex justify-center items-center overflow-hidden"
+    >
+      <img [src]="imageUrl" class="w-full object-cover" alt="Product Image" />
     </div>
     }
   </div>

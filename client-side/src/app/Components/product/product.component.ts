@@ -32,6 +32,7 @@ import { ProductItemSkeletonComponent } from '../shared/product-item/product-ite
     ProductItemComponent,
     ProductSkeletonComponent,
     ProductItemSkeletonComponent,
+    ProductItemSkeletonComponent,
   ],
   templateUrl: './product.component.html',
 })
@@ -66,6 +67,11 @@ export class ProductComponent implements OnInit {
   isFavoriteState: boolean = false;
 
   private routeSub: Subscription = new Subscription();
+  skeletonArr = Array(4);
+
+  
+  productLoading: boolean = true;
+  productsLoading: boolean = true;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -89,8 +95,8 @@ export class ProductComponent implements OnInit {
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.fetchProduct(this.productId);
+      this.fetchProducts();
       this.relatedProducts$ = this.productService.products$;
-      this.productService.getProducts(1, 5).subscribe();
     } else {
       console.error('Product ID not found in route parameters.');
     }
@@ -166,6 +172,7 @@ export class ProductComponent implements OnInit {
           this.isFavoriteState = this.favoriteService.isInFavorites(
             productData.id
           );
+          this.productLoading = false;
           this.cdr.detectChanges();
         } else {
           console.warn('[ProductComponent] No product data received.');
@@ -173,6 +180,15 @@ export class ProductComponent implements OnInit {
       },
       error: (error) => {
         console.error('[ProductComponent] Error fetching product:', error);
+      },
+    });
+  }
+
+  fetchProducts() {
+    this.productService.getProducts(1, 5).subscribe({
+      next: (response) => {
+        this.productsLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
