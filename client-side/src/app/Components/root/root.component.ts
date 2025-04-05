@@ -14,6 +14,8 @@ import { UserService } from '../../Services/user.service';
 import { productFavorite } from '../../Models/productFavorite.model';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-root',
@@ -61,7 +63,9 @@ export class RootComponent {
     private favoriteService: FavoriteService,
     private cartService: CartService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private toast:NgToastService, 
   ) {}
 
   ngOnInit(): void {
@@ -101,6 +105,19 @@ export class RootComponent {
     this.cartModalShow = open;
     this.toggleBodyScroll(open);
   }
+
+  handleCheckoutClick(): void {
+    this.cart$.subscribe((cartItems) => {
+      this.toggleCartModal(false); 
+      if (cartItems.length === 0) {
+        this.toast.danger('cart is empty!, please add items to checkout');
+        this.router.navigate(['/']);
+      } else {
+        this.router.navigate(['/checkout']);
+      }
+    }).unsubscribe(); 
+  }
+ 
 
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';
