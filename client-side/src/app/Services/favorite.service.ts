@@ -7,12 +7,13 @@ import { NgToastService } from 'ng-angular-popup';
 import { productFavorite } from '../Models/productFavorite.model';
 import { ModalService } from './modal.service';
 import { LoginPromptModalComponent } from '../Components/modals/login-prompt-modal/login-prompt-modal.component';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavoriteService {
-  private apiUrl = 'http://localhost:5000/users';
+  private apiUrl = `${environment.apiUrl}/users`;
   private favoritesSubject = new BehaviorSubject<productFavorite[]>([]);
   favorites$ = this.favoritesSubject.asObservable();
 
@@ -59,6 +60,7 @@ export class FavoriteService {
       first(),
       switchMap((isLoggedIn) => {
         if (!isLoggedIn) {
+        
           this.modalService.show(LoginPromptModalComponent);
           return of(this.favoritesSubject.getValue());
         }
@@ -114,7 +116,7 @@ export class FavoriteService {
     return apiFavorites.map((p) => ({
       id: p._id,
       name: p.productName,
-      images: p.productImages,
+      image: p.productImage,
       subTitle: p.productSubtitle,
     }));
   }

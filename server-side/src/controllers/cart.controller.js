@@ -8,10 +8,11 @@ const Product = require('../models/product.model');
 // GET: Retrieve user cart
 const getUserCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
+  console.log('my cart user :', userId);
   const cart = await Cart.findOne({ userId })
     .populate(
       'products.productId',
-      '_id productName productImages productPrice productSale'
+      '_id productName colors productPrice productSale'
     )
     .lean();
 
@@ -19,31 +20,47 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
     return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
   }
 
-  const products = cart.products.map(({ productId, quantity }) => {
-    // Determine the correct effective price
-    const effectivePrice = productId.productSale
-      ? productId.productPrice * (1 - productId.productSale / 100) // If sale is a percentage
-      : productId.productPrice; // Otherwise, use the original price
+  const products = cart.products
+    .map(({ productId, quantity, color }) => {
+      if (!productId) {
+        return null; // Product was removed from DB
+      }
 
-    return {
-      _id: productId._id,
-      quantity,
-      productName: productId.productName,
-      productImages: productId.productImages,
-      productPrice: effectivePrice, // Use the effective price
-      productQuantity: quantity,
-      subtotal: quantity * effectivePrice, // Calculate subtotal correctly
-    };
-  });
+      const colorVariant = productId.colors.find((c) => c.name === color);
 
-  // Calculate the total price
-  const totalPrice = products.reduce((sum, item) => sum + item.subtotal, 0);
+      if (!colorVariant) {
+        return null;
+      }
+
+      const availableQuantity = colorVariant.quantity;
+
+      const finalQuantity = Math.min(quantity, availableQuantity);
+
+      const effectivePrice = productId.productSale
+        ? productId.productPrice * (1 - productId.productSale / 100)
+        : productId.productPrice;
+
+      return {
+        _id: productId._id,
+        productQuantity: finalQuantity,
+        productName: productId.productName,
+        productImage:
+          colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
+        productPrice: effectivePrice,
+        productSubtotal: finalQuantity * effectivePrice,
+      };
+    })
+    .filter((product) => product !== null);
+  const totalPrice = products.reduce(
+    (sum, item) => sum + item.productSubtotal,
+    0
+  );
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,
     data: {
       products,
-      totalPrice, // Return the correctly calculated total price
+      totalPrice,
     },
   });
 });
@@ -51,51 +68,95 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
 // POST: Add products to cart
 const addToCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
+  console.log('my cart user :', userId);
   const items = req.body;
+  console.log('my cart items :', items);
 
+  // Validate the items array
   if (!Array.isArray(items) || items.length === 0) {
     return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
   }
 
+  // Validate each item in the cart
   for (const item of items) {
-    if (!mongoose.Types.ObjectId.isValid(item.productId) || item.quantity < 1) {
-      console.log(item.productId, item.quantity);
+    const { productId, quantity, color } = item;
+
+    if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 1) {
       return next(
-        new AppError('Invalid productId or quantity.', 400, httpStatusText.FAIL)
+        new AppError(
+          'Invalid productId or quantity. Quantity must be at least 1.',
+          400,
+          httpStatusText.FAIL
+        )
+      );
+    }
+
+    const product = await Product.findById(productId).select('colors');
+    if (!product) {
+      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+    }
+
+    // If no color is provided, use the first available color
+    if (!color && product.colors.length > 0) {
+      item.color = product.colors[0].name;
+    }
+
+    // Validate the color
+    const colorVariant = product.colors.find((c) => c.name === item.color);
+    if (!colorVariant) {
+      return next(
+        new AppError(
+          `Color ${item.color} not available for this product.`,
+          400,
+          httpStatusText.FAIL
+        )
       );
     }
   }
 
+  // Find or create the user's cart
   let cart = await Cart.findOne({ userId });
-
   if (!cart) {
     cart = new Cart({ userId, products: [] });
   }
 
-  for (const { productId, quantity } of items) {
+  // Add or update items in the cart
+  for (const { productId, quantity, color } of items) {
+    const product = await Product.findById(productId).lean();
+
+    if (!product) {
+      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+    }
+
+    // Find the color variant in the product
+    const colorVariant = product.colors.find((c) => c.name === color);
+    if (!colorVariant) {
+      return next(
+        new AppError(`Color ${color} not available.`, 400, httpStatusText.FAIL)
+      );
+    }
+
+    // Ensure requested quantity does not exceed available stock
+    const availableQuantity = colorVariant.quantity;
+    const finalQuantity = Math.min(quantity, availableQuantity);
+
     const existingProduct = cart.products.find(
-      (p) => p.productId.toString() === productId
+      (p) => p.productId.toString() === productId && p.color === color
     );
+
     if (existingProduct) {
-      const product = await Product.findById(productId);
       existingProduct.quantity = Math.min(
-        product.productQuantity,
-        existingProduct.quantity + quantity
+        availableQuantity,
+        existingProduct.quantity + finalQuantity
       );
     } else {
-      cart.products.push({ productId, quantity });
+      cart.products.push({ productId, quantity: finalQuantity, color });
     }
   }
 
+  // Save the cart and populate product details
   await cart.save();
-  await cart.populate(
-    'products.productId',
-    '_id productName productImages productPrice'
-  );
-  await cart.populate(
-    'products.productId',
-    '_id productName productImages productPrice'
-  );
+  await cart.populate('products.productId', '_id productName productPrice');
 
   res.status(201).json({
     status: httpStatusText.SUCCESS,
@@ -106,16 +167,25 @@ const addToCart = asyncWrapper(async (req, res, next) => {
 // PATCH: Update cart (change quantity or remove a product)
 const updateCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log(req);
-  const { productId, quantity } = req.body;
+  let { productId, quantity, color } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0) {
-    console.log(productId, quantity);
     return next(
-      new AppError('Invalid productId or quantity.', 400, httpStatusText.FAIL)
+      new AppError(
+        'Invalid productId, quantity, or color.',
+        400,
+        httpStatusText.FAIL
+      )
     );
   }
+  const product = await Product.findById(productId).select('colors');
+  if (!product) {
+    return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+  }
 
+  if (!color && product.colors.length > 0) {
+    color = product.colors[0].name;
+  }
   const cart = await Cart.findOne({ userId });
 
   if (!cart) {
@@ -123,12 +193,16 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   }
 
   const productIndex = cart.products.findIndex(
-    (p) => p.productId.toString() === productId
+    (p) => p.productId.toString() === productId && p.color === color
   );
 
   if (productIndex === -1) {
     return next(
-      new AppError('Product not found in cart.', 404, httpStatusText.FAIL)
+      new AppError(
+        'Product with this color not found in cart.',
+        404,
+        httpStatusText.FAIL
+      )
     );
   }
 
@@ -141,7 +215,7 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   await cart.save();
   await cart.populate(
     'products.productId',
-    '_id productName productImages productPrice'
+    '_id productName colors productPrice'
   );
 
   res.status(200).json({

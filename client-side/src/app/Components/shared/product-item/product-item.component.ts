@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
+  HostListener,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
@@ -35,7 +36,10 @@ import { productCart } from '../../../Models/productCart.model';
   animations: [
     trigger('slideInOut', [
       state('in', style({ transform: 'translateY(0%)', opacity: 1 })),
-      state('out', style({ transform: 'translateY(100%)', opacity: 0 })),
+      state(
+        'out',
+        style({ transform: 'translateY(100%)', opacity: 0, display: 'none' })
+      ),
       transition('in <=> out', [animate('300ms ease-in-out')]),
     ]),
   ],
@@ -45,39 +49,59 @@ export class ProductItemComponent implements OnInit {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
-  disableAnimation = false;
+  showActions = false;
 
   cart$!: Observable<productCart[]>;
+  isInCartState = false;
+  isFavoriteState = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
     private cartService: CartService
   ) {}
+
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
-  }
 
-  onMouseEnter() {
-    if (!this.disableAnimation) this.isHovered = true;
-  }
-
-  onMouseLeave() {
-    if (!this.disableAnimation) this.isHovered = false;
+    // Initialize state
+    this.isInCartState = this.cartService.isInCart(this.product.id);
+    this.isFavoriteState = this.favoriteService.isInFavorites(this.product.id);
   }
 
   toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe();
-    this.cdr.detectChanges();
+    this.favoriteService.toggleFavourite(this.product.id).subscribe({
+      next: () => {
+        this.isFavoriteState = this.favoriteService.isInFavorites(
+          this.product.id
+        );
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   toggleCart() {
-    if (this.cartService.isInCart(this.product.id)) {
-      this.cartService.removeProduct(this.product.id);
-    } else {
-      this.cartService.addProduct(this.product);
+    this.isInCartState
+      ? this.cartService.removeProduct(this.product.id)
+      : this.cartService.addProduct(this.product);
+    this.isInCartState = this.cartService.isInCart(this.product.id);
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('mouseenter')
+  onMouseEnter() {
+    if (!this.showActions) {
+      this.isHovered = true;
+      this.cdr.markForCheck();
     }
-    this.cdr.detectChanges();
+  }
+
+  @HostListener('mouseleave')
+  onMouseLeave() {
+    if (!this.showActions) {
+      this.isHovered = false;
+      this.cdr.markForCheck();
+    }
   }
 
   isNewProduct(): boolean {
@@ -97,6 +121,6 @@ export class ProductItemComponent implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = '/images/products/1.png';
+    (event.target as HTMLImageElement).src = '/images/mainsofa.png';
   }
 }

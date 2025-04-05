@@ -33,6 +33,7 @@ const contactRouter = require("./src/routes/contact.routes");
 const orderRouter = require("./src/routes/order.routes");
 const paymentRouter = require("./src/routes/payment.routes");
 
+
 / * * * * End Router imports * * * * /;
 
 // Connect to MongoDB
@@ -59,10 +60,9 @@ app.use("/cart", cartRouter);
 app.use("/api", galleryRouter);
 app.use("/contact", contactRouter);
 app.use("/orders", orderRouter);
-app.use('/payments', paymentRouter);
+app.use("/payments", paymentRouter);
 
 / * * * Global MiddleWare * * * /;
-// Not found routes
 app.all("*", (req, res, next) => {
   return res.status(404).json({
     status: httpStatusText.ERROR,

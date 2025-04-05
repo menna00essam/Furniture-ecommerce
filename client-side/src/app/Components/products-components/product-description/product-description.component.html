@@ -1,46 +1,102 @@
 <div class="w-full min-h-screen bg-white flex flex-col items-center py-8 lg:py-12">
-  <!-- upper line -->
+  <!-- Upper Border -->
   <div class="w-full border-t border-gray-medium"></div>
 
-  <!-- options -->
+  <!-- Options (Tabs) -->
   <div
     class="w-full max-w-2xl px-4 flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8 lg:mt-10 font-poppins justify-center">
-    <span class="text-black font-medium text-center cursor-pointer">Description</span>
-    <span class="text-gray-medium hover:text-gray-dark text-center cursor-pointer">
+    <span (click)="activeTab = 'description'" [class.text-black]="activeTab === 'description'"
+      [class.text-gray-medium]="activeTab !== 'description'" class="font-medium text-center cursor-pointer">
+      Description
+    </span>
+    <span (click)="activeTab = 'additionalInfo'" [class.text-black]="activeTab === 'additionalInfo'"
+      [class.text-gray-medium]="activeTab !== 'additionalInfo'" class="hover:text-gray-dark text-center cursor-pointer">
       Additional Information
     </span>
-    <span class="text-gray-medium hover:text-gray-dark text-center cursor-pointer">
-      Reviews [5]
-    </span>
   </div>
 
-  <!-- Paragraphs -->
+  <!-- Description Section -->
+  @if (activeTab === 'description') {
   <div class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6">
-    <p class="text-sm sm:text-base leading-relaxed">
-      Embodying the raw, wayward spirit of rock ‘n’ roll, the Kilburn portable
-      active stereo speaker takes the unmistakable look and sound of Marshall,
-      unplugs the chords, and takes the show on the road.
-    </p>
-    <p class="mt-4 sm:mt-5 text-sm sm:text-base leading-relaxed">
-      Weighing in under 7 pounds, the Kilburn is a lightweight piece of
-      vintage-styled engineering. Setting the bar as one of the loudest speakers
-      in its class, the Kilburn is a compact, stout-hearted hero with
-      well-balanced audio that boasts a clear midrange and extended highs for
-      articulate, pronounced sound. The analog knobs allow you to fine-tune the
-      controls to your preferences, while the guitar-influenced leather strap
-      enables easy and stylish travel.
-    </p>
+    <p class="text-sm sm:text-base leading-relaxed">{{ description }}</p>
   </div>
+  }
 
-  <!-- Image Grid -->
+  <!-- Additional Information Section -->
+  @if (activeTab === 'additionalInfo') {
+  <div class="w-full max-w-3xl px-4 sm:px-6 text-center font-poppins text-gray mt-4 sm:mt-6">
+
+    <!-- General Information -->
+    @if (additionalInfo.general) {
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-black">General Information</h3>
+      <table class="w-full border-collapse mt-2">
+        @for (key of getObjectKeys(additionalInfo.general); track key) {
+        <tr class="border-b">
+          <td class="py-2 font-medium">{{ key | titlecase }}</td>
+          <td class="py-2">{{ additionalInfo.general[key] }}</td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+
+    <!-- Product Details -->
+    @if (additionalInfo.productDetails) {
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-black">Product Details</h3>
+      <table class="w-full border-collapse mt-2">
+        @for (key of getObjectKeys(additionalInfo.productDetails); track key) {
+        <tr class="border-b">
+          <td class="py-2 font-medium">{{ key | titlecase }}</td>
+          <td class="py-2">{{ additionalInfo.productDetails[key] }}</td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+
+    <!-- Dimensions -->
+    @if (additionalInfo.dimensions) {
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-black">Dimensions (cm)</h3>
+      <table class="w-full border-collapse mt-2">
+        @for (key of getObjectKeys(additionalInfo.dimensions); track key) {
+        <tr class="border-b">
+          <td class="py-2 font-medium">{{ key | titlecase }}</td>
+          <td class="py-2">{{ additionalInfo.dimensions[key] }} cm</td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+
+    <!-- Warranty Information -->
+    @if (additionalInfo.warranty) {
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-black">Warranty</h3>
+      <table class="w-full border-collapse mt-2">
+        @for (key of getObjectKeys(additionalInfo.warranty); track key) {
+        <tr class="border-b">
+          <td class="py-2 font-medium">{{ key | titlecase }}</td>
+          <td class="py-2">{{ additionalInfo.warranty[key] }}</td>
+        </tr>
+        }
+      </table>
+    </div>
+    }
+
+  </div>
+  }
+
+
+  <!-- Image Grid (Always Visible) -->
   <div class="w-full max-w-6xl px-4 sm:px-6 mt-6 sm:mt-8 flex flex-col sm:flex-row gap-6 sm:gap-8">
+    @for (imageUrl of (imageUrls ?? []).slice(0, 2); track imageUrl) {
     <div
       class="w-full sm:w-1/2 h-auto aspect-square sm:aspect-video bg-secondary rounded-lg flex justify-center items-center overflow-hidden">
-      <img src="images/products/mainsofa.png" class="w-full h-full object-cover p-4" alt="Product showcase" />
+      <img [src]="imageUrl" class="w-full  object-cover" alt="Product Image" />
     </div>
-    <div
-      class="w-full sm:w-1/2 h-auto aspect-square sm:aspect-video bg-secondary rounded-lg flex justify-center items-center overflow-hidden">
-      <img src="images/products/mainsofa.png" class="w-full h-full object-cover p-4" alt="Product showcase" />
-    </div>
+    }
   </div>
 </div>

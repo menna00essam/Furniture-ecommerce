@@ -5,13 +5,12 @@ import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { product } from '../Models/product.model';
 import { CartService } from './cart.service';
-import { productCart } from '../Models/productCart.model';
-
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private isLoggedInSubject: BehaviorSubject<boolean>;
   isLoggedIn$: Observable<boolean>;
   private cartService!: CartService;

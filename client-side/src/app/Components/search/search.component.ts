@@ -18,11 +18,12 @@ import { ProductService } from '../../Services/product.service';
   imports: [CommonModule, FormsModule, DropdownComponent],
   template: `
     <div
-      class="relative flex h-full w-full cursor-pointer items-center rounded-md border border-gray-medium bg-white p-1"
+      class="relative flex flex-1 h-full w-full cursor-pointer items-center rounded-md border border-gray-medium bg-white p-1"
     >
       <input
         type="text"
         class="w-full focus:outline-none"
+        placeholder="Search products..."
         [(ngModel)]="searchValue"
         (focus)="toggleDropdown(true)"
         (input)="onSearchInput()"

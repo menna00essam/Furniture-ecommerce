@@ -1,6 +1,6 @@
 export interface product {
   id: string;
-  images: string[];
+  image: string;
   name: string;
   subTitle: string;
   price: number;
@@ -8,6 +8,7 @@ export interface product {
   date: Date;
   sale?: number;
   quantity: number;
+  color: string;
   colors?: string[];
   sizes?: string[];
   brand?: string;

@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { product } from '../Models/product.model';
+import { ProductDetails } from '../Models/product-details.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, tap, take, map, switchMap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 enum SortOptions {
   Default = 'Default',
@@ -18,8 +20,9 @@ enum SortOptions {
   providedIn: 'root',
 })
 export class ProductService {
+  private apiUrl = `${environment.apiUrl}/products`;
+
   private productsSubject = new BehaviorSubject<product[]>([]);
-  apiUrl = 'http://localhost:5000/products';
   products$ = this.productsSubject.asObservable();
 
   constructor(private http: HttpClient) {}
@@ -105,7 +108,7 @@ export class ProductService {
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.productName,
-            images: p.productImages,
+            image: p.productImage,
             subTitle: p.productSubtitle,
             price: p.productPrice,
             quantity: p.productQuantity,
@@ -114,6 +117,7 @@ export class ProductService {
             ),
             date: p.productDate,
             sale: p.productSale,
+            color: p.mainColor,
           }));
 
           console.log(
@@ -130,7 +134,7 @@ export class ProductService {
   }
 
   // Get a single product by ID
-  getProduct(productId: string): Observable<product> {
+  getProduct(productId: string): Observable<ProductDetails> {
     console.log('[ProductService] Fetching product with ID:', productId);
 
     return this.http
@@ -143,27 +147,36 @@ export class ProductService {
         ),
         map(({ data }) => ({
           id: data.product._id,
-          name: data.product.productName,
-          images: data.product.productImages,
-          subTitle: data.product.productSubtitle,
-          price: data.product.productPrice,
-          quantity: data.product.productQuantity,
-          categories: data.product.productCategories.map(
-            (cat: { catName: string }) => cat.catName
-          ),
-          date: data.product.productDate,
-          sale: data.product.productSale,
-          description: data.product.productDescription,
-          colors: data.product.colors,
-          sizes: data.product.sizes,
+          productName: data.product.productName,
+          productSubtitle: data.product.productSubtitle,
+          productPrice: data.product.productPrice,
+          productDate: data.product.productDate,
+          productSale: data.product.productSale,
+          productDescription: data.product.productDescription,
           brand: data.product.brand,
+
+          productCategories: data.product.productCategories.map(
+            (cat: string) => cat
+          ),
+
+          colors: data.product.colors.map((color: any) => ({
+            name: color.name,
+            hex: color.hex,
+            quantity: color.quantity,
+            sku: color.sku,
+            mainImage: color.images.length > 0 ? color.images[0].url : null,
+            galleryImages: color.images.map((img: any) => img.url),
+          })),
+
+          additionalInformation: data.product.additionalInformation || {},
         })),
         tap((product) =>
           console.log('[ProductService] Transformed product:', product)
         ),
+
         catchError((error) => {
           console.error('[ProductService] Error fetching product:', error);
-          return of(null as unknown as product);
+          return of(null as unknown as ProductDetails);
         })
       );
   }

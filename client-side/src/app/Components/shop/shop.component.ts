@@ -36,6 +36,8 @@ import { product } from '../../Models/product.model';
 import { category } from '../../Models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { SearchComponent } from '../search/search.component';
+import { Router } from '@angular/router';
 
 // Enums
 enum SortOptions {
@@ -66,6 +68,7 @@ enum SortOptions {
     ProductItemComponent,
     PaginationComponent,
     ProductItemSkeletonComponent,
+    SearchComponent,
   ],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
@@ -124,7 +127,8 @@ export class ShopComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private categoriesService: CategoriesService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -141,8 +145,8 @@ export class ShopComponent implements OnInit {
     this.priceMax$ = this.productService.getMaxPrice();
     combineLatest([this.priceMin$, this.priceMax$]).subscribe(([min, max]) => {
       console.log(`Price range initialized: ${min} - ${max}`);
-      this.minPrice = min;
-      this.maxPrice = max;
+      this.minPrice = Math.floor(min);
+      this.maxPrice = Math.ceil(max);
     });
   }
 
@@ -152,6 +156,10 @@ export class ShopComponent implements OnInit {
       map((categories) => categories.map((cat) => cat.name))
     );
     this.categoriesService.getCategories().subscribe();
+  }
+
+  goToProduct(id: string) {
+    this.router.navigate([`/product/${id}`]);
   }
 
   fetchProducts() {
@@ -188,8 +196,8 @@ export class ShopComponent implements OnInit {
   onPriceChange(event: Event, isMin: boolean): void {
     const value = Number((event.target as HTMLInputElement).value);
     isMin
-      ? (this.minPrice = Math.min(value, this.maxPrice - 1))
-      : (this.maxPrice = Math.max(value, this.minPrice + 1));
+      ? (this.minPrice = Math.floor(Math.min(value, this.maxPrice - 1)))
+      : (this.maxPrice = Math.ceil(Math.max(value, this.minPrice + 1)));
     console.log(
       `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
     );

@@ -13,12 +13,15 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, ButtonComponent, CurrencyPipe],
 })
 export class CartTotalsComponent {
-  constructor(private router: Router, private cartService: CartService) {}
+  subtotal$!: Observable<number>;
 
-  @Input() subtotal: Observable<number> = new Observable<number>();
+  constructor(private cartService: CartService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.subtotal$ = this.cartService.cartSubtotal$;
+  }
 
   goToCheckout() {
-    this.cartService.setCheckoutData();
     this.router.navigate(['/checkout']);
   }
 }

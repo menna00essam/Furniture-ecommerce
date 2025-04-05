@@ -1,6 +1,6 @@
 export interface productCart {
   id: string;
-  images: string[];
+  image: string;
   name: string;
   price: number;
   quantity: number;

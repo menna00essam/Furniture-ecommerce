@@ -4,43 +4,6 @@ const AppError = require("../utils/appError");
 const Product = require("../models/product.model");
 const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
 
-// - get a product by id
-// - get products full data for compariosn
-// - get all-products (name and id ) usred in search
-// - get all products by search -- pagination 16
-
-// const getAllProducts = asyncWrapper(async (req, res, next) => {
-//   let { limit = 16, page = 1, order = 'desc' } = req.query;
-
-//   limit = Math.max(1, limit);
-//   page = Math.max(1, page);
-
-//   if (isNaN(limit) || isNaN(page)) {
-//     return next(
-//       new AppError(
-//         "Invalid pagination parameters. 'limit' and 'page' must be positive numbers.",
-//         400,
-//         httpStatusText.FAIL
-//       )
-//     );
-//   }
-
-//   const skip = (page - 1) * limit;
-//   const totalProducts = await Product.countDocuments();
-//   const sortOrder = order === 'asc' ? 1 : -1;
-
-//   const products = await Product.find()
-//     .select(
-//       '_id productName productSubtitle productImages productPrice productDate productSale productCategories productQuantity'
-//     )
-//     .limit(limit)
-//     .skip(skip)
-//     .sort({ productDate: sortOrder })
-//     .populate('productCategories', 'catName')
-//     .lean();
-
-//   res.status(200).json({
-//     status: httpStatusText.SUCCESS,
 const getAllProducts = asyncWrapper(async (req, res, next) => {
   let {
     limit = 16,
@@ -174,10 +137,15 @@ const getFilteredProducts = async (
     { $limit: limit },
     {
       $lookup: {
-        from: "categories",
-        localField: "productCategories",
-        foreignField: "_id",
-        as: "productCategories",
+        from: 'categories',
+        localField: 'productCategories',
+        foreignField: '_id',
+        as: 'productCategories',
+      },
+    },
+    {
+      $addFields: {
+        firstColor: { $arrayElemAt: ['$colors', 0] },
       },
     },
     {
@@ -185,17 +153,20 @@ const getFilteredProducts = async (
         _id: 1,
         productName: 1,
         productSubtitle: 1,
-        productImages: 1,
+        productImage: {
+          $arrayElemAt: ['$firstColor.images.url', 0],
+        },
         productPrice: 1,
         productDate: 1,
         productSale: 1,
-        productQuantity: 1,
+        productQuantity: '$firstColor.quantity',
         effectivePrice: 1,
+        mainColor: '$firstColor.name',
         productCategories: {
           $map: {
-            input: "$productCategories",
-            as: "category",
-            in: { _id: "$$category._id", catName: "$$category.catName" },
+            input: '$productCategories',
+            as: 'category',
+            in: { _id: '$$category._id', catName: '$$category.catName' },
           },
         },
       },
@@ -327,14 +298,14 @@ const getMaxEffectivePrice = asyncWrapper(async (req, res, next) => {
       $addFields: {
         effectivePrice: {
           $cond: {
-            if: { $gt: ["$productSale", 0] }, // If there's a discount
+            if: { $gt: ["$productSale", 0] },
             then: {
               $multiply: [
                 "$productPrice",
                 { $subtract: [1, { $divide: ["$productSale", 100] }] },
               ],
             },
-            else: "$productPrice", // Otherwise, use original price
+            else: "$productPrice",
           },
         },
       },
