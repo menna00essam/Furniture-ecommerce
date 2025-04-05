@@ -51,7 +51,9 @@ export class SettingComponent {
 
   ngOnInit(): void {
     this.user$ = this.userService.user$;
-    this.userService.getUser().subscribe((user) => {});
+    this.userService.getUser().subscribe((user) => {
+      console.log(user.thumbnail);
+    });
   }
   toggleCheck() {
     this.isChecked = !this.isChecked;

@@ -23,6 +23,7 @@ export class UserService {
       .pipe(
         map(({ data: { user } }) => {
           const { email, username, _id, thumbnail } = user;
+          console.log(thumbnail);
           return {
             email,
             name: username,
