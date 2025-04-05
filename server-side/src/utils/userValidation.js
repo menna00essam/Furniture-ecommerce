@@ -5,7 +5,7 @@ const ajv = new Ajv();
 const userSchema = {
   type: 'object',
   properties: {
-    username: { type: 'string', pattern: '^[a-zA-Z]*$', minLength: 3 },
+    username: { type: 'string', pattern: '^[a-zA-Z ]*$', minLength: 3 },
     email: {
       type: 'string',
       pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$',
