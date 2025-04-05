@@ -58,7 +58,8 @@ export class CartService {
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error(`[CartService] ${operation} failed:`, error);
+      if (error.status != 404)
+        console.error(`[CartService] ${operation} failed:`, error);
       return of(result as T);
     };
   }
