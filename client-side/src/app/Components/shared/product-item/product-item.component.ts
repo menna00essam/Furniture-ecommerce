@@ -36,7 +36,10 @@ import { productCart } from '../../../Models/productCart.model';
   animations: [
     trigger('slideInOut', [
       state('in', style({ transform: 'translateY(0%)', opacity: 1 })),
-      state('out', style({ transform: 'translateY(100%)', opacity: 0 })),
+      state(
+        'out',
+        style({ transform: 'translateY(100%)', opacity: 0, display: 'none' })
+      ),
       transition('in <=> out', [animate('300ms ease-in-out')]),
     ]),
   ],
@@ -67,11 +70,13 @@ export class ProductItemComponent implements OnInit {
   }
 
   toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe(() => {
-      this.isFavoriteState = this.favoriteService.isInFavorites(
-        this.product.id
-      );
-      this.cdr.markForCheck();
+    this.favoriteService.toggleFavourite(this.product.id).subscribe({
+      next: () => {
+        this.isFavoriteState = this.favoriteService.isInFavorites(
+          this.product.id
+        );
+        this.cdr.markForCheck();
+      },
     });
   }
 

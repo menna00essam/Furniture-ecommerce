@@ -9,7 +9,6 @@ export const orderGuard: CanActivateFn = (route, state) => {
   if (checkoutService.hasCompletedCheckout()) {
     return true;
   } else {
-    // Redirect if accessed directly
     router.navigate(['/cart']);
     return false;
   }

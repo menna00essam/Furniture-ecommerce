@@ -60,6 +60,7 @@ export class FavoriteService {
       first(),
       switchMap((isLoggedIn) => {
         if (!isLoggedIn) {
+        
           this.modalService.show(LoginPromptModalComponent);
           return of(this.favoritesSubject.getValue());
         }

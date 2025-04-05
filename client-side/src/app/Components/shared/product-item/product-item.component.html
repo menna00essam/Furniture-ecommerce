@@ -1,21 +1,23 @@
-<div
-  class="bg-gray-light relative overflow-hidden"
-  aria-labelledby="product-title"
->
-  @if (product.sale) {
-  <p
-    class="absolute w-[50px] h-[50px] right-[10px] top-[10px] p-[10px] text-white rounded-full bg-red-light flex items-center justify-center"
-    aria-label="Sale discount"
-  >
-    -{{ product.sale }}%
-  </p>
-  } @if(isNewProduct()){
-  <p
-    class="absolute w-[50px] h-[50px] right-[10px] top-[10px] p-[10px] text-white rounded-full bg-green-light flex items-center justify-center"
-    aria-label="Sale discount"
-  >
-    New
-  </p>
+<div class="bg-gray-light relative" aria-labelledby="product-title">
+  @if(product.sale||isNewProduct()){
+  <div class="absolute right-1 top-1.5 flex gap-2">
+    @if (product.sale) {
+    <p
+      class="w-[50px] h-[50px] p-[10px] text-white rounded-full bg-red-light flex items-center justify-center"
+      aria-label="Sale discount"
+    >
+      -{{ product.sale }}%
+    </p>
+    } @if(isNewProduct()){
+    <p
+      class="w-[50px] h-[50px] p-[10px] text-white rounded-full bg-green-light flex items-center justify-center"
+      aria-label="Sale discount"
+    >
+      New
+    </p>
+
+    }
+  </div>
 
   }
   <div [routerLink]="['/product', product.id]" class="cursor-pointer">
@@ -62,7 +64,7 @@
   <div
     class="hidden bg-black-transparent p-3 w-full flex flex-col items-center justify-center"
     [ngClass]="{
-      'lg:flex lg:absolute lg:h-full lg:top-0 lg:left-0': !showActions
+      'lg:flex lg:absolute lg:h-full lg:top-0 lg:left-0': !showActions,
     }"
     [@slideInOut]="isHovered ? 'in' : 'out'"
     [@.disabled]="showActions"
