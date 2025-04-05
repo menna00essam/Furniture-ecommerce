@@ -218,6 +218,7 @@ const toggleFavourite = asyncWrapper(async (req, res, next) => {
   }
 
   const index = user.favourites.indexOf(productId);
+  let isFavourite;
 
   if (index !== -1) {
     isFavourite = false;
@@ -229,31 +230,61 @@ const toggleFavourite = asyncWrapper(async (req, res, next) => {
 
   await user.save();
 
-  // Populate favourites before sending response
+  // Populate and transform the response
   const updatedUser = await User.findById(userId)
-    .populate("favourites", "_id productName productImages productSubtitle")
+    .populate({
+      path: "favourites",
+      select: "_id productName productSubtitle colors",
+    })
     .lean();
+
+  const formattedFavourites = updatedUser.favourites.map((product) => {
+    const firstColor = product.colors?.[0];
+    const firstImage = firstColor?.images?.[0]?.url || null;
+
+    return {
+      _id: product._id,
+      productName: product.productName,
+      productSubtitle: product.productSubtitle,
+      productImage: firstImage,
+    };
+  });
 
   res.status(200).json({
     status: "success",
-    data: { favourites: updatedUser.favourites }, // Returns populated data
+    data: { favourites: formattedFavourites },
   });
 });
 
 const getFavourites = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
+
   const user = await User.findById(userId)
-    .populate("favourites", "_id productName productImages productSubtitle")
+    .populate({
+      path: "favourites",
+      select: "_id productName productSubtitle colors",
+    })
     .lean();
 
   if (!user) {
-    return next(
-      new AppError("User not found with", 404, httpStatusText.NOT_FOUND)
-    );
+    return next(new AppError("User not found", 404, httpStatusText.NOT_FOUND));
   }
+
+  const formattedFavourites = user.favourites.map((product) => {
+    const firstColor = product.colors?.[0];
+    const firstImage = firstColor?.images?.[0]?.url || null;
+
+    return {
+      _id: product._id,
+      productName: product.productName,
+      productSubtitle: product.productSubtitle,
+      productImage: firstImage,
+    };
+  });
+
   res.status(200).json({
     status: "success",
-    data: { favourites: user.favourites },
+    data: { favourites: formattedFavourites },
   });
 });
 
