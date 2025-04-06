@@ -92,7 +92,7 @@ const getRelatedPosts = asyncWrapper(async (req, res, next) => {
   console.log(id);
 
   // Find the current post
-  const post = await Post.findById(id);
+  const post = await Post.findById({ _id: { $eq: id } });
 
   if (!post)
     return next(new AppError('Post not found.', 404, httpStatusText.FAIL));
