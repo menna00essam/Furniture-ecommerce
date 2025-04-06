@@ -165,7 +165,7 @@ const transporter = nodemailer.createTransport({
 
 const forgotPassword = asyncWrapper(async (req, res, next) => {
   const { email } = req.body;
-  let user = await userModel.findOne({ email });
+  let user = await userModel.findOne({ email: { $eq: email } });
   if (!user) {
     return next(
       new AppError(
