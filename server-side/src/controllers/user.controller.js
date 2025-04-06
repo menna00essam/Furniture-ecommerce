@@ -108,7 +108,7 @@ const changeIMG = asyncWrapper(async (req, res, next) => {
 const changePassword = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
   const { password } = req.body;
-  console.log(password, userId);
+  console.log(`Password change request received for user: ${userId}`);
   if (!password) {
     return next(new AppError("Password is required", 400, httpStatusText.FAIL));
   }
