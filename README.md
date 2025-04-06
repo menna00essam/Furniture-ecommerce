@@ -58,14 +58,15 @@ npm start
 
 ### 📦 Backend
 
-```cd server-side
+```bash
+cd server-side
 npm install
 npm run dev
 ```
 
 > ✅ **Make sure MongoDB is running locally or update your connection string in the `.env` file.**
 
-You can configure your backend settings such as MongoDB URI, JWT secret, and Stripe API keys inside a `.env` file in the `backend` folder.
+You can configure your backend settings such as MongoDB URI, JWT secret, and Stripe API keys inside a `.env` file in the `server-side` folder.
 
 ---
 
