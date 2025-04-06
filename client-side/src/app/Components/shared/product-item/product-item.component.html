@@ -1,4 +1,7 @@
-<div class="bg-gray-light relative overflow-hidden" aria-labelledby="product-title">
+<div
+  class="bg-gray-light relative overflow-hidden"
+  aria-labelledby="product-title"
+>
   @if(product.sale||isNewProduct()){
   <div class="absolute right-1 top-1.5 flex gap-2">
     @if (product.sale) {
@@ -69,9 +72,17 @@
     [@slideInOut]="isHovered ? 'in' : 'out'"
     [@.disabled]="showActions"
   >
-    <app-button type="plain" (click)="toggleCart()" btnWidth="200px"
-      >{{ isInCartState ? "Remove from" : "Add to" }} Cart</app-button
+    <app-button
+      *ngIf="product.quantity > 0"
+      type="plain"
+      (click)="toggleCart()"
+      btnWidth="200px"
     >
+      {{ isInCartState ? "Remove from" : "Add to" }} Cart
+    </app-button>
+    <p *ngIf="product.quantity < 1" class="text-red-500 text-xl">
+      Out of stock
+    </p>
     <nav
       class="flex flex-row flex-wrap justify-center gap-5 text-white mt-3"
       aria-label="Product actions"
