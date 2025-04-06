@@ -113,51 +113,47 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  getMappedProduct$(): Observable<product | null> {
-    return this.product$.pipe(
-      map((product) => {
-        if (!product || !this.selectedColor) return null;
-
-        return {
-          id: product.id,
-          name: product.productName,
-          image: this.selectedColor.mainImage || 'default-image.jpg',
-          subTitle: product.productSubtitle,
-          price: this.salePrice,
-          color: this.selectedColor.name,
-          quantity: this.count,
-          categories: product.productCategories || [],
-          date: product.productDate,
-          sale: product.productSale,
-          colors: [this.selectedColor.hex],
-          sizes: [],
-          brand: product.brand,
-        };
-      })
-    );
+  getMappedProduct(product: ProductDetails): product {
+    return {
+      id: product.id,
+      name: product.productName,
+      image: this.selectedColor?.mainImage || 'default-image.jpg',
+      subTitle: product.productSubtitle,
+      price: this.salePrice,
+      color: this.selectedColor?.name || '',
+      quantity: this.count,
+      categories: product.productCategories || [],
+      date: product.productDate,
+      sale: product.productSale,
+      colors: [this.selectedColor?.hex || ''],
+      sizes: [],
+      brand: product.brand,
+    };
   }
 
   toggleCart() {
-    this.getMappedProduct$().subscribe((productToAdd) => {
-      if (!productToAdd) {
-        this.warningMessage = 'Please select a color first';
-        return;
-      }
+    const productDetails = this.productSubject.getValue();
+    if (!productDetails) {
+      console.error('Product details are null.');
+      return;
+    }
+    const product = this.getMappedProduct(productDetails);
 
-      const variantId = String(productToAdd.id);
+    if (!product) {
+      this.warningMessage = 'Please select a color first';
+      return;
+    }
 
-      if (this.isInCartState) {
-        this.cartService.removeProduct(variantId);
-      } else {
-        this.cartService.addProduct(
-          { ...productToAdd, id: variantId },
-          this.count
-        );
-      }
+    const variantId = String(product.id);
 
-      this.isInCartState = !this.isInCartState;
-      this.cdr.markForCheck();
-    });
+    if (this.isInCartState) {
+      this.cartService.removeProduct(variantId);
+    } else {
+      this.cartService.addProduct({ ...product, id: variantId }, this.count);
+    }
+
+    this.isInCartState = !this.isInCartState;
+    this.cdr.markForCheck();
   }
 
   fetchProduct(productId: string) {
