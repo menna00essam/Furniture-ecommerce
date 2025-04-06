@@ -180,7 +180,7 @@ const editUser = asyncWrapper(async (req, res, next) => {
   }
 
   if (email) {
-    const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+    const existingUser = await User.findOne({ email: { $eq: email }, _id: { $ne: userId } });
     if (existingUser) {
       return next(
         new AppError("Email already in use", 400, httpStatusText.FAIL)
