@@ -35,7 +35,7 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private router: Router,
     private productService: ProductService,
-    private toast:NgToastService,
+    private toast: NgToastService
   ) {}
 
   ngOnInit(): void {
@@ -61,10 +61,12 @@ export class CartComponent implements OnInit {
             if (item.quantity < totalAvailableStock) {
               this.cartService.increaseQuantity(item.id);
             } else {
-              this.toast.danger(`you have reached to available quantity for ${item.name}`);
+              this.toast.danger(
+                `you have reached to available quantity for ${item.name}`
+              );
               // console.log(`Maximum quantity available for ${item.name}`);
             }
-          } 
+          }
           return of(null);
         })
       )

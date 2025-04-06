@@ -1,14 +1,14 @@
 const express = require('express');
 const productController = require('../controllers/product.controller');
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per windowMs
-});
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // max 100 requests per windowMs
+// });
 
-router.use(limiter);
+// router.use(limiter);
 
 router.route('/').get(productController.getAllProducts);
 router.route('/search').get(productController.getSearchProducts);

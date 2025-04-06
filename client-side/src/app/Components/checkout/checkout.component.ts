@@ -115,7 +115,7 @@ export class CheckoutComponent implements OnDestroy {
 
   /** Load cart data on component initialization */
   private loadCartData(): void {
-    this.cartService.getCart().subscribe(cartItems => {
+    this.cartService.getCart().subscribe((cartItems) => {
       this.cartItems = cartItems;
     });
     this.subtotal$ = this.cartService.cartSubtotal$;
@@ -186,7 +186,7 @@ export class CheckoutComponent implements OnDestroy {
     };
 
     console.log('cartItems>>>>>>>>>>', this.cartItems);
-    
+
     const orderItems: OrderItem[] = this.cartItems.map((item) => ({
       productId: item.productId,
       productName: item.name,
