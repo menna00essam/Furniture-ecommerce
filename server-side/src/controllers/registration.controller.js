@@ -206,7 +206,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
 });
 const resetPassword = asyncWrapper(async (req, res, next) => {
   const { token, password } = req.body;
-  let user = await userModel.findOne({ resetToken: token });
+  let user = await userModel.findOne({ resetToken: { $eq: token } });
   if (!user || user.resetTokenExpiry < Date.now()) {
     return next(
       new AppError("Invalid or expired token.", 400, httpStatusText.FAIL)
