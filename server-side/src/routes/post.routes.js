@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postControllers = require('../controllers/post.controller');
+const rateLimit = require('express-rate-limit');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
