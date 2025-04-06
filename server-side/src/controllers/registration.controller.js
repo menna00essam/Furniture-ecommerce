@@ -50,7 +50,7 @@ const signup = asyncWrapper(async (req, res, next) => {
 const login = asyncWrapper(async (req, res, next) => {
   const user = req.body;
   let foundedUser = await userModel.findOne({
-    email: user.email,
+    email: { $eq: user.email },
   });
   if (!foundedUser) {
     return next(
