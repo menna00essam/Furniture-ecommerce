@@ -64,10 +64,25 @@ export class CartService {
     };
   }
 
+  private calculateDiscountedPrice(price: number, sale?: number): number {
+    return sale ? price * (1 - sale / 100) : price;
+  }
+
   /*** Cart Operations ***/
   private loadCart(): void {
     console.log('[CartService] Loading cart...');
     this.getCart().subscribe();
+  }
+
+  private mapToProductCart(p: any): productCart {
+    return {
+      id: p._id,
+      name: p.productName,
+      image: p.productImage,
+      price: p.productPrice,
+      quantity: p.productQuantity,
+      subtotal: p.productPrice * p.productQuantity,
+    };
   }
 
   getCart(): Observable<productCart[]> {
@@ -100,91 +115,62 @@ export class CartService {
     }
   }
 
-  private mapToProductCart(p: any): productCart {
-    return {
-      id: p._id,
-      name: p.productName,
-      image: p.productImage,
-      price: p.productPrice,
-      quantity: p.productQuantity,
-      subtotal: p.productPrice * p.productQuantity, // Fixed subtotal calculation
-    };
-  }
-
-  updateCart(cart: productCart[]): void {
-    console.log('[CartService] Cart updated:', cart);
-    this.cartSubject.next(cart);
-    if (!this.isLoggedInSubject.getValue()) this.saveGuestCart(cart);
-  }
-
   addProduct(product: product, quantity: number = 1): void {
     console.log(`[CartService] Adding product to cart: ${product.name}`);
-    if (this.isLoggedInSubject.getValue()) {
-      this.http
-        .post(
-          this.apiUrl,
-          [{ productId: product.id, quantity, color: product.color }],
-          { headers: this.getAuthHeaders() }
-        )
-        .pipe(catchError(this.handleError('addProduct')))
-        .subscribe({
-          next: (response: any) => {
-            console.log('[CartService] Add product response:', response);
-            if (response.status === 'success') {
-              let cart = [...this.cartSubject.getValue()];
-              const discountedPrice = product.sale
-                ? product.price * (1 - product.sale / 100)
-                : product.price;
 
-              let existingProduct = cart.find((p) => p.id === product.id);
-
-              if (existingProduct) {
-                existingProduct.quantity++;
-                existingProduct.subtotal =
-                  existingProduct.quantity * existingProduct.price;
-              } else {
-                cart.push({
-                  id: product.id,
-                  name: product.name,
-                  image: product.image,
-                  price: discountedPrice,
-                  quantity: quantity,
-                  subtotal: discountedPrice,
-                });
-              }
-
-              this.cartSubject.next(cart);
-              this.cartSubtotalSubject.next(
-                cart.reduce((sum, p) => sum + p.subtotal, 0)
-              );
-              console.log('[CartService] Product added:', cart);
-              this.toast.success(`${product.name} added to cart successfully.`);
-            }
-          },
-        });
-    } else {
-      let cart = [...this.cartSubject.getValue()];
-      const discountedPrice = product.sale
-        ? product.price * (1 - product.sale / 100)
-        : product.price;
-
-      cart.push({
-        id: product.id,
-        name: product.name,
-        image: product.image,
-        price: discountedPrice,
-        quantity: quantity,
-        subtotal: discountedPrice,
-      });
-
-      this.saveGuestCart(cart);
-      this.cartSubject.next(cart);
-      this.cartSubtotalSubject.next(
-        cart.reduce((sum, p) => sum + p.subtotal, 0)
-      );
-      console.log('[CartService] Product added for guest user:', cart);
-      this.toast.success(`${product.name} added to cart successfully.`);
+    if (!this.isLoggedInSubject.getValue()) {
+      this.handleGuestAddProduct(product, quantity);
+      return;
     }
+
+    const body = [
+      {
+        productId: product.id,
+        quantity,
+        color: product.color,
+      },
+    ];
+
+    this.http
+      .post(this.apiUrl, body, { headers: this.getAuthHeaders() })
+      .pipe(catchError(this.handleError('addProduct')))
+      .subscribe({
+        next: (response: any) => {
+          console.log('[CartService] Add product response:', response);
+
+          if (response.status !== 'success') return;
+
+          const cartProducts = response.data.products.map((p: productCart) =>
+            this.mapToProductCart(p)
+          );
+
+          this.cartSubject.next(cartProducts);
+          this.cartSubtotalSubject.next(response.data.totalPrice);
+
+          this.toast.success(`${product.name} added to cart successfully.`);
+        },
+      });
+  }
+
+  private handleGuestAddProduct(product: product, quantity: number): void {
+    let cart = [...this.cartSubject.getValue()];
+    const price = this.calculateDiscountedPrice(product.price, product.sale);
+
+    cart.push({
+      id: product.id,
+      name: product.name,
+      image: product.image,
+      price,
+      quantity,
+      subtotal: price,
+    });
+
+    this.saveGuestCart(cart);
+    this.cartSubject.next(cart);
+    this.cartSubtotalSubject.next(cart.reduce((sum, p) => sum + p.subtotal, 0));
+
+    console.log('[CartService] Product added for guest user:', cart);
+    this.toast.success(`${product.name} added to cart successfully.`);
   }
 
   removeProduct(productId: string): void {
