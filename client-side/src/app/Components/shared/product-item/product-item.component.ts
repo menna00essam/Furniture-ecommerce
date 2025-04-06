@@ -5,12 +5,11 @@ import {
   ChangeDetectorRef,
   OnInit,
   HostListener,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-
 import { ButtonComponent } from '../button/button.component';
 import { RouterModule } from '@angular/router';
-
 import {
   trigger,
   transition,
@@ -22,10 +21,8 @@ import {
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
-import { Observable } from 'rxjs';
-
-import { NgToastService } from 'ng-angular-popup';
 import { productCart } from '../../../Models/productCart.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-item',
@@ -45,15 +42,16 @@ import { productCart } from '../../../Models/productCart.model';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductItemComponent implements OnInit {
+export class ProductItemComponent implements OnInit, OnDestroy {
   @Input({ required: true }) product!: product;
 
   isHovered = false;
   showActions = false;
 
-  cart$!: Observable<productCart[]>;
   isInCartState = false;
   isFavoriteState = false;
+
+  private subs = new Subscription();
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -62,34 +60,37 @@ export class ProductItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cart$ = this.cartService.cart$;
+    this.subs.add(
+      this.cartService.cart$.subscribe((cart) => {
+        this.isInCartState = cart.some((item) => item.id === this.product.id);
+        this.cdr.markForCheck();
+      })
+    );
 
-    // Initialize state
-    this.isInCartState = this.cartService.isInCart(this.product.id);
-    this.isFavoriteState = this.favoriteService.isInFavorites(this.product.id);
-  }
-
-  toggleFavourites() {
-    this.favoriteService.toggleFavourite(this.product.id).subscribe({
-      next: () => {
-        this.isFavoriteState = this.favoriteService.isInFavorites(
-          this.product.id
+    this.subs.add(
+      this.favoriteService.favorites$.subscribe((favorites) => {
+        this.isFavoriteState = favorites.some(
+          (fav) => fav.id === this.product.id
         );
         this.cdr.markForCheck();
-      },
-    });
+      })
+    );
   }
 
-  toggleCart() {
-    this.isInCartState
-      ? this.cartService.removeProduct(this.product.id)
-      : this.cartService.addProduct(this.product);
-    this.isInCartState = this.cartService.isInCart(this.product.id);
-    this.cdr.markForCheck();
+  toggleFavourites(): void {
+    this.favoriteService.toggleFavourite(this.product.id).subscribe();
+  }
+
+  toggleCart(): void {
+    if (this.isInCartState) {
+      this.cartService.removeProduct(this.product.id);
+    } else {
+      this.cartService.addProduct(this.product);
+    }
   }
 
   @HostListener('mouseenter')
-  onMouseEnter() {
+  onMouseEnter(): void {
     if (!this.showActions) {
       this.isHovered = true;
       this.cdr.markForCheck();
@@ -97,7 +98,7 @@ export class ProductItemComponent implements OnInit {
   }
 
   @HostListener('mouseleave')
-  onMouseLeave() {
+  onMouseLeave(): void {
     if (!this.showActions) {
       this.isHovered = false;
       this.cdr.markForCheck();
@@ -112,15 +113,11 @@ export class ProductItemComponent implements OnInit {
     return productDate > oneMonthAgo.getTime();
   }
 
-  isFavorite(productId: string): boolean {
-    return this.favoriteService.isInFavorites(productId);
-  }
-
-  isInCart(productId: string): boolean {
-    return this.cartService.isInCart(productId);
-  }
-
-  onImageError(event: Event) {
+  onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = '/images/mainsofa.png';
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
   }
 }

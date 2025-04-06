@@ -16,7 +16,7 @@ interface Order {
   selector: 'app-orders',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, FormsModule, DropdownComponent],
+  imports: [CommonModule, FormsModule],
 })
 export class OrdersComponent implements OnInit {
   orders$!: Observable<Order[]>;

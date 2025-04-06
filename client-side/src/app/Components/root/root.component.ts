@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RouterModule, RouterOutlet } from '@angular/router';
@@ -65,7 +65,8 @@ export class RootComponent {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private toast:NgToastService, 
+    private toast: NgToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -89,11 +90,16 @@ export class RootComponent {
   }
 
   deleteFavorite(id: string): void {
-    this.favoriteService.toggleFavourite(id).subscribe();
+    this.favoriteService.toggleFavourite(id).subscribe({
+      next: () => {
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   deleteCartProduct(id: string): void {
     this.cartService.removeProduct(id);
+    this.cdr.markForCheck();
   }
 
   toggleFavModal(open: boolean): void {
@@ -107,17 +113,18 @@ export class RootComponent {
   }
 
   handleCheckoutClick(): void {
-    this.cart$.subscribe((cartItems) => {
-      this.toggleCartModal(false); 
-      if (cartItems.length === 0) {
-        this.toast.danger('cart is empty!, please add items to checkout');
-        this.router.navigate(['/']);
-      } else {
-        this.router.navigate(['/checkout']);
-      }
-    }).unsubscribe(); 
+    this.cart$
+      .subscribe((cartItems) => {
+        this.toggleCartModal(false);
+        if (cartItems.length === 0) {
+          this.toast.danger('cart is empty!, please add items to checkout');
+          this.router.navigate(['/']);
+        } else {
+          this.router.navigate(['/checkout']);
+        }
+      })
+      .unsubscribe();
   }
- 
 
   private toggleBodyScroll(isOpen: boolean): void {
     document.body.style.overflowY = isOpen ? 'hidden' : 'auto';

@@ -201,6 +201,7 @@ export class ShopComponent implements OnInit {
     console.log(
       `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
     );
+    this.currentPage = 1;
     this.fetchProducts();
   }
 
@@ -220,6 +221,7 @@ export class ShopComponent implements OnInit {
       ? [...this.selectedCategories, category.id]
       : this.selectedCategories.filter((c) => c !== category.id);
     console.log(`Category selection changed: ${this.selectedCategories}`);
+    this.currentPage = 1;
     this.fetchProducts();
   }
 

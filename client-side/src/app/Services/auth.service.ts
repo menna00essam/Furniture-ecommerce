@@ -45,9 +45,7 @@ export class AuthService {
   }
 
   signup(user: any): Observable<any> {
-    return this.http
-      .post(`${this.apiUrl}/signup`, user)
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.post(`${this.apiUrl}/signup`, user);
   }
 
   login(user: any, rememberMe: boolean): Observable<any> {
@@ -59,8 +57,7 @@ export class AuthService {
           this.handleCartMerge();
           this.navigateToDashboard();
         }
-      }),
-      catchError((error) => this.handleError(error))
+      })
     );
   }
 
@@ -97,15 +94,11 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<any> {
-    return this.http
-      .post(`${this.apiUrl}/forgot-password`, { email })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email });
   }
 
   resetPassword(password: string, token: string): Observable<any> {
-    return this.http
-      .post(`${this.apiUrl}/reset-password`, { password, token })
-      .pipe(catchError((error) => this.handleError(error)));
+    return this.http.post(`${this.apiUrl}/reset-password`, { password, token });
   }
 
   private storeToken(token: string, rememberMe: boolean): void {

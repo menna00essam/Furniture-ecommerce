@@ -65,9 +65,11 @@ export class SignupComponent {
         },
         error: (err) => {
           this.errorMessage = err.error.error;
+          console.log(this.errorMessage);
         },
       });
     } else {
+      this.errorMessage = 'Form invalid';
       console.error('Form invalid');
     }
   }
