@@ -1,0 +1,129 @@
+<section class="w-full h-full flex flex-col gap-4">
+  <h3 class="text-lg font-medium">Orders</h3>
+
+  <!-- Orders Status Filters
+  <div class="flex gap-4">
+    <div
+      class="flex gap-2 p-2 border border-gray rounded-md hover:bg-gray-light has-checked:bg-gray-light cursor-pointer"
+    >
+      <input
+        type="checkbox"
+        id="pending"
+        [(ngModel)]="pendingChecked"
+        (change)="fetchOrders()"
+      />
+      <label for="pending" class="cursor-pointer">Pending</label>
+    </div>
+    <div
+      class="flex gap-2 p-2 border border-gray rounded-md hover:bg-gray-light has-checked:bg-gray-light cursor-pointer"
+    >
+      <input
+        type="checkbox"
+        id="succeeded"
+        [(ngModel)]="succeededChecked"
+        (change)="fetchOrders()"
+      />
+      <label for="succeeded" class="cursor-pointer">Succeeded</label>
+    </div>
+  </div> -->
+
+  <!-- Orders Table -->
+  <div class="rounded-md border text-xs">
+    <div class="relative w-full overflow-auto">
+      <table class="w-full text-xs sm:text-sm ">
+        <thead>
+          <tr class="border-b">
+            <th class="h-12 px-4 text-left font-medium">Order Number</th>
+            <th class="h-12 px-4 text-left font-medium">Status</th>
+            <th class="h-12 px-4 text-left font-medium">Total</th>
+            <th class="h-12 px-4 text-left font-medium">Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="totalOrders$ | async; else noData">
+            <tr
+              *ngFor="let order of orders$ | async"
+              class="border-b last:border-none"
+            >
+              <td class="px-4 py-2">{{ order.orderNumber }}</td>
+              <td class="px-4 py-2">{{ order.status }}</td>
+              <td class="px-4 py-2">{{ order.total | currency }}</td>
+              <td class="px-4 py-2">{{ order.createdAt | date }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- No Data Message -->
+  <ng-template #noData>
+    <tr>
+      <td class="p-4 text-center h-24" colspan="4">No data available</td>
+    </tr>
+  </ng-template>
+
+  <!-- Pagination -->
+  <!-- <div
+    class="flex justify-end p-3 bg-white shadow-md rounded-lg gap-4 md:gap-8"
+  >
+    Per Page Selection
+    <div class="flex items-center gap-2 min-w-auto">
+      <p class="text-sm font-medium text-gray-700">Per page</p>
+      <div class="relative">
+        <button
+          class="bg-white h-10 flex items-center px-5 cursor-pointer w-14 lg:w-30 border border-gray-medium rounded-md focus:outline-none"
+          (click)="togglePageSizesMenuOpen()"
+        >
+          <span class="text-gray-dark">{{ itemsPerPage$ | async }}</span>
+        </button>
+        <ng-container *ngIf="pageSizesMenuOpen && pageSizes.length > 0">
+          <app-dropdown
+            [items]="pageSizes"
+            (selectedValueChange)="updatePageSize($event)"
+          ></app-dropdown>
+        </ng-container>
+      </div>
+    </div>
+
+    Page Info
+    <div class="flex items-center text-sm font-medium text-gray-700">
+      Page {{ currentPage }} of {{ totalPages$ | async }}
+    </div>
+
+    Pagination Buttons
+    <div class="flex gap-2 items-center">
+      <button
+        (click)="goToFirstPage()"
+        [disabled]="currentPage === 1"
+        class="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        <<
+      </button>
+
+      <button
+        (click)="goToPreviousPage()"
+        [disabled]="currentPage === 1"
+        class="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        <
+      </button>
+
+      <button
+        (click)="goToNextPage()"
+        [disabled]="currentPage === (totalPages$ | async)"
+        class="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        >
+      </button>
+
+      <button
+        (click)="goToLastPage()"
+        [disabled]="currentPage === (totalPages$ | async)"
+        class="p-2 rounded-md border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        >>
+      </button>
+    </div>
+  </div> -->
+</section>
