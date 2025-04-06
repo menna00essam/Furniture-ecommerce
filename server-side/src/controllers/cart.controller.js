@@ -114,7 +114,7 @@ const addToCart = asyncWrapper(async (req, res, next) => {
   }
 
   for (const { productId, quantity, color } of items) {
-    const product = await Product.findById({ _id: { $eq: productId } }).lean();
+    const product = await Product.findById(productId).lean();
     const colorVariant = product.colors.find((c) => c.name === color);
     const availableQuantity = colorVariant.quantity;
     const finalQuantity = Math.min(quantity, availableQuantity);

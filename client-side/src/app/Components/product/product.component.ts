@@ -181,7 +181,7 @@ export class ProductComponent implements OnInit {
   }
 
   fetchProducts() {
-    this.productService.getProducts(1, 5).subscribe({
+    this.productService.getProducts(1, 4).subscribe({
       next: (response) => {
         this.productsLoading = false;
         this.cdr.detectChanges();

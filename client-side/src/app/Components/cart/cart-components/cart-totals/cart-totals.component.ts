@@ -16,7 +16,7 @@ import { productCart } from '../../../../Models/productCart.model';
 export class CartTotalsComponent {
   subtotal$!: Observable<number>;
   @Input() cartItems: productCart[] = [];
-  
+
   constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit(): void {
