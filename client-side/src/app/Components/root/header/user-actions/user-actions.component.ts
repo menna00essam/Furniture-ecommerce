@@ -32,11 +32,14 @@ export class UserActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.user$ = this.userService.user$;
-    this.userService.getUser().subscribe();
 
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
+
+    if (this.isLoggedIn) {
+      this.userService.getUser().subscribe();
+    }
 
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
     this.favoritesLength$ = this.favoriteService.favorites$.pipe(

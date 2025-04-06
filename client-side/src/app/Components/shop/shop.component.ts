@@ -108,7 +108,7 @@ export class ShopComponent implements OnInit {
   maxPrice!: number;
 
   // Pagination
-  productsPerPage = 5;
+  productsPerPage = 8;
   currentPage = 1;
   totalProducts = 0;
   pagesCount = 0;

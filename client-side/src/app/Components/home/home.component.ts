@@ -4,6 +4,7 @@ import {
   ElementRef,
   ViewChild,
   OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import Swiper from 'swiper';
 import {
@@ -35,28 +36,29 @@ import { product } from '../../Models/product.model';
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   products$!: Observable<product[]>;
-  productsImages = [
-    { image: '/images/products/1.png' },
-    { image: '/images/products/2.png' },
-    { image: '/images/products/3.png' },
-    { image: '/images/products/4.png' },
-    { image: '/images/products/5.png' },
-    { image: '/images/products/6.png' },
-  ];
 
   @ViewChild('swiperRef', { static: false }) swiperRef!: ElementRef;
   @ViewChild('imageSwiper', { static: false }) imageSwiper!: ElementRef;
   @ViewChild('imageSwiper2', { static: false }) imageSwiper2!: ElementRef;
 
-  constructor(private router: Router, private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.products$ = this.productService.products$;
-    this.productService.getProducts(1, 8).subscribe();
+    this.productService.getProducts(1, 10).subscribe({
+      next: () => this.cdr.detectChanges(),
+    });
   }
 
   ngAfterViewInit() {
-    this.initSwipers();
+    this.products$.subscribe((products) => {
+      if (products?.length) {
+        setTimeout(() => this.initSwipers(), 0);
+      }
+    });
   }
 
   private initSwipers(): void {

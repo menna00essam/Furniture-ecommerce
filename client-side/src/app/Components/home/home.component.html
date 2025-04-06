@@ -54,7 +54,7 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-10 w-full"
     >
-      @for (item of products$|async; track item.id) {
+      @for (item of (products$|async)?.slice(0,4); track item.id) {
       <app-product-item [product]="item"> </app-product-item>
       }
     </div>
@@ -73,9 +73,10 @@
       </p>
       <app-button type="primary-fill">Explore More</app-button>
     </div>
+
     <div #swiperRef class="swiper w-full">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <div class="relative transform transition-transform duration-300">
             <img
               [src]="product.image"
@@ -97,7 +98,7 @@
     <h2 class="text-4xl font-semibold">#FurniroFurniture</h2>
     <div #imageSwiper class="swiper w-full">
       <div class="swiper-wrapper py-2">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <img
             [src]="product.image"
             class="h-[100px] w-[200px] md:h-[200px] md:w-[300px] lg:h-[300px] lg:w-[400px] object-cover rounded-lg shadow"
@@ -107,7 +108,7 @@
     </div>
     <div #imageSwiper2 class="swiper w-full">
       <div class="swiper-wrapper py-2">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <img
             [src]="product.image"
             class="h-[100px] w-[200px] md:h-[200px] md:w-[300px] lg:h-[300px] lg:w-[400px] object-cover rounded-lg shadow"
