@@ -7,22 +7,25 @@ import {
 } from '@angular/router';
 import { BlogPost } from '../../Models/blog.model';
 import { BlogService } from '../../Services/blog.service';
+import { Subscription } from 'rxjs';
+import { BlogSkeletonComponent } from './blog-skeleton/blog-skeleton.component';
 import { CommonModule } from '@angular/common';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
-import { Subscription } from 'rxjs';
+import { RelatedBlogSkeletonComponent } from './related-blog-skeleton/related-blog-skeleton.component';
 
 @Component({
   selector: 'app-blog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    HeaderBannerComponent,
-    FeatureBannerComponent,
-  ],
   templateUrl: './blog.component.html',
   styleUrls: ['./blog.component.css'],
+  imports: [
+    BlogSkeletonComponent,
+    RouterModule,
+    CommonModule,
+    HeaderBannerComponent,
+    FeatureBannerComponent,
+    RelatedBlogSkeletonComponent,
+  ],
 })
 export class BlogComponent implements OnInit, OnDestroy {
   blogs: BlogPost[] = [];
@@ -30,6 +33,8 @@ export class BlogComponent implements OnInit, OnDestroy {
   relatedBlogs: BlogPost[] = [];
   selectedCategory: string = '';
   private routeSub: Subscription = new Subscription();
+  loading: boolean = true; // For main blog data
+  loadingRelatedBlogs: boolean = true; // For related blogs data
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -61,11 +66,15 @@ export class BlogComponent implements OnInit, OnDestroy {
   }
 
   fetchBlogData(blogID: string): void {
+    this.loading = true; // Set loading to true for main blog
+    this.loadingRelatedBlogs = true; // Set loading to true for related blogs
+
     this.blogService.getPostById(blogID).subscribe((data) => {
-      console.log('[BlogComponent] Blog data:', data);
       this.blog = data;
       this.blogService.getRelatedPosts(blogID).subscribe((relatedData) => {
         this.relatedBlogs = relatedData;
+        this.loading = false; // Set loading to false for main blog
+        this.loadingRelatedBlogs = false; // Set loading to false for related blogs
       });
     });
   }
