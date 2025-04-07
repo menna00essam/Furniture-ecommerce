@@ -1,13 +1,12 @@
-<app-header-banner bannerTitle="Blog"></app-header-banner>
+<app-header-banner
+  bannerTitle="{{ blog?.title }}"
+  [bannerPath]="['blogs', '{{blog.title}}']"
+></app-header-banner>
 
 <section class="flex flex-col md:flex-row gap-2 mx-auto max-w-[1240px] p-10">
   @if(blog){
   <div class="p-4 max-w-3xl mx-auto">
-    <img
-      [src]="blog.img"
-      [alt]="blog.title"
-      class="w-full rounded-lg"
-    />
+    <img [src]="blog.img" [alt]="blog.title" class="w-full rounded-lg" />
 
     <div class="flex items-center gap-4 text-gray text-xs md:text-sm mt-2">
       <p class="flex items-center">

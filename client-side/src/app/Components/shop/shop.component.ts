@@ -36,7 +36,7 @@ import { product } from '../../Models/product.model';
 import { category } from '../../Models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { SearchComponent } from '../search/search.component';
+import { SearchComponent } from './search/search.component';
 import { Router } from '@angular/router';
 
 // Enums
