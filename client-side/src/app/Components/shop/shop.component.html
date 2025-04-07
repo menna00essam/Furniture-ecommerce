@@ -1,7 +1,10 @@
 @let products = (products$ | async) ?? []; @let productsMinPrice = (priceMin$ |
 async); @let productsMaxPrice = (priceMax$ | async);
 
-<app-header-banner bannerTitle="Shop"></app-header-banner>
+<app-header-banner
+  bannerTitle="Shop"
+  [bannerPath]="[{ title: 'shop', path: '/shop' }]"
+></app-header-banner>
 
 <div class="bg-secondary px-1 md:px-5 text-sm sm:text-base">
   <div
@@ -9,7 +12,10 @@ async); @let productsMaxPrice = (priceMax$ | async);
   >
     <!-- Left Section: Filter & Results Info -->
     <div class="flex gap-4 items-center">
-      <div class="flex gap-2 cursor-pointer items-center" (click)="toggleShowFilter()">
+      <div
+        class="flex gap-2 cursor-pointer items-center"
+        (click)="toggleShowFilter()"
+      >
         <img src="icons/filter.svg" alt="Filter Icon" />
         <p>Filter</p>
       </div>
@@ -18,7 +24,6 @@ async); @let productsMaxPrice = (priceMax$ | async);
         {{ getDisplayedResultsRange() }}
       </p>
     </div>
-   
 
     <!-- Right Section: Sorting Dropdown -->
     <div class="flex items-center gap-2">
@@ -28,7 +33,10 @@ async); @let productsMaxPrice = (priceMax$ | async);
           class="bg-white h-10 md:h-14 flex items-center px-5 cursor-pointer w-full min-w-40 md:min-w-48 border border-gray-medium rounded-md focus:outline-none"
           (click)="toggleDropdown(true)"
         >
-          <span class="text-gray-dark overflow-ellipsis whitespace-nowrap overflow-hidden">{{ selectedSortValue$ | async }}</span>
+          <span
+            class="text-gray-dark overflow-ellipsis whitespace-nowrap overflow-hidden"
+            >{{ selectedSortValue$ | async }}</span
+          >
         </button>
         @if(showSortMenu && sortMenuItems.length > 0){
         <app-dropdown
@@ -53,7 +61,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
     class="fixed lg:relative top-0 left-0 w-full h-full lg:h-auto bg-white max-w-[300px] lg:max-w-auto lg:min-w-[300px] p-[25px] lg:pl-0 lg:pt-0 flex flex-col gap-[25px] z-[1000] lg:z-0 border-r border-gray-medium"
     [@slideInOut]="showFilters ? 'in' : 'out'"
   >
-   <app-search (onSelect)="goToProduct($event)"></app-search>
+    <app-search (onSelect)="goToProduct($event)"></app-search>
     <app-filter-option title="Category">
       <div class="flex flex-col gap-2">
         <div

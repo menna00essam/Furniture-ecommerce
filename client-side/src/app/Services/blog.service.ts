@@ -43,7 +43,7 @@ export class BlogService {
       console.log('[BlogService] Fetching all posts');
     }
 
-    this.http
+    return this.http
       .get<{ status: string; data: { totalPosts: number; posts: BlogPost[] } }>(
         url
       )
@@ -54,8 +54,7 @@ export class BlogService {
           this.totalPostsSubject.next(data.data.totalPosts);
         }),
         catchError(this.handleError)
-      )
-      .subscribe();
+      );
   }
 
   getPostById(id: string): Observable<BlogPost> {

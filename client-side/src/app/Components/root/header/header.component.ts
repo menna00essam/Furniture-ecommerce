@@ -9,7 +9,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchComponent } from '../../search/search.component';
+import { SearchComponent } from '../../shop/search/search.component';
 import { UserActionsComponent } from './user-actions/user-actions.component';
 import { NavigationComponent } from './navigation/navigation.component';
 
@@ -31,13 +31,11 @@ export class HeaderComponent {
   @Output() openCart = new EventEmitter<void>();
   isActive = false;
 
-
   constructor(private router: Router, private elementRef: ElementRef) {}
 
   toggleMenu() {
     this.isActive = !this.isActive;
   }
-
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
