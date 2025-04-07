@@ -10,5 +10,5 @@ import { RouterModule } from '@angular/router';
 })
 export class HeaderBannerComponent {
   @Input() bannerTitle = '';
-  @Input() bannerPath: string[] = [];
+  @Input() bannerPath: { title: string; path: string }[] = [];
 }

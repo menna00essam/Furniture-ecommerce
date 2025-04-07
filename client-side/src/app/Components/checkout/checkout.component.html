@@ -1,5 +1,11 @@
 <!--**** Header component ****-->
-<app-header-banner bannerTitle="Checkout"></app-header-banner>
+<app-header-banner
+  bannerTitle="Checkout"
+  [bannerPath]="[
+    { title: 'cart', path: '/cart' },
+    { title: 'checkout', path: '/checkout' }
+  ]"
+></app-header-banner>
 
 <!--**** stepper component ****-->
 <app-stepper></app-stepper>
