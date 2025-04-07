@@ -30,7 +30,7 @@ html {
   );
   @include mat.dialog-overrides(
     (
-      container-min-width: 500px,
+      container-small-max-width: 300px,
     )
   );
 }

@@ -12,36 +12,42 @@ import { ButtonComponent } from '../button/button.component';
   selector: 'app-pagination',
   imports: [ButtonComponent, CommonModule],
   template: `
-    <div class="flex justify-center gap-5 py-5">
+    <div class="flex justify-center gap-2 py-5">
       <!-- Previous Button -->
       @if(currentPage>1){
       <app-button
         type="secondary-fill"
-        btnWidth="100px"
+        btnWidth="60px"
         (click)="goToPage(currentPage - 1)"
       >
-        Previous
+        <
       </app-button>
       }
 
       <!-- Page Numbers -->
-      <app-button
-        *ngFor="let page of [].constructor(pagesCount); let i = index"
-        [type]="currentPage === i + 1 ? 'primary-fill' : 'secondary-fill'"
-        btnWidth="60px"
-        (click)="goToPage(i + 1)"
-      >
-        {{ i + 1 }}
+      @if(pagesCount!=1 && currentPage!=1){
+      <app-button type="secondary-fill" btnWidth="60px">
+        {{ currentPage - 1 }}
       </app-button>
+      }
+      <app-button type="primary-fill" btnWidth="60px">
+        {{ currentPage }}
+      </app-button>
+
+      @if(pagesCount!=1&&pagesCount!=currentPage){
+      <app-button type="secondary-fill" btnWidth="60px">
+        {{ currentPage + 1 }}
+      </app-button>
+      }
 
       <!-- Next Button -->
       @if(currentPage < pagesCount){
       <app-button
         type="secondary-fill"
-        btnWidth="70px"
+        btnWidth="60px"
         (click)="goToPage(currentPage + 1)"
       >
-        Next
+        >
       </app-button>
       }
     </div>
