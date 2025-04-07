@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   imports: [RouterOutlet, RouterModule, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {
   title = 'client';

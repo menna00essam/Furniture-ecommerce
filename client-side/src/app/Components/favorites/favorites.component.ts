@@ -17,6 +17,5 @@ import { FavoritesItemsComponent } from '../shared/favorites-items/favorites-ite
     FavoritesItemsComponent,
   ],
   templateUrl: './favorites.component.html',
-  styleUrl: './favorites.component.css',
 })
 export class FavoritesComponent {}

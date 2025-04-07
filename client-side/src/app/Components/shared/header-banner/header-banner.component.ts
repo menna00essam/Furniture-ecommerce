@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
   selector: 'app-header-banner',
   imports: [RouterModule, CommonModule],
   templateUrl: './header-banner.component.html',
-  styleUrl: './header-banner.component.css',
 })
 export class HeaderBannerComponent {
   @Input() bannerTitle = '';

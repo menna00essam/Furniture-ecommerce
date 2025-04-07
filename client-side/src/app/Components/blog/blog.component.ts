@@ -17,7 +17,6 @@ import { RelatedBlogSkeletonComponent } from './related-blog-skeleton/related-bl
 @Component({
   selector: 'app-blog',
   templateUrl: './blog.component.html',
-  styleUrls: ['./blog.component.css'],
   imports: [
     BlogSkeletonComponent,
     RouterModule,

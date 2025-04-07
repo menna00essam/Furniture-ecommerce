@@ -22,7 +22,6 @@ import {
   selector: 'app-login',
   imports: [ReactiveFormsModule, InputComponent, RouterModule, ButtonComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
   animations: [
     trigger('slideUpDown', [
       state('in', style({ height: '*', opacity: 1 })),
