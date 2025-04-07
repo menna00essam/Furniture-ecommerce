@@ -103,7 +103,13 @@
         }
 
         <!-- Submit Button -->
-        <app-button type="primary-fill">Submit</app-button>
+        <app-button type="primary-fill">
+          @if(!isLoading){ Submit } @else {
+          <div class="flex justify-center">
+            <div class="spinner"></div>
+          </div>
+          }
+        </app-button>
       </form>
 
       <!-- Submission Message -->
