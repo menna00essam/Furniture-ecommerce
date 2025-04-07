@@ -38,7 +38,7 @@ export class AuthService {
     if (cart.length > 0) {
       const cartService = this.getCartService();
       cart.forEach((p: product) => {
-        cartService.addProduct(p);
+        cartService.addProduct(p, p.quantity);
       });
       localStorage.removeItem('cart');
     }
