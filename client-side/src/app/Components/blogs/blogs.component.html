@@ -112,9 +112,10 @@
 
       <!-- Navigation Buttons -->
       <app-pagination
-        [currentPage]="currentPage"
+        [(currentPage)]="currentPage"
         [pagesCount]="totalPages"
-        (currentPageChange)="goToPage($event)"
+        [container]="this.blogsContainer"
+        (currentPageChange)="loadPosts()"
       ></app-pagination>
     </div>
   </div>

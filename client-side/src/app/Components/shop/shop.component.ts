@@ -235,26 +235,6 @@ export class ShopComponent implements OnInit {
     return `Showing ${start}-${end} of ${this.totalProducts} results`;
   }
 
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.pagesCount) {
-      console.log(`Navigating to page: ${page}`);
-      this.currentPage = page;
-      this.fetchProducts();
-      this.scrollToProducts();
-    }
-  }
-
-  private scrollToProducts(): void {
-    if (this.productsContainer) {
-      const offset = 100;
-      const topPosition =
-        this.productsContainer.nativeElement.getBoundingClientRect().top +
-        window.scrollY -
-        offset;
-      window.scrollTo({ top: topPosition, behavior: 'smooth' });
-    }
-  }
-
   toggleShowFilter(open: boolean = !this.showFilters): void {
     this.showFilters = open;
     if (window.innerWidth < 1024) {
