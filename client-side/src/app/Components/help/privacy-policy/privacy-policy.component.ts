@@ -6,6 +6,5 @@ import { FeatureBannerComponent } from '../../shared/feature-banner/feature-bann
   selector: 'app-privacy-policy',
   imports: [HeaderBannerComponent, FeatureBannerComponent],
   templateUrl: './privacy-policy.component.html',
-  styleUrl: './privacy-policy.component.css',
 })
 export class PrivacyPolicyComponent {}

@@ -123,9 +123,10 @@ async); @let productsMaxPrice = (priceMax$ | async);
     </div>
 
     <app-pagination
-      [currentPage]="currentPage"
+      [(currentPage)]="currentPage"
       [pagesCount]="pagesCount"
-      (currentPageChange)="goToPage($event)"
+      [container]="this.productsContainer"
+      (currentPageChange)="fetchProducts()"
     ></app-pagination>
     } @else if (loading) {
 

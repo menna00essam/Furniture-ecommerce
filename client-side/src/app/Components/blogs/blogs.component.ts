@@ -28,7 +28,6 @@ import { BlogSkeletonComponent } from '../blog/blog-skeleton/blog-skeleton.compo
     BlogSkeletonComponent,
   ],
   templateUrl: './blogs.component.html',
-  styleUrls: ['./blogs.component.css'],
 })
 export class BlogsComponent implements OnInit {
   @ViewChild('blogsContainer') blogsContainer!: ElementRef;
@@ -83,22 +82,6 @@ export class BlogsComponent implements OnInit {
     });
   }
 
-  goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-    this.loadPosts();
-    if (this.blogsContainer?.nativeElement) {
-      const offset = 100;
-      window.scrollTo({
-        top:
-          this.blogsContainer.nativeElement.getBoundingClientRect().top +
-          window.scrollY -
-          offset,
-        behavior: 'smooth',
-      });
-    }
-  }
-
   filterByCategory(selectedItem: { id: string; value: string } | string) {
     this.selectedCategory =
       typeof selectedItem === 'string' ? selectedItem : selectedItem.value;
@@ -111,4 +94,3 @@ export class BlogsComponent implements OnInit {
     this.isMenuOpen = open;
   }
 }
-

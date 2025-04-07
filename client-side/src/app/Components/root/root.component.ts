@@ -28,7 +28,6 @@ import { NgToastService } from 'ng-angular-popup';
     RouterModule,
   ],
   templateUrl: './root.component.html',
-  styleUrl: './root.component.css',
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
