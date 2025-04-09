@@ -91,6 +91,8 @@ export class ProductComponent implements OnInit {
   }
 
   loadProduct(): void {
+    this.productLoading = true;
+    this.productsLoading = true;
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.fetchProduct(this.productId);
@@ -161,7 +163,9 @@ export class ProductComponent implements OnInit {
       next: (productData) => {
         if (productData) {
           this.productSubject.next(productData);
-          this.updatePrices();
+          this.originalPrice = productData.productPrice;
+          this.salePrice =
+            this.originalPrice * (1 - (productData.productSale || 0) / 100);
           this.colors = productData.colors || [];
           if (this.colors.length > 0) this.setSelectedColor(0);
           this.isInCartState = this.cartService.isInCart(productData.id);
@@ -173,9 +177,13 @@ export class ProductComponent implements OnInit {
         } else {
           console.warn('[ProductComponent] No product data received.');
         }
+        this.productLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('[ProductComponent] Error fetching product:', error);
+        this.productLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
@@ -186,18 +194,27 @@ export class ProductComponent implements OnInit {
         this.productsLoading = false;
         this.cdr.detectChanges();
       },
+      error: (error) => {
+        console.error(
+          '[ProductComponent] Error fetching related products:',
+          error
+        );
+        this.productsLoading = false;
+        this.cdr.detectChanges();
+      },
     });
   }
 
-  updatePrices() {
-    this.product$.subscribe((product) => {
-      if (product) {
-        this.originalPrice = product.productPrice;
-        this.salePrice =
-          this.originalPrice * (1 - (product.productSale || 0) / 100);
-      }
-    });
-  }
+  // no need fot it
+  // updatePrices() {
+  //   this.product$.subscribe((product) => {
+  //     if (product) {
+  //       this.originalPrice = product.productPrice;
+  //       this.salePrice =
+  //         this.originalPrice * (1 - (product.productSale || 0) / 100);
+  //     }
+  //   });
+  // }
 
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;

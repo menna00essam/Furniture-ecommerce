@@ -21,6 +21,21 @@ const ALLOWED_COLORS = [
   { name: "Turquoise", hex: "#40E0D0" },
   { name: "Light Green", hex: "#90EE90" },
   { name: "Dark Green", hex: "#006400" },
+  { name: "Light Grey", hex: "#D3D3D3" },
+  { name: "Dark Grey", hex: "#A9A9A9" },
+  { name: "Ivory", hex: "#FFFFF0" },
+  { name: "Cream", hex: "#FFFDD0" },
+  { name: "Burgundy", hex: "#800020" },
+  { name: "Olive", hex: "#808000" },
+  { name: "Mustard", hex: "#FFDB58" },
+  { name: "Coral", hex: "#FF7F50" },
+  { name: "Salmon", hex: "#FA8072" },
+  { name: "Lavender", hex: "#E6E6FA" },
+  { name: "Peach", hex: "#FFDAB9" },
+  { name: "walnut", hex: "#8B4513" },
+  { name: "White Stained", hex: "#F5F5F5" },
+  { name: "Pine", hex: "#F0E68C" },
+  { name: "Oak", hex: "#8B4513" },
 ];
 
 const ProductSchema = new mongoose.Schema(
