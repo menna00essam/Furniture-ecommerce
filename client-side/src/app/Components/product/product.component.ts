@@ -73,6 +73,7 @@ export class ProductComponent implements OnInit {
 
   productLoading: boolean = true;
   productsLoading: boolean = true;
+  btnWidth: string = '150px';
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -84,6 +85,7 @@ export class ProductComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.btnWidth = window.innerWidth < 640 ? '340px' : '155px';
     this.routeSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.loadProduct();
@@ -103,6 +105,10 @@ export class ProductComponent implements OnInit {
       });
     }
   }
+
+  // get dynamicBtnWidth() {
+  //   return window.innerWidth < 640 ? '340px' : '155px';
+  // }
 
   getMappedProduct(product: ProductDetails): product {
     return {
