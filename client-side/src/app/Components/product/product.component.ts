@@ -15,7 +15,7 @@ import { ProductItemComponent } from '../shared/product-item/product-item.compon
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
@@ -147,41 +147,42 @@ export class ProductComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  fetchProduct(productId: string) {
-    this.productService.getProduct(productId).subscribe({
-      next: (productData) => {
-        if (productData) {
-          this.productSubject.next(productData);
-          this.originalPrice = productData.productPrice;
-          this.productcategories = (productData.productCategories ?? []).map(
-            ({ catName }) => catName
-          );
-          this.salePrice =
-            this.originalPrice * (1 - (productData.productSale || 0) / 100);
-          this.colors = productData.colors || [];
-          if (this.colors.length > 0) this.setSelectedColor(0);
-          this.isInCartState = this.cartService.isInCart(productData.id);
-          this.isFavoriteState = this.favoriteService.isInFavorites(
-            productData.id
-          );
+  fetchProduct(productId: string): Observable<ProductDetails> {
+    return this.productService.getProduct(productId).pipe(
+      tap({
+        next: (productData) => {
+          if (productData) {
+            this.productSubject.next(productData);
+            this.originalPrice = productData.productPrice;
+            this.productcategories = (productData.productCategories ?? []).map(
+              ({ _id }) => _id
+            );
+            this.salePrice =
+              this.originalPrice * (1 - (productData.productSale || 0) / 100);
+            this.colors = productData.colors || [];
+            if (this.colors.length > 0) this.setSelectedColor(0);
+            this.isInCartState = this.cartService.isInCart(productData.id);
+            this.isFavoriteState = this.favoriteService.isInFavorites(
+              productData.id
+            );
+            console.log(
+              '[ProductComponent -- fetch product] Categories:',
+              this.productcategories
+            ); // Check if categories are populated correctly
+            this.productLoading = false;
+            this.fetchProducts();
+          } else {
+            console.warn('[ProductComponent] No product data received.');
+          }
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('[ProductComponent] Error fetching product:', error);
           this.productLoading = false;
           this.cdr.detectChanges();
-        } else {
-          console.warn('[ProductComponent] No product data received.');
-        }
-        console.log(
-          '[ProductComponent -- fetch product] Categories:',
-          this.productcategories
-        ); //  this gves back a response  --- [ProductComponent -- fetch product] Categories: ['armchairs']
-        this.productLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('[ProductComponent] Error fetching product:', error);
-        this.productLoading = false;
-        this.cdr.detectChanges();
-      },
-    });
+        },
+      })
+    );
   }
 
   // related products
@@ -189,15 +190,10 @@ export class ProductComponent implements OnInit {
     console.log(
       '[ProductComponent -- fetch products] Categories:',
       this.productcategories
-    ); // no response
+    );
 
     this.productService.getProducts(1, 4, this.productcategories).subscribe({
       next: (response) => {
-        console.log(
-          '[ProductComponent] Related Products Response:',
-          this.productcategories
-        ); //--- got [ProductComponent] Related Products Response: ['armchairs']
-        console.log('[ProductComponent] Related Products Response:', response); // works also but get products without the category
         this.productsLoading = false;
         this.cdr.detectChanges();
       },
@@ -216,9 +212,10 @@ export class ProductComponent implements OnInit {
     this.productsLoading = true;
     this.productId = this.route.snapshot.paramMap.get('id');
     if (this.productId) {
-      this.fetchProduct(this.productId);
-      this.fetchProducts();
-      this.relatedProducts$ = this.productService.products$;
+      this.fetchProduct(this.productId).subscribe(() => {
+        console.log('[ProductComponent] Product data fetched successfully.');
+        this.relatedProducts$ = this.productService.products$;
+      });
     } else {
       console.error('Product ID not found in route parameters.');
     }
