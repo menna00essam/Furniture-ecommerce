@@ -5,7 +5,7 @@ export interface ProductDetails {
   productPrice: number;
   productDate: Date;
   productSale?: number;
-  productCategories?: string[];
+  productCategories?: any[];
   productDescription?: string;
   brand?: string;
 

@@ -15,6 +15,7 @@ import { ProductItemComponent } from '../shared/product-item/product-item.compon
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
@@ -62,6 +63,7 @@ export class ProductComponent implements OnInit {
   } | null = null;
   count: number = 1;
   originalPrice: number = 0;
+  productcategories: string[] = [];
   salePrice: number = 0;
   isInCartState: boolean = false;
   isFavoriteState: boolean = false;
@@ -88,19 +90,6 @@ export class ProductComponent implements OnInit {
       }
     });
     this.loadProduct();
-  }
-
-  loadProduct(): void {
-    this.productLoading = true;
-    this.productsLoading = true;
-    this.productId = this.route.snapshot.paramMap.get('id');
-    if (this.productId) {
-      this.fetchProduct(this.productId);
-      this.fetchProducts();
-      this.relatedProducts$ = this.productService.products$;
-    } else {
-      console.error('Product ID not found in route parameters.');
-    }
   }
 
   toggleFavorite() {
@@ -164,6 +153,9 @@ export class ProductComponent implements OnInit {
         if (productData) {
           this.productSubject.next(productData);
           this.originalPrice = productData.productPrice;
+          this.productcategories = (productData.productCategories ?? []).map(
+            ({ catName }) => catName
+          );
           this.salePrice =
             this.originalPrice * (1 - (productData.productSale || 0) / 100);
           this.colors = productData.colors || [];
@@ -177,6 +169,10 @@ export class ProductComponent implements OnInit {
         } else {
           console.warn('[ProductComponent] No product data received.');
         }
+        console.log(
+          '[ProductComponent -- fetch product] Categories:',
+          this.productcategories
+        ); //  this gves back a response  --- [ProductComponent -- fetch product] Categories: ['armchairs']
         this.productLoading = false;
         this.cdr.detectChanges();
       },
@@ -188,9 +184,20 @@ export class ProductComponent implements OnInit {
     });
   }
 
+  // related products
   fetchProducts() {
-    this.productService.getProducts(1, 4).subscribe({
+    console.log(
+      '[ProductComponent -- fetch products] Categories:',
+      this.productcategories
+    ); // no response
+
+    this.productService.getProducts(1, 4, this.productcategories).subscribe({
       next: (response) => {
+        console.log(
+          '[ProductComponent] Related Products Response:',
+          this.productcategories
+        ); //--- got [ProductComponent] Related Products Response: ['armchairs']
+        console.log('[ProductComponent] Related Products Response:', response); // works also but get products without the category
         this.productsLoading = false;
         this.cdr.detectChanges();
       },
@@ -203,6 +210,18 @@ export class ProductComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+  loadProduct(): void {
+    this.productLoading = true;
+    this.productsLoading = true;
+    this.productId = this.route.snapshot.paramMap.get('id');
+    if (this.productId) {
+      this.fetchProduct(this.productId);
+      this.fetchProducts();
+      this.relatedProducts$ = this.productService.products$;
+    } else {
+      console.error('Product ID not found in route parameters.');
+    }
   }
 
   // no need fot it
