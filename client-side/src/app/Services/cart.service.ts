@@ -274,4 +274,108 @@ export class CartService {
     localStorage.removeItem('cart');
     this.cartSubtotalSubject.next(0);
   }
+  private updateCartState(cart: productCart[]): void {
+    // Update the cart items
+    this.cartSubject.next(cart);
+
+    // Calculate new subtotal
+    const newSubtotal = cart.reduce((sum, p) => sum + p.subtotal, 0);
+    this.cartSubtotalSubject.next(newSubtotal);
+
+    // Persist guest cart
+    if (!this.isLoggedInSubject.getValue()) {
+      this.saveGuestCart(cart);
+    }
+
+    console.log('[CartService] Cart state updated:', cart);
+  }
+
+  // In CartService
+  addProductWithColor(product: product, quantity: number): void {
+    const price = this.calculateDiscountedPrice(product.price, product.sale);
+
+    if (this.isLoggedInSubject.getValue()) {
+      this.http
+        .post(
+          this.apiUrl,
+          [
+            {
+              productId: product.id,
+              quantity,
+              color: product.color,
+            },
+          ],
+          { headers: this.getAuthHeaders() }
+        )
+        .pipe(catchError(this.handleError('addProductWithColor')))
+        .subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              const cartProducts = response.data.products.map(
+                (p: productCart) => this.mapToProductCart(p)
+              );
+              this.cartSubject.next(cartProducts);
+              this.cartSubtotalSubject.next(response.data.totalPrice);
+
+              this.toast.success(
+                `${product.name} (${product.color}) added to cart successfully`
+              );
+            }
+          },
+        });
+    } else {
+      this.handleGuestAddProductWithColor(product, quantity, price);
+      this.toast.success(
+        `${product.name} (${product.color}) added to cart successfully`
+      );
+    }
+  }
+
+  removeColorVariant(productId: string, color: string): void {
+    const cart = this.cartSubject.getValue();
+    const product = cart.find((p) => p.id === productId && p.color === color);
+
+    if (product) {
+      const filteredCart = cart.filter(
+        (p) => !(p.id === productId && p.color === color)
+      );
+      this.updateCartState(filteredCart);
+      this.toast.success(`${product.name} (${color}) removed from the cart`);
+    }
+  }
+
+  private handleGuestAddProductWithColor(
+    product: product,
+    quantity: number,
+    price: number
+  ): void {
+    const cart = [...this.cartSubject.getValue()];
+    const existing = cart.find(
+      (p) => p.id === product.id && p.color === product.color
+    );
+
+    if (existing) {
+      existing.quantity += quantity;
+      existing.subtotal = existing.quantity * price;
+    } else {
+      cart.push({
+        ...product,
+        price,
+        quantity,
+        subtotal: price * quantity,
+        color: product.color,
+      });
+    }
+
+    this.updateCartState(cart);
+  }
+
+  isColorInCart(productId: string, color: string): boolean {
+    return this.cartSubject
+      .getValue()
+      .some((p) => p.id === productId && p.color === color);
+  }
+  isUserLoggedIn(): boolean {
+    return this.isLoggedInSubject.getValue();
+  }
 }

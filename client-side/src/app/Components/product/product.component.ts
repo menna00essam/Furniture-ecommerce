@@ -130,27 +130,27 @@ export class ProductComponent implements OnInit {
 
   toggleCart() {
     const productDetails = this.productSubject.getValue();
-    if (!productDetails) {
-      console.error('Product details are null.');
-      return;
-    }
-    const product = this.getMappedProduct(productDetails);
-
-    if (!product) {
+    if (!productDetails || !this.selectedColor) {
       this.warningMessage = 'Please select a color first';
       return;
     }
 
-    const variantId = String(product.id);
+    const product = this.getMappedProduct(productDetails);
+    const colorName = this.selectedColor.name;
 
     if (this.isInCartState) {
-      this.cartService.removeProduct(variantId);
+      this.cartService.removeColorVariant(product.id, colorName);
     } else {
-      this.cartService.addProduct({ ...product, id: variantId }, this.count);
+      this.cartService.addProductWithColor(product, this.count);
     }
 
-    this.isInCartState = !this.isInCartState;
-    this.cdr.markForCheck();
+    // Optimistic update for guest users
+    if (!this.cartService.isUserLoggedIn()) {
+      this.isInCartState = this.cartService.isColorInCart(
+        product.id,
+        colorName
+      );
+    }
   }
 
   fetchProduct(productId: string): Observable<ProductDetails> {
@@ -237,11 +237,17 @@ export class ProductComponent implements OnInit {
   //     }
   //   });
   // }
-
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;
     this.selectedImage = this.colors[index]?.mainImage || 'default-image.jpg';
     this.selectedColor = this.colors[this.selectedColorIndex];
+
+    if (this.productId && this.selectedColor) {
+      this.isInCartState = this.cartService.isColorInCart(
+        this.productId,
+        this.selectedColor.name
+      );
+    }
   }
 
   selectThumbnail(image: string) {
