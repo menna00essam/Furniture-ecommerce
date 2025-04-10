@@ -16,22 +16,21 @@ export class ComparisonService {
     private productService: ProductService
   ) {}
 
+  // In ComparisonService
   addToComparison(productId: string): void {
     let comparison = JSON.parse(
       localStorage.getItem(this.comparisonKey) || '[]'
     );
-    if (!comparison.includes(productId)) {
-      if (comparison.length < 2) {
-        comparison.push(productId);
-      } else {
-        comparison[0] = productId;
-      }
-    }
 
+    // Remove existing entry if it exists
+    comparison = comparison.filter((id: string) => id !== productId);
+
+    // Add to the end of array if not full
     if (comparison.length < 2) {
       comparison.push(productId);
     } else {
-      comparison[0] = productId;
+      // If full, remove oldest and add new (FIFO)
+      comparison = [comparison[1], productId];
     }
 
     localStorage.setItem(this.comparisonKey, JSON.stringify(comparison));

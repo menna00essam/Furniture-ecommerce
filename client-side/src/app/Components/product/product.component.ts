@@ -82,6 +82,7 @@ export class ProductComponent implements OnInit {
     private productService: ProductService,
     private favoriteService: FavoriteService,
     private cartService: CartService,
+    private comparisonService: ComparisonService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -119,10 +120,6 @@ export class ProductComponent implements OnInit {
       });
     }
   }
-
-  // get dynamicBtnWidth() {
-  //   return window.innerWidth < 640 ? '340px' : '155px';
-  // }
 
   getMappedProduct(product: ProductDetails): product {
     return {
@@ -287,6 +284,19 @@ export class ProductComponent implements OnInit {
       this.count--;
     }
   }
+  onAddToComparison() {
+    if (this.product$) {
+      const currentProduct = this.productSubject.getValue();
+      if (currentProduct) {
+        console.log('Adding to comparison:', currentProduct.id);
+      }
+      // Use the existing ComparisonService to handle adding to the comparison
+      if (currentProduct) {
+        this.comparisonService.addToComparison(currentProduct.id);
+      }
+    }
+  }
+
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
     this.cartSub.unsubscribe(); // Cleanup subscription
