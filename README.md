@@ -84,7 +84,7 @@ You can configure your backend settings such as MongoDB URI, JWT secret, and Str
 
 ## 🌍 Live Demo
 
-👉 [**Click here to view the live demo**](#)  
+👉 [**Click here to view the live demo**](https://furniroo-website.vercel.app)  
 
 ---
 
