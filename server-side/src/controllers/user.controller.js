@@ -116,15 +116,17 @@ const changePassword = asyncWrapper(async (req, res, next) => {
   if (!user) {
     return next(new AppError("User not found", 404, httpStatusText.NOT_FOUND));
   }
-  const isSamePassword = await bcrypt.compare(password, user.password);
-  if (isSamePassword) {
-    return next(
-      new AppError(
-        "New password must be different from the old one",
-        400,
-        httpStatusText.FAIL
-      )
-    );
+  if (!user.googleId) {
+    const isSamePassword = await bcrypt.compare(password, user.password);
+    if (isSamePassword) {
+      return next(
+        new AppError(
+          "New password must be different from the old one",
+          400,
+          httpStatusText.FAIL
+        )
+      );
+    }
   }
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(password, salt);
