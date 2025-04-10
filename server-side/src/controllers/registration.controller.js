@@ -95,7 +95,7 @@ const google = (req, res, next) => {
   );
   // res.redirect(`http://localhost:4200/auth/login?token=${token}`);
   res.redirect(
-    `http://furniture-ecommerce-phi.vercel.app/auth/login?token=${token}`
+    `https://furniture-ecommerce-phi.vercel.app/auth/login?token=${token}`
   );
 }; 
 // const code = req.query.code;
@@ -187,7 +187,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
 
   await user.save();
   // const resetLink = `http://localhost:4200/auth/reset-password?token=${user.resetToken}`;
-  const resetLink = `http://furniture-ecommerce-phi.vercel.app/auth/reset-password?token=${user.resetToken}`;
+  const resetLink = `https://furniture-ecommerce-phi.vercel.app/auth/reset-password?token=${user.resetToken}`;
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.email,
