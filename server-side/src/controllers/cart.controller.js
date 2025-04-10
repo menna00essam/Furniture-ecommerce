@@ -1,23 +1,23 @@
-const mongoose = require('mongoose');
-const httpStatusText = require('../utils/httpStatusText');
-const AppError = require('../utils/appError');
-const Cart = require('../models/cart.model');
-const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
-const Product = require('../models/product.model');
+const mongoose = require("mongoose");
+const httpStatusText = require("../utils/httpStatusText");
+const AppError = require("../utils/appError");
+const Cart = require("../models/cart.model");
+const asyncWrapper = require("../middlewares/asyncWrapper.middleware");
+const Product = require("../models/product.model");
 
 // GET: Retrieve user cart
 const getUserCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log('my cart user :', userId);
+  console.log("my cart user :", userId);
   const cart = await Cart.findOne({ userId })
     .populate(
-      'products.productId',
-      '_id productName colors productPrice productSale'
+      "products.productId",
+      "_id productName colors productPrice productSale"
     )
     .lean();
 
   if (!cart) {
-    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
+    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
   }
 
   const products = cart.products
@@ -72,7 +72,7 @@ const addToCart = asyncWrapper(async (req, res, next) => {
   const items = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
-    return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
+    return next(new AppError("Invalid cart items.", 400, httpStatusText.FAIL));
   }
 
   for (const item of items) {
@@ -81,16 +81,16 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 1) {
       return next(
         new AppError(
-          'Invalid productId or quantity. Quantity must be at least 1.',
+          "Invalid productId or quantity. Quantity must be at least 1.",
           400,
           httpStatusText.FAIL
         )
       );
     }
 
-    const product = await Product.findById(productId).select('colors');
+    const product = await Product.findById(productId).select("colors");
     if (!product) {
-      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+      return next(new AppError("Product not found.", 404, httpStatusText.FAIL));
     }
 
     if (!color && product.colors.length > 0) {
@@ -137,8 +137,8 @@ const addToCart = asyncWrapper(async (req, res, next) => {
   await cart.save();
   cart = await Cart.findOne({ userId })
     .populate(
-      'products.productId',
-      '_id productName colors productPrice productSale'
+      "products.productId",
+      "_id productName colors productPrice productSale"
     )
     .lean();
 
@@ -191,15 +191,15 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(productId) || quantity < 0) {
     return next(
       new AppError(
-        'Invalid productId, quantity, or color.',
+        "Invalid productId, quantity, or color.",
         400,
         httpStatusText.FAIL
       )
     );
   }
-  const product = await Product.findById(productId).select('colors');
+  const product = await Product.findById(productId).select("colors");
   if (!product) {
-    return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
+    return next(new AppError("Product not found.", 404, httpStatusText.FAIL));
   }
 
   if (!color && product.colors.length > 0) {
@@ -208,7 +208,7 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   const cart = await Cart.findOne({ userId });
 
   if (!cart) {
-    return next(new AppError('Cart not found.', 404, httpStatusText.FAIL));
+    return next(new AppError("Cart not found.", 404, httpStatusText.FAIL));
   }
 
   const productIndex = cart.products.findIndex(
@@ -218,7 +218,7 @@ const updateCart = asyncWrapper(async (req, res, next) => {
   if (productIndex === -1) {
     return next(
       new AppError(
-        'Product with this color not found in cart.',
+        "Product with this color not found in cart.",
         404,
         httpStatusText.FAIL
       )
@@ -233,8 +233,8 @@ const updateCart = asyncWrapper(async (req, res, next) => {
 
   await cart.save();
   await cart.populate(
-    'products.productId',
-    '_id productName colors productPrice'
+    "products.productId",
+    "_id productName colors productPrice"
   );
 
   res.status(200).json({
