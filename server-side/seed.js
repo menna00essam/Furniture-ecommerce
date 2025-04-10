@@ -46,320 +46,441 @@ const seedData = async () => {
     // ======================
     // 2. Create Categories
     // ======================
-    const categories = await Category.insertMany([
-      {
-        catName: "armchairs",
-        description:
-          " Armchairs are comfortable, upholstered chairs designed for relaxation and style. They come in various designs, materials, and colors, making them versatile for any room.",
-        image:
-          "https://res.cloudinary.com/dddhappm3/image/upload/v1743873075/landskrona-6_dyifrd.jpg",
-      },
-    ]);
+    // const categories = await Category.insertMany([
+    //   {
+    //     catName: "beds",
+    //     description:
+    //       "Beds are essential furniture pieces designed for sleeping and resting. They come in various styles, sizes, and materials to suit different preferences and needs.",
+    //     image:
+    //       "https://res.cloudinary.com/dddhappm3/image/upload/v1742566578/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-6_fypo21.jpg",
+    //   },
+    // ]);
 
     // ======================
     // 3. Create Products
     // ======================
 
-    // const products = await Product.insertMany([
-    //   {
-    //     productName: "smedstorp",
-    //     productSubtitle: "smedstorp unique experience for your comfort",
-    //     productPrice: 1900.99,
-    //     productSale: 15,
-    //     productCategories: ["67e692e984d799deabb3f06e"],
-    //     productDescription:
-    //       "The Smedstorp sofa combines modern elegance with everyday comfort, making it a standout addition to any living room. Featuring premium fabric upholstery, it delivers a smooth, refined texture that's both durable and inviting. Its sleek silhouette, clean lines, and supportive cushioning provide a balanced blend of style and relaxation. Available in two rich tones—dark gray for a sophisticated, minimalist feel, and dark blue for a bold yet calming touch—the Smedstorp sofa brings a contemporary charm to your home while ensuring comfort that lasts. Whether you're hosting friends or enjoying a quiet evening, this sofa is designed to enhance your living space with its timeless appeal and practical functionality.",
-    //     brand: "IkEA",
-    //     colors: [
-    //       {
-    //         name: "Dark Gray",
-    //         hex: "#333333",
+    const products = await Product.insertMany([
+      {
+        productName: "Streiko bed",
+        productSubtitle: " streiko bed is comfortable",
+        productPrice: 1900.99,
+        productSale: 15,
+        productCategories: ["67f1986686cf275218e0ad06"],
+        productDescription:
+          " The Streiko bed is a stylish and comfortable sleeping solution that combines modern design with functionality. Its sleek lines and premium fabric upholstery create an elegant look, while the sturdy construction ensures durability. The bed features a plush mattress for optimal comfort, making it perfect for a restful night's sleep. Available in various colors, including light gray and dark gray, the Streiko bed seamlessly fits into any bedroom decor. With its contemporary aesthetic and cozy feel, this bed is an excellent choice for those seeking both style and comfort.",
+        brand: "IkEA",
+        colors: [
+          {
+            name: "walnut",
+            hex: "#8B4513",
 
-    //         images: [
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-2_uxtqfw",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871503/categories/sofas/smedstorp/dark%20gray/smedstorp-2_uxtqfw.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-4_g9zmk8",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871501/categories/sofas/smedstorp/dark%20gray/smedstorp-4_g9zmk8.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-3_xrvwsi",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871501/categories/sofas/smedstorp/dark%20gray/smedstorp-3_xrvwsi.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-5_biljob",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871495/categories/sofas/smedstorp/dark%20gray/smedstorp-5_biljob.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-6_bvun2e",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871490/categories/sofas/smedstorp/dark%20gray/smedstorp-6_bvun2e.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark gray/smedstorp-1_cfd2lk",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871479/categories/sofas/smedstorp/dark%20gray/smedstorp-1_cfd2lk.jpg",
-    //           },
-    //         ],
-    //         quantity: 6,
-    //       },
-    //       {
-    //         name: "Dark Blue",
-    //         hex: "#0000FF",
+            images: [
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-7_x7f4fk",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566618/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-7_x7f4fk.png",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-6_fypo21",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566578/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-6_fypo21.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-8_jw5ewj",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566578/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-8_jw5ewj.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-5_r88fyc",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566578/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-5_r88fyc.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-4_ceyiib",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566578/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-4_ceyiib.png",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-1_g5kumg",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566577/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-1_g5kumg.png",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-2_ryeui0",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566577/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-2_ryeui0.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/Streiko Bed/walnut/Streiko_Bed-3_kjgtza",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742566577/categories/beds/Streiko%20Bed/walnut/Streiko_Bed-3_kjgtza.jpg",
+              },
+            ],
+            quantity: 9,
+          },
+          // {
+          //   name: "Dark Blue",
+          //   hex: "#0000FF",
 
-    //         images: [
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-5_vyl6bu",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871593/categories/sofas/smedstorp/dark%20blue/smedstorp-5_vyl6bu.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-2_q2od9s",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871591/categories/sofas/smedstorp/dark%20blue/smedstorp-2_q2od9s.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-3_o2y8hh",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871590/categories/sofas/smedstorp/dark%20blue/smedstorp-3_o2y8hh.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-6_ap5orh",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871584/categories/sofas/smedstorp/dark%20blue/smedstorp-6_ap5orh.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-4_gmoerw",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871579/categories/sofas/smedstorp/dark%20blue/smedstorp-4_gmoerw.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/smedstorp/dark blue/smedstorp-1_kqekak",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871574/categories/sofas/smedstorp/dark%20blue/smedstorp-1_kqekak.jpg",
-    //           },
-    //         ],
-    //         quantity: 10,
-    //       },
-    //     ],
+          //   images: [
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-5_vyl6bu",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871593/categories/sofas/smedstorp/dark%20blue/smedstorp-5_vyl6bu.jpg",
+          //     },
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-2_q2od9s",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871591/categories/sofas/smedstorp/dark%20blue/smedstorp-2_q2od9s.jpg",
+          //     },
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-3_o2y8hh",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871590/categories/sofas/smedstorp/dark%20blue/smedstorp-3_o2y8hh.jpg",
+          //     },
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-6_ap5orh",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871584/categories/sofas/smedstorp/dark%20blue/smedstorp-6_ap5orh.jpg",
+          //     },
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-4_gmoerw",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871579/categories/sofas/smedstorp/dark%20blue/smedstorp-4_gmoerw.jpg",
+          //     },
+          //     {
+          //       public_id:
+          //         "categories/sofas/smedstorp/dark blue/smedstorp-1_kqekak",
+          //       url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871574/categories/sofas/smedstorp/dark%20blue/smedstorp-1_kqekak.jpg",
+          //     },
+          //   ],
+          //   quantity: 10,
+          // },
+        ],
 
-    //     additionalInformation: {
-    //       general: {
-    //         salesPackage: "3 Sofa",
-    //         modelNumber: "SOFA-123",
-    //         configuration: "Fixed  Seat",
-    //         upholsteryMaterial: "Velvet",
-    //         upholsteryColor: "Black",
-    //       },
-    //       productDetails: {
-    //         fillingMaterial: "Foam",
-    //         finishType: "Matte",
-    //         adjustableHeadrest: false,
-    //         maximumLoadCapacity: 300,
-    //         originOfManufacture: "USA",
-    //       },
-    //       dimensions: {
-    //         width: 200,
-    //         height: 85,
-    //         depth: 90,
-    //         seatHeight: 45,
-    //         legHeight: 10,
-    //       },
-    //       warranty: {
-    //         summary: "1 Year Warranty",
-    //         serviceType: "Onsite Service",
-    //         covered: "Manufacturing Defects",
-    //         notCovered: "Physical Damage",
-    //         domesticWarranty: "Yes",
-    //       },
-    //     },
-    //   },
-    //   {
-    //     productName: "landskrona",
-    //     productSubtitle: "landskrona sofa is the best for you and your family",
-    //     productPrice: 1900.99,
-    //     productSale: 15,
-    //     productCategories: ["67e692e984d799deabb3f06e"],
-    //     productDescription:
-    //       " The Landskrona sofa is a stylish and comfortable addition to any living space. With its modern design and premium fabric upholstery, it offers both elegance and durability. The sofa features a sleek silhouette with clean lines, providing a contemporary touch to your home. Available in two stunning colors—dark gray for a sophisticated look and light green for a refreshing vibe—the Landskrona sofa is perfect for relaxing or entertaining guests. Its plush cushions ensure maximum comfort, making it an ideal choice for lounging or hosting gatherings. Elevate your living room with the Landskrona sofa's timeless appeal and functional design.",
-    //     brand: "IkEA",
-    //     colors: [
-    //       {
-    //         name: "Dark Gray",
-    //         hex: "#333333",
+        additionalInformation: {
+          general: {
+            salesPackage: "bed ",
+            modelNumber: "bed--123",
+            configuration: "Fixed sleep",
+            upholsteryMaterial: "Velvet",
+            upholsteryColor: "Black",
+          },
+          productDetails: {
+            fillingMaterial: "Foam",
+            finishType: "Matte",
+            adjustableHeadrest: false,
+            maximumLoadCapacity: 300,
+            originOfManufacture: "USA",
+          },
+          dimensions: {
+            width: 200,
+            height: 85,
+            depth: 90,
+            seatHeight: 45,
+            legHeight: 10,
+          },
+          warranty: {
+            summary: "1 Year Warranty",
+            serviceType: "Onsite Service",
+            covered: "Manufacturing Defects",
+            notCovered: "Physical Damage",
+            domesticWarranty: "Yes",
+          },
+        },
+      },
+      {
+        productName: "Slattum",
+        productSubtitle: " slattum bed is comfortable bed ",
+        productPrice: 1450.99,
+        productSale: 7.5,
+        productCategories: ["67f1986686cf275218e0ad06"],
+        productDescription:
+          " The Slattum bed is a stylish and comfortable sleeping solution that combines modern design with functionality. Its sleek lines and premium fabric upholstery create an elegant look, while the sturdy construction ensures durability. The bed features a plush mattress for optimal comfort, making it perfect for a restful night's sleep. Available in various colors, including light gray and dark gray, the Slattum bed seamlessly fits into any bedroom decor. With its contemporary aesthetic and cozy feel, this bed is an excellent choice for those seeking both style and comfort.",
+        brand: "IkEA",
+        colors: [
+          {
+            name: "Dark Gray",
+            hex: "#A9A9A9",
 
-    //         images: [
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-4_rfgaxm",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871760/categories/armchairs/landskrona/dark%20gray/landskrona-4_rfgaxm.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-3_e86rz5",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871758/categories/armchairs/landskrona/dark%20gray/landskrona-3_e86rz5.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-2_ysltji",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871758/categories/armchairs/landskrona/dark%20gray/landskrona-2_ysltji.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-5_ewtsgk",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871755/categories/armchairs/landskrona/dark%20gray/landskrona-5_ewtsgk.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-1_sxdpte",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871751/categories/armchairs/landskrona/dark%20gray/landskrona-1_sxdpte.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/dark gray/landskrona-6_pu48pz",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871742/categories/armchairs/landskrona/dark%20gray/landskrona-6_pu48pz.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-4_sof7hy",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871384/categories/sofas/landskrona/dark%20gray/landskrona-4_sof7hy.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-2_ff2iiq",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871384/categories/sofas/landskrona/dark%20gray/landskrona-2_ff2iiq.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-6_cutp1t",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871382/categories/sofas/landskrona/dark%20gray/landskrona-6_cutp1t.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-3_lfpwhi",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871380/categories/sofas/landskrona/dark%20gray/landskrona-3_lfpwhi.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-5_zqyqln",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871373/categories/sofas/landskrona/dark%20gray/landskrona-5_zqyqln.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/dark gray/landskrona-1_qkac5n",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871367/categories/sofas/landskrona/dark%20gray/landskrona-1_qkac5n.jpg",
-    //           },
-    //         ],
-    //         quantity: 8,
-    //       },
-    //       {
-    //         name: "Light Green",
-    //         hex: "#90EE90",
+            images: [
+              {
+                public_id: "categories/beds/slattum/dark gray/slattum-5_yphje9",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871931/categories/beds/slattum/dark%20gray/slattum-5_yphje9.jpg",
+              },
+              {
+                public_id: "categories/beds/slattum/dark gray/slattum-1_gyiggf",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871931/categories/beds/slattum/dark%20gray/slattum-1_gyiggf.jpg",
+              },
+              {
+                public_id: "categories/beds/slattum/dark gray/slattum-2_m1tsg5",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871930/categories/beds/slattum/dark%20gray/slattum-2_m1tsg5.jpg",
+              },
+              {
+                public_id: "categories/beds/slattum/dark gray/slattum-6_azojr6",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871928/categories/beds/slattum/dark%20gray/slattum-6_azojr6.jpg",
+              },
+              {
+                public_id: "categories/beds/slattum/dark gray/slattum-4_jcunut",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871927/categories/beds/slattum/dark%20gray/slattum-4_jcunut.jpg",
+              },
+            ],
+            quantity: 3,
+          },
+          {
+            name: "Light Blue",
+            hex: "#ADD8E6",
 
-    //         images: [
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-5_o6mbvu",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871818/categories/armchairs/landskrona/light%20green/landskrona-5_o6mbvu.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-6_buaefo",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871816/categories/armchairs/landskrona/light%20green/landskrona-6_buaefo.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-1_vwpruz",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871815/categories/armchairs/landskrona/light%20green/landskrona-1_vwpruz.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-4_ydeirq",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871809/categories/armchairs/landskrona/light%20green/landskrona-4_ydeirq.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-3_q7etbn",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871801/categories/armchairs/landskrona/light%20green/landskrona-3_q7etbn.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/armchairs/landskrona/light green/landskrona-2_uzyotg",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871795/categories/armchairs/landskrona/light%20green/landskrona-2_uzyotg.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-4_fjgugs",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871440/categories/sofas/landskrona/light%20green/landskrona-4_fjgugs.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-2_umrcrs",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871440/categories/sofas/landskrona/light%20green/landskrona-2_umrcrs.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-3_epwpjx",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871434/categories/sofas/landskrona/light%20green/landskrona-3_epwpjx.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-6_rbntbl",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871434/categories/sofas/landskrona/light%20green/landskrona-6_rbntbl.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-5_no0ifd",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871425/categories/sofas/landskrona/light%20green/landskrona-5_no0ifd.jpg",
-    //           },
-    //           {
-    //             public_id:
-    //               "categories/sofas/landskrona/light green/landskrona-1_gjbcic",
-    //             url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871420/categories/sofas/landskrona/light%20green/landskrona-1_gjbcic.jpg",
-    //           },
-    //         ],
-    //         quantity: 12,
-    //       },
-    //     ],
+            images: [
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-5_ekky4m",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871980/categories/beds/slattum/light%20blue/slattum-5_ekky4m.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-6_dqcpkw",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871980/categories/beds/slattum/light%20blue/slattum-6_dqcpkw.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-2_bdlret",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871977/categories/beds/slattum/light%20blue/slattum-2_bdlret.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-3_pzovdz",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871975/categories/beds/slattum/light%20blue/slattum-3_pzovdz.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-4_juxrob",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871967/categories/beds/slattum/light%20blue/slattum-4_juxrob.jpg",
+              },
+              {
+                public_id:
+                  "categories/beds/slattum/light blue/slattum-1_kd8wy5",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743871952/categories/beds/slattum/light%20blue/slattum-1_kd8wy5.jpg",
+              },
+            ],
+            quantity: 11,
+          },
+        ],
 
-    //     additionalInformation: {
-    //       general: {
-    //         salesPackage: "3 Sofa",
-    //         modelNumber: "SOFA-123",
-    //         configuration: "Fixed  Seat",
-    //         upholsteryMaterial: "Velvet",
-    //         upholsteryColor: "Black",
-    //       },
-    //       productDetails: {
-    //         fillingMaterial: "Foam",
-    //         finishType: "Matte",
-    //         adjustableHeadrest: false,
-    //         maximumLoadCapacity: 300,
-    //         originOfManufacture: "USA",
-    //       },
-    //       dimensions: {
-    //         width: 200,
-    //         height: 85,
-    //         depth: 90,
-    //         seatHeight: 45,
-    //         legHeight: 10,
-    //       },
-    //       warranty: {
-    //         summary: "1 Year Warranty",
-    //         serviceType: "Onsite Service",
-    //         covered: "Manufacturing Defects",
-    //         notCovered: "Physical Damage",
-    //         domesticWarranty: "Yes",
-    //       },
-    //     },
-    //   },
-    // ]);
+        additionalInformation: {
+          general: {
+            salesPackage: "Bed ",
+            modelNumber: "confo-bed--135",
+            configuration: "Fixed",
+            upholsteryMaterial: "Velvet",
+            upholsteryColor: "Black",
+          },
+          productDetails: {
+            fillingMaterial: "Foam",
+            finishType: "Matte",
+            adjustableHeadrest: false,
+            maximumLoadCapacity: 300,
+            originOfManufacture: "USA",
+          },
+          dimensions: {
+            width: 200,
+            height: 85,
+            depth: 90,
+            seatHeight: 45,
+            legHeight: 10,
+          },
+          warranty: {
+            summary: "1 Year Warranty",
+            serviceType: "Onsite Service",
+            covered: "Manufacturing Defects",
+            notCovered: "Physical Damage",
+            domesticWarranty: "Yes",
+          },
+        },
+      },
+      {
+        productName: "Tarva",
+        productSubtitle: "tarva bed is a stylish and comfortable bed",
+        productPrice: 1600.99,
+        productSale: 14,
+        productCategories: ["67f1986686cf275218e0ad06"],
+        productDescription:
+          " The Tarva bed is a stylish and comfortable sleeping solution that combines modern design with functionality. Its sleek lines and premium fabric upholstery create an elegant look, while the sturdy construction ensures durability. The bed features a plush mattress for optimal comfort, making it perfect for a restful night's sleep. Available in various colors, including light gray and dark gray, the Tarva bed seamlessly fits into any bedroom decor. With its contemporary aesthetic and cozy feel, this bed is an excellent choice for those seeking both style and comfort.",
+        brand: "IkEA",
+        colors: [
+          {
+            name: "Pine",
+            hex: "#DEB887",
+
+            images: [
+              {
+                public_id: "categories/beds/tarva/pine/tarva-5_mtkd9x",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872025/categories/beds/tarva/pine/tarva-5_mtkd9x.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/pine/tarva-4_pbjhos",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872022/categories/beds/tarva/pine/tarva-4_pbjhos.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/pine/tarva-3_pb6q5h",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872020/categories/beds/tarva/pine/tarva-3_pb6q5h.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/pine/tarva-6_pnnqky",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872020/categories/beds/tarva/pine/tarva-6_pnnqky.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/pine/tarva-1_mdx7j4",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872013/categories/beds/tarva/pine/tarva-1_mdx7j4.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/pine/tarva-2_xpaeqy",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872001/categories/beds/tarva/pine/tarva-2_xpaeqy.jpg",
+              },
+            ],
+            quantity: 11,
+          },
+          {
+            name: "White Stained",
+            hex: "#F5F5F5",
+
+            images: [
+              {
+                public_id: "categories/beds/tarva/white stained/tarva-2_icpu7d",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872056/categories/beds/tarva/white%20stained/tarva-2_icpu7d.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/white stained/tarva-3_bd0tyk",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872055/categories/beds/tarva/white%20stained/tarva-3_bd0tyk.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/white stained/tarva-5_ifcu3z",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872054/categories/beds/tarva/white%20stained/tarva-5_ifcu3z.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/white stained/tarva-4_amgcvj",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872053/categories/beds/tarva/white%20stained/tarva-4_amgcvj.jpg",
+              },
+              {
+                public_id: "categories/beds/tarva/white stained/tarva-1_yj1z3d",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1743872041/categories/beds/tarva/white%20stained/tarva-1_yj1z3d.jpg",
+              },
+            ],
+            quantity: 9,
+          },
+        ],
+
+        additionalInformation: {
+          general: {
+            salesPackage: "bed ",
+            modelNumber: "bedd-135",
+            configuration: "Fixed Seat",
+            upholsteryMaterial: "Velvet",
+            upholsteryColor: "Black",
+          },
+          productDetails: {
+            fillingMaterial: "Foam",
+            finishType: "Matte",
+            adjustableHeadrest: false,
+            maximumLoadCapacity: 300,
+            originOfManufacture: "USA",
+          },
+          dimensions: {
+            width: 200,
+            height: 85,
+            depth: 90,
+            seatHeight: 45,
+            legHeight: 10,
+          },
+          warranty: {
+            summary: "1 Year Warranty",
+            serviceType: "Onsite Service",
+            covered: "Manufacturing Defects",
+            notCovered: "Physical Damage",
+            domesticWarranty: "Yes",
+          },
+        },
+      },
+      {
+        productName: "Valt Bed",
+        productSubtitle: " valt bed is a stylish and comfortable bed",
+        productPrice: 999.99,
+        productSale: 11.5,
+        productCategories: ["67f1986686cf275218e0ad06"],
+        productDescription:
+          " The Valt bed is a stylish and comfortable sleeping solution that combines modern design with functionality. Its sleek lines and premium fabric upholstery create an elegant look, while the sturdy construction ensures durability. The bed features a plush mattress for optimal comfort, making it perfect for a restful night's sleep. Available in various colors, including light gray and dark gray, the Valt bed seamlessly fits into any bedroom decor. With its contemporary aesthetic and cozy feel, this bed is an excellent choice for those seeking both style and comfort.",
+        brand: "IkEA",
+        colors: [
+          {
+            name: "Oak",
+            hex: "#FFD700",
+            images: [
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-5_bmtn6t",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567068/categories/beds/Valt%20Bed/oak/Valt_Bed-5_bmtn6t.jpg",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-7_bultft",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567064/categories/beds/Valt%20Bed/oak/Valt_Bed-7_bultft.jpg",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-6_jd0ta3",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567051/categories/beds/Valt%20Bed/oak/Valt_Bed-6_jd0ta3.png",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-1_fcssyg",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567050/categories/beds/Valt%20Bed/oak/Valt_Bed-1_fcssyg.jpg",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-4_ohgfkr",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567048/categories/beds/Valt%20Bed/oak/Valt_Bed-4_ohgfkr.png",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-3_woi4xn",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567040/categories/beds/Valt%20Bed/oak/Valt_Bed-3_woi4xn.jpg",
+              },
+              {
+                public_id: "categories/beds/Valt Bed/oak/Valt_Bed-2_j3dm78",
+                url: "https://res.cloudinary.com/dddhappm3/image/upload/v1742567040/categories/beds/Valt%20Bed/oak/Valt_Bed-2_j3dm78.jpg",
+              },
+            ],
+            quantity: 19,
+          },
+        ],
+
+        additionalInformation: {
+          general: {
+            salesPackage: "bed ",
+            modelNumber: "comfoo--135",
+            configuration: "Fixed Seat",
+            upholsteryMaterial: "Velvet",
+            upholsteryColor: "Black",
+          },
+          productDetails: {
+            fillingMaterial: "Foam",
+            finishType: "Matte",
+            adjustableHeadrest: false,
+            maximumLoadCapacity: 300,
+            originOfManufacture: "USA",
+          },
+          dimensions: {
+            width: 200,
+            height: 85,
+            depth: 90,
+            seatHeight: 45,
+            legHeight: 10,
+          },
+          warranty: {
+            summary: "1 Year Warranty",
+            serviceType: "Onsite Service",
+            covered: "Manufacturing Defects",
+            notCovered: "Physical Damage",
+            domesticWarranty: "Yes",
+          },
+        },
+      },
+    ]);
 
     // ======================
     // 5. Create Carts

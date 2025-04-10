@@ -176,6 +176,7 @@ export class ShopComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
+          console.log(this.selectedCategories);
           console.log('Products fetched:', response.data);
           this.totalProducts = response.data.totalProducts;
           this.updatePagesCount();
