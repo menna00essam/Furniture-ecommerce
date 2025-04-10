@@ -17,7 +17,7 @@
   (click)="toggleFavModal(false)"
 ></div>
 <div
-  class="fixed top-0 right-0 h-full w-full max-w-[420px] bg-gray-light p-[25px] flex flex-col gap-[25px] z-[1000]"
+  class="fixed top-0 right-0 h-full w-full max-w-[420px] bg-gray-light p-[25px] flex flex-col gap-[25px] z-[1000] "
   [@slideInOut]="favModalShow ? 'in' : 'out'"
 >
   <div class="flex justify-between">
@@ -26,7 +26,7 @@
       <img src="icons/close.svg" alt="Close" />
     </div>
   </div>
-  <div class="border-y border-gray flex-1 flex flex-col gap-[25px] py-[25px]">
+  <div class="border-y border-gray flex-1 flex flex-col gap-[10px] py-[10px] overflow-scroll">
     @if (favoritesLength$|async) { @for (item of favorites$|async; track
     item.id) {
     <div
@@ -84,9 +84,9 @@
     </div>
   </div>
   <div
-    class="border-y border-gray flex-1 flex flex-col gap-[25px] py-[25px] justify-between"
+    class="border-y border-gray flex-1 flex flex-col gap-[10px] py-[10px] justify-between overflow-scroll"
   >
-    <div class="flex flex-col gap-[25px] flex-1">
+    <div class="flex flex-col gap-[25px] overflow-scroll">
       @if (cartLength$|async) {
       <div
         *ngFor="let item of cart$ | async"
@@ -122,7 +122,7 @@
       }
     </div>
     <div class="flex justify-between">
-      <div>Subtotal</div>
+      <div >Subtotal</div>
       <div class="text-primary">
         {{ cartProductsTotalPrice | async | currency }}
       </div>
@@ -136,7 +136,7 @@
       >Cart</a
     >
     @if (cartLength$|async) {
-    <a     
+    <a
       (click)="handleCheckoutClick()"
       class="border py-[5px] px-[30px] text-xs rounded-[50px] cursor-pointer"
       >Checkout</a

@@ -5,4 +5,5 @@ export interface productCart {
   price: number;
   quantity: number;
   subtotal: number;
+  color?: string;
 }

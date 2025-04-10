@@ -23,6 +23,7 @@ import { CartService } from '../../../Services/cart.service';
 import { product } from '../../../Models/product.model';
 import { productCart } from '../../../Models/productCart.model';
 import { Subscription } from 'rxjs';
+import { ComparisonService } from '../../../Services/comparison.service';
 
 @Component({
   selector: 'app-product-item',
@@ -56,7 +57,8 @@ export class ProductItemComponent implements OnInit, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef,
     private favoriteService: FavoriteService,
-    private cartService: CartService
+    private cartService: CartService,
+    private ComparisonService: ComparisonService
   ) {}
 
   ngOnInit(): void {
@@ -115,6 +117,15 @@ export class ProductItemComponent implements OnInit, OnDestroy {
 
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = '/images/mainsofa.png';
+  }
+  onAddToComparison(): void {
+    if (this.product) {
+      console.log('Adding to comparison:', this.product.id);
+      this.ComparisonService.addToComparison(
+        this.product.id,
+        this.product.name
+      );
+    }
   }
 
   ngOnDestroy(): void {

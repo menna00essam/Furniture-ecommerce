@@ -112,9 +112,11 @@
         }
 
         <!-- Buttons Section -->
-        <div class="flex flex-col w-full gap-3 lg:gap-4 items-start">
+        <div
+          class="flex flex-col w-full gap-3 lg:gap-4 items-center lg:items-start"
+        >
           <div
-            class="flex flex-col sm:flex-row gap-3 lg:gap-4 w-full sm:w-auto items-center"
+            class="flex flex-wrap gap-3 lg:gap-4 w-full sm:w-auto items-center"
           >
             <!-- Quantity Selector -->
             <div
@@ -137,25 +139,18 @@
             <!-- Action Buttons -->
             <app-button
               (click)="toggleCart()"
-              btnWidth="190px"
+              btnWidth="180px"
+              btnPadding="10px"
               [type]="'black-outline'"
               >{{ isInCartState ? "Remove From" : "Add To" }} Cart</app-button
             >
-            <app-button [type]="'black-outline'">
+            <app-button
+              [btnWidth]="btnWidth"
+              [type]="'black-outline'"
+              [routerLink]="['/comparison']"
+              (click)="onAddToComparison()"
+            >
               <span class="flex items-center justify-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
                 Comparison
               </span>
             </app-button>
@@ -202,7 +197,7 @@
   <!-- related products .. -->
   }
   <div class="flex flex-col items-center justify-center p-10">
-    <h2 class="text-4xl font-bold">Related Products</h2>
+    <h2 class="text-2xl lg:text-4xl font-bold">Related Products</h2>
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-10 w-full"
     >

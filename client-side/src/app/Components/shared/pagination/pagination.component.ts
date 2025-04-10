@@ -26,16 +26,29 @@ import { ButtonComponent } from '../button/button.component';
 
       <!-- Page Numbers -->
       @if(pagesCount!=1 && currentPage!=1){
-      <app-button type="secondary-fill" btnWidth="60px">
+      <app-button
+        type="secondary-fill"
+        btnWidth="60px"
+        (click)="goToPage(currentPage - 1)"
+      >
         {{ currentPage - 1 }}
       </app-button>
       }
-      <app-button type="primary-fill" btnWidth="60px">
+
+      <app-button
+        type="primary-fill"
+        btnWidth="60px"
+        (click)="goToPage(currentPage)"
+      >
         {{ currentPage }}
       </app-button>
 
       @if(pagesCount!=1&&pagesCount!=currentPage){
-      <app-button type="secondary-fill" btnWidth="60px">
+      <app-button
+        type="secondary-fill"
+        btnWidth="60px"
+        (click)="goToPage(currentPage + 1)"
+      >
         {{ currentPage + 1 }}
       </app-button>
       }

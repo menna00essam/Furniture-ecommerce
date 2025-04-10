@@ -76,16 +76,15 @@ export class RootComponent {
 
     if (this.isLoggedIn) {
       this.userService.getUser().subscribe();
+      this.favorites$ = this.favoriteService.favorites$;
+      this.favoritesLength$ = this.favoriteService.favorites$.pipe(
+        map((favorites) => favorites.length)
+      );
     }
 
     this.cart$ = this.cartService.cart$;
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
     this.cartProductsTotalPrice = this.cartService.cartSubtotal$;
-
-    this.favorites$ = this.favoriteService.favorites$;
-    this.favoritesLength$ = this.favoriteService.favorites$.pipe(
-      map((favorites) => favorites.length)
-    );
   }
 
   deleteFavorite(id: string): void {

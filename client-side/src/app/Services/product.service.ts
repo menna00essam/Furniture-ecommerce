@@ -70,6 +70,7 @@ export class ProductService {
     let url = `${this.apiUrl}?categories=${
       categories.length ? categories.join(',') : ''
     }&page=${page}&limit=${limit}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    console.log('[ProductService] the full data', url);
 
     switch (sortBy) {
       case SortOptions.LowToHigh:
