@@ -89,7 +89,7 @@ export class ProductComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.btnWidth = window.innerWidth < 640 ? '100%' : '155px';
+    this.btnWidth = window.innerWidth < 640 ? '340px' : '155px';
     this.routeSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.loadProduct();
@@ -103,6 +103,15 @@ export class ProductComponent implements OnInit {
             item.id === this.productId &&
             this.selectedColor &&
             item.color == this.selectedColor.name
+        );
+        this.cdr.markForCheck();
+      })
+    );
+
+    this.subs.add(
+      this.favoriteService.favorites$.subscribe((favorites) => {
+        this.isFavoriteState = favorites.some(
+          (fav) => fav.id === this.productId
         );
         this.cdr.markForCheck();
       })
