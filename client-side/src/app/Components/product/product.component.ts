@@ -1,30 +1,48 @@
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import {
+  ActivatedRoute,
+  NavigationEnd,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import { ProductService } from '../../Services/product.service';
-
-import { ProductNavigationComponent } from '../products-components/product-navigation/product-navigation.component';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { ProductDetails } from '../../Models/product-details.model';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
+import { FavoriteService } from '../../Services/favorite.service';
+import { CartService } from '../../Services/cart.service';
+import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
+import { product } from '../../Models/product.model';
+import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
+import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
+import { ComparisonService } from '../../Services/comparison.service';
 
 @Component({
   selector: 'app-product',
+  standalone: true,
   imports: [
     CommonModule,
     ButtonComponent,
-    ProductNavigationComponent,
     ThumbnailComponent,
+    RouterModule,
+    AsyncPipe,
     ProductDescriptionComponent,
     ProductItemComponent,
+    ProductSkeletonComponent,
+    ProductItemSkeletonComponent,
+    ProductItemSkeletonComponent,
   ],
   templateUrl: './product.component.html',
 })
 export class ProductComponent implements OnInit {
   productId: string | null = null;
-  product!: ProductDetails;
+  private productSubject = new BehaviorSubject<ProductDetails | null>(null);
+  product$ = this.productSubject.asObservable(); // Observable for the product
+  relatedProducts$!: Observable<product[]>;
   warningMessage: string | null = null;
   colors: {
     name: string;
@@ -35,86 +53,193 @@ export class ProductComponent implements OnInit {
     sku?: string;
   }[] = [];
   selectedColorIndex: number = 0;
-  selectedImage: string | null = null;
+  selectedImage!: string;
+  selectedColor: {
+    name: string;
+    hex: string;
+    mainImage?: string | null;
+    galleryImages?: string[];
+    quantity?: number;
+    sku?: string;
+  } | null = null;
   count: number = 1;
   originalPrice: number = 0;
+  productcategories: string[] = [];
   salePrice: number = 0;
+  isInCartState: boolean = false;
+  isFavoriteState: boolean = false;
+  private cartSub!: Subscription;
+
+  private routeSub: Subscription = new Subscription();
+  skeletonArr = Array(4);
+
+  productLoading: boolean = true;
+  productsLoading: boolean = true;
+  btnWidth: string = '150px';
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private productService: ProductService,
-    private route: ActivatedRoute
+    private favoriteService: FavoriteService,
+    private cartService: CartService,
+    private comparisonService: ComparisonService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.productId = this.route.snapshot.paramMap.get('id');
-    if (this.productId) {
-      this.fetchProduct(this.productId);
+    this.btnWidth = window.innerWidth < 640 ? '340px' : '155px';
+    this.routeSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.loadProduct();
+      }
+    });
+    this.cartSub = this.cartService.cart$.subscribe((cart) => {
+      this.updateCartStateForCurrentProduct();
+    });
+    this.loadProduct();
+  }
+
+  private updateCartStateForCurrentProduct(): void {
+    if (!this.productId || !this.selectedColor) return;
+
+    this.isInCartState = this.cartService.isColorInCart(
+      this.productId,
+      this.selectedColor.name
+    );
+    this.cdr.markForCheck();
+  }
+  toggleFavorite() {
+    const product = this.productSubject.getValue();
+    if (product) {
+      this.favoriteService.toggleFavourite(product.id).subscribe({
+        next: () => {
+          this.isFavoriteState = this.favoriteService.isInFavorites(product.id);
+          this.cdr.markForCheck();
+        },
+      });
     }
   }
 
-  fetchProduct(productId: string) {
-    this.productService.getProduct(productId).subscribe({
-      next: (productData) => {
-        console.log('[ProductComponent] Received Product:', productData);
+  getMappedProduct(product: ProductDetails): product {
+    return {
+      id: product.id,
+      name: product.productName,
+      image: this.selectedColor?.mainImage || 'default-image.jpg',
+      subTitle: product.productSubtitle,
+      price: this.salePrice,
+      color: this.selectedColor?.name || '',
+      quantity: this.count,
+      categories: product.productCategories || [],
+      date: product.productDate,
+      sale: product.productSale,
+      colors: [this.selectedColor?.hex || ''],
+      sizes: [],
+      brand: product.brand,
+    };
+  }
 
-        if (productData) {
-          this.product = productData as ProductDetails;
-          this.updatePrices();
+  toggleCart() {
+    const productDetails = this.productSubject.getValue();
+    if (!productDetails || !this.selectedColor) {
+      this.warningMessage = 'Please select a color first';
+      return;
+    }
 
-          // Ensure colors array exists and map correctly
-          this.colors = Array.isArray(productData.colors)
-            ? productData.colors.map((c: any) => ({
-                name: c.name || 'Unknown',
-                hex: c.hex || '#000000',
-                mainImage: c.mainImage || c.galleryImages?.[0] || null,
-                galleryImages: Array.isArray(c.galleryImages)
-                  ? c.galleryImages.slice(0, 6)
-                  : [],
-                quantity: c.quantity ?? 0,
-              }))
-            : [];
+    const product = this.getMappedProduct(productDetails);
+    const colorName = this.selectedColor.name;
+    console.log('Product price when toggling cart:', product.price);
 
-          if (this.colors.length > 0) {
-            this.setSelectedColor(0);
+    if (this.isInCartState) {
+      this.cartService.removeColorVariant(product.id, colorName);
+    } else {
+      this.cartService.addProductWithColor(product, this.count);
+    }
+  }
+
+  fetchProduct(productId: string): Observable<ProductDetails> {
+    return this.productService.getProduct(productId).pipe(
+      tap({
+        next: (productData) => {
+          if (productData) {
+            this.count = 1;
+            this.productSubject.next(productData);
+            this.originalPrice = productData.productPrice;
+            this.productcategories = (productData.productCategories ?? []).map(
+              ({ _id }) => _id
+            );
+            this.salePrice =
+              this.originalPrice * (1 - (productData.productSale || 0) / 100);
+            console.log('[product component] sale price', this.salePrice);
+
+            this.colors = productData.colors || [];
+            if (this.colors.length > 0) this.setSelectedColor(0);
+            this.isInCartState = this.cartService.isInCart(productData.id);
+            this.isFavoriteState = this.favoriteService.isInFavorites(
+              productData.id
+            );
+            console.log(
+              '[ProductComponent -- fetch product] Categories:',
+              this.productcategories
+            );
+            this.productLoading = false;
+            this.fetchProducts();
+          } else {
+            console.warn('[ProductComponent] No product data received.');
           }
-        } else {
-          console.warn('[ProductComponent] No product data received.');
-        }
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('[ProductComponent] Error fetching product:', error);
+          this.productLoading = false;
+          this.cdr.detectChanges();
+        },
+      })
+    );
+  }
+
+  // related products
+  fetchProducts() {
+    this.productService.getProducts(1, 4, this.productcategories).subscribe({
+      next: (response) => {
+        this.productsLoading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('[ProductComponent] Error fetching product:', error);
+        console.error(
+          '[ProductComponent] Error fetching related products:',
+          error
+        );
+        this.productsLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
-  updatePrices() {
-    this.originalPrice = this.product.productPrice;
-    console.log('original price :', this.originalPrice);
-    const salePercentage = this.product.productSale || 0;
-    this.salePrice = this.originalPrice * (1 - salePercentage / 100) || 0;
-    console.log('saleprice :', this.salePrice);
+  loadProduct(): void {
+    this.productLoading = true;
+    this.productsLoading = true;
+    this.productId = this.route.snapshot.paramMap.get('id');
+    if (this.productId) {
+      this.fetchProduct(this.productId).subscribe(() => {
+        console.log('[ProductComponent] Product data fetched successfully.');
+        this.relatedProducts$ = this.productService.products$;
+      });
+    } else {
+      console.error('Product ID not found in route parameters.');
+    }
   }
 
-  /**
-   * Sets the selected color and updates images accordingly.
-   */
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;
-    this.selectedImage = this.colors[index]?.mainImage || null;
-  }
-  get selectedColor() {
-    return this.colors[this.selectedColorIndex] || null;
+    this.selectedImage = this.colors[index]?.mainImage || 'default-image.jpg';
+    this.selectedColor = this.colors[this.selectedColorIndex];
+    this.updateCartStateForCurrentProduct();
   }
 
-  /**
-   * Updates the main image when clicking a thumbnail.
-   */
   selectThumbnail(image: string) {
     this.selectedImage = image;
   }
 
-  /**
-   * Handles color selection and updates the displayed image.
-   */
   selectColor(color: {
     name: string;
     hex: string;
@@ -126,23 +251,13 @@ export class ProductComponent implements OnInit {
       this.setSelectedColor(index);
     }
   }
+
   get stockStatus(): string {
-    if (!this.selectedColor?.quantity || this.selectedColor.quantity <= 0) {
-      console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
-      return 'Out of Stock';
-    }
-    console.log('quantitttttyyyyyyyyyy :', this.selectedColor?.quantity);
-    return 'In Stock';
+    return this.selectedColor?.quantity && this.selectedColor.quantity > 0
+      ? 'In Stock'
+      : 'Out of Stock';
   }
 
-  getMappedProduct(): any {
-    return {
-      name: this.product.productName,
-      subTitle: this.product.productDescription,
-      price: this.product.productPrice,
-      // Add other required mappings here
-    };
-  }
   stringify(obj: any): string {
     return JSON.stringify(obj);
   }
@@ -168,5 +283,22 @@ export class ProductComponent implements OnInit {
       this.warningMessage = null;
       this.count--;
     }
+  }
+  onAddToComparison() {
+    if (this.product$) {
+      const currentProduct = this.productSubject.getValue();
+      if (currentProduct) {
+        console.log('Adding to comparison:', currentProduct.id);
+      }
+      // Use the existing ComparisonService to handle adding to the comparison
+      if (currentProduct) {
+        this.comparisonService.addToComparison(currentProduct.id);
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.routeSub.unsubscribe();
+    this.cartSub.unsubscribe(); // Cleanup subscription
   }
 }

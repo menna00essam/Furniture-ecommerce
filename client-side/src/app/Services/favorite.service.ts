@@ -60,8 +60,9 @@ export class FavoriteService {
       first(),
       switchMap((isLoggedIn) => {
         if (!isLoggedIn) {
-        
           this.modalService.show(LoginPromptModalComponent);
+          console.error('User is not logged in. Prompting for login.');
+          console.log(productId);
           return of(this.favoritesSubject.getValue());
         }
 

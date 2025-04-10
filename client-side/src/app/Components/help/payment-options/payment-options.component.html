@@ -1,5 +1,8 @@
 <!-- Page Header -->
-<app-header-banner bannerTitle="Payment Options"></app-header-banner>
+<app-header-banner
+  bannerTitle="Payment Options"
+  [bannerPath]="[{ title: 'payment options', path: '/paymentoptions' }]"
+></app-header-banner>
 
 <div class="flex justify-center p-10">
   <div class="p-6 bg-white shadow rounded-lg flex flex-col gap-6 max-w-3xl">
@@ -7,7 +10,7 @@
 
     <!-- Cash on Delivery -->
     <div class="flex flex-col gap-4">
-      <h2 class="text-2xl font-semibold">Cash on Delivery (COD)</h2>
+      <h2 class="text-xl md:text-2xl font-semibold">Cash on Delivery (COD)</h2>
       <div class="flex gap-2">
         <p class="text-gray-700">
           We offer <strong>Cash on Delivery (COD)</strong> as a convenient
@@ -15,7 +18,7 @@
           your doorstep. Please ensure you have the exact amount ready, as our
           delivery personnel may not always have change available.
         </p>
-        <div class="w-[50%]">
+        <div class="hidden md:block w-[50%]">
           <img src="/icons/cash-on-delivery.svg" alt="Debit Card" />
         </div>
       </div>
@@ -23,7 +26,7 @@
 
     <!-- Bank Card Payments -->
     <div class="flex flex-col gap-4">
-      <h2 class="text-2xl font-semibold">Bank Card Payments</h2>
+      <h2 class="text-xl md:text-2xl font-semibold">Bank Card Payments</h2>
       <div class="flex flex-col gap-2">
         <p class="text-gray-700">
           We accept payments through major credit and debit cards, including
@@ -33,15 +36,15 @@
         </p>
         <div class="flex gap-2">
           <img src="/icons/visa-card.svg" alt="VISA" class="w-20" />
-          <img src="/icons/master-card.svg" alt="Mastercard" class="w-20"/>
-          <img src="/icons/depit-card.svg" alt="Debit Card"class="w-20" />
+          <img src="/icons/master-card.svg" alt="Mastercard" class="w-20" />
+          <img src="/icons/depit-card.svg" alt="Debit Card" class="w-20" />
         </div>
       </div>
     </div>
 
     <!-- Secure Transactions -->
     <div class="flex flex-col gap-4">
-      <h2 class="text-2xl font-semibold">Secure Transactions</h2>
+      <h2 class="text-xl md:text-2xl font-semibold">Secure Transactions</h2>
       <p class="text-gray-700">
         We prioritize your security. All online transactions are encrypted using
         industry-standard security protocols, ensuring your personal and

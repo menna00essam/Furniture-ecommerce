@@ -1,5 +1,8 @@
 <!-- Page Header -->
-<app-header-banner bannerTitle="Contact"></app-header-banner>
+<app-header-banner
+  bannerTitle="Contact"
+  [bannerPath]="[{ title: 'contact', path: '/contact' }]"
+></app-header-banner>
 
 <!-- Contact Section -->
 <section class="p-10 flex flex-col gap-10">
@@ -14,16 +17,16 @@
   </div>
 
   <div
-    class="flex flex-col md:flex-row justify-center items-start gap-[50px] md:gap-[80px]"
+    class="flex flex-col sm:flex-row justify-center items-start gap-5 md:gap-10"
   >
     <!-- Contact Information -->
-    <div class="flex flex-col gap-10 w-[500px]">
+    <div class="flex flex-col gap-5">
       <!-- Address -->
       <div class="flex gap-3">
         <i class="fas fa-map-marker-alt text-xl text-black mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold text-black">Address</p>
-          <p class="text-base text-black">
+          <p class="text-sm lg:text-base text-black">
             15 Tahrir Square, Downtown, Cairo, Egypt
           </p>
         </div>
@@ -34,8 +37,8 @@
         <i class="fas fa-phone text-xl mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold">Phone</p>
-          <p>Mobile: +20 100 123 4567</p>
-          <p>Hotline: 16000</p>
+          <p class="text-sm lg:text-base">Mobile: +20 100 123 4567</p>
+          <p class="text-sm lg:text-base">Hotline: 16000</p>
         </div>
       </div>
 
@@ -44,8 +47,8 @@
         <i class="fas fa-clock text-xl mt-1"></i>
         <div class="flex flex-col gap-4">
           <p class="text-xl font-semibold">Working Hours</p>
-          <p>Mon - Fri: 9:00 AM - 10:00 PM</p>
-          <p>Sat - Sun: 10:00 AM - 9:00 PM</p>
+          <p class="text-sm lg:text-base">Mon - Fri: 9:00 AM - 10:00 PM</p>
+          <p class="text-sm lg:text-base">Sat - Sun: 10:00 AM - 9:00 PM</p>
         </div>
       </div>
     </div>
@@ -100,7 +103,13 @@
         }
 
         <!-- Submit Button -->
-        <app-button type="primary-fill">Submit</app-button>
+        <app-button type="primary-fill">
+          @if(!isLoading){ Submit } @else {
+          <div class="flex justify-center">
+            <div class="spinner"></div>
+          </div>
+          }
+        </app-button>
       </form>
 
       <!-- Submission Message -->

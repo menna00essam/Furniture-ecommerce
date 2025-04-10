@@ -13,6 +13,7 @@ import { BlogPost } from '../../Models/blog.model';
 
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
+import { BlogSkeletonComponent } from '../blog/blog-skeleton/blog-skeleton.component';
 
 @Component({
   selector: 'app-blogs',
@@ -24,9 +25,9 @@ import { Observable } from 'rxjs';
     FeatureBannerComponent,
     DropdownComponent,
     PaginationComponent,
+    BlogSkeletonComponent,
   ],
   templateUrl: './blogs.component.html',
-  styleUrls: ['./blogs.component.css'],
 })
 export class BlogsComponent implements OnInit {
   @ViewChild('blogsContainer') blogsContainer!: ElementRef;
@@ -35,7 +36,8 @@ export class BlogsComponent implements OnInit {
   selectedCategory: string = 'All';
   isMenuOpen: boolean = false;
   searchQuery: string = '';
-  posts$!: Observable<BlogPost[]>; // Now using an Observable
+  posts$!: Observable<BlogPost[]>; // Observable for posts
+  loading = true;
 
   currentPage: number = 1;
   postsPerPage: number = 3;
@@ -60,12 +62,13 @@ export class BlogsComponent implements OnInit {
   }
 
   loadPosts() {
-    // Fetch posts with the selected category, page, and posts per page
-    this.blogService.getAllPosts(
-      this.currentPage,
-      this.postsPerPage,
-      this.selectedCategory
-    );
+    this.loading = true; // Set loading state to true when starting to load posts
+
+    this.blogService
+      .getAllPosts(this.currentPage, this.postsPerPage, this.selectedCategory)
+      .subscribe(() => {
+        this.loading = false; // Set loading to false once posts are loaded
+      });
 
     // Subscribe to posts$ to get the posts list
     this.posts$ = this.blogService.posts$;
@@ -77,27 +80,6 @@ export class BlogsComponent implements OnInit {
       this.totalPages = Math.ceil(this.totalPosts / this.postsPerPage);
       console.log('Total Pages:', this.totalPages);
     });
-
-    // You can also subscribe to posts$ here if needed
-    this.posts$.subscribe((posts) => {
-      // Handle the posts array if you want to perform any operations on it
-    });
-  }
-
-  goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
-    this.loadPosts();
-    if (this.blogsContainer?.nativeElement) {
-      const offset = 100;
-      window.scrollTo({
-        top:
-          this.blogsContainer.nativeElement.getBoundingClientRect().top +
-          window.scrollY -
-          offset,
-        behavior: 'smooth',
-      });
-    }
   }
 
   filterByCategory(selectedItem: { id: string; value: string } | string) {

@@ -1,5 +1,8 @@
 <!-- Page Header -->
-<app-header-banner bannerTitle="Returns"></app-header-banner>
+<app-header-banner
+  bannerTitle="Returns Policy"
+  [bannerPath]="[{ title: 'returns policy', path: '/returns' }]"
+></app-header-banner>
 
 <div class="flex justify-center p-10">
   <div class="p-6 bg-white shadow rounded-lg flex flex-col gap-6 max-w-3xl">
@@ -16,7 +19,11 @@
           return. This policy is in addition to your statutory rights and IKEA
           commercial guarantees.
         </p>
-        <img src="images/90.png" alt="Returns" class="self-center w-80" />
+        <img
+          src="images/90.png"
+          alt="Returns"
+          class="self-center w-80 hidden md:block"
+        />
       </div>
     </div>
 

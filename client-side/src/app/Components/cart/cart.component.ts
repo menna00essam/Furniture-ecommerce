@@ -5,16 +5,16 @@ import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.c
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { CartService } from '../../Services/cart.service';
-import { Observable, map } from 'rxjs';
+import { Observable, map, take, switchMap, of } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
 import { productCart } from '../../Models/productCart.model';
-import { ButtonComponent } from '../shared/button/button.component';
 import { Router } from '@angular/router';
+import { ProductService } from '../../Services/product.service';
+import { NgToastService } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css'],
   standalone: true,
   imports: [
     CommonModule,
@@ -30,7 +30,12 @@ export class CartComponent implements OnInit {
   cart$!: Observable<productCart[]>;
   cartLength$!: Observable<number>;
 
-  constructor(private cartService: CartService, private router: Router) {}
+  constructor(
+    private cartService: CartService,
+    private router: Router,
+    private productService: ProductService,
+    private toast: NgToastService
+  ) {}
 
   ngOnInit(): void {
     this.cart$ = this.cartService.cart$;
@@ -41,8 +46,30 @@ export class CartComponent implements OnInit {
     this.cartService.removeProduct(itemId);
   }
 
-  increaseQuantity(productId: string) {
-    this.cartService.increaseQuantity(productId);
+  increaseQuantity(item: productCart) {
+    this.productService
+      .getProduct(item.id)
+      .pipe(
+        take(1),
+        switchMap((productDetails) => {
+          if (productDetails && productDetails.colors) {
+            const totalAvailableStock = productDetails.colors.reduce(
+              (sum, color) => sum + color.quantity,
+              0
+            );
+            if (item.quantity < totalAvailableStock) {
+              this.cartService.increaseQuantity(item.id);
+            } else {
+              this.toast.danger(
+                `you have reached to available quantity for ${item.name}`
+              );
+              // console.log(`Maximum quantity available for ${item.name}`);
+            }
+          }
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   decreaseQuantity(productId: string) {

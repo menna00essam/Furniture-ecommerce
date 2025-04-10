@@ -13,7 +13,6 @@ import {
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './input.component.html',
-  styleUrl: './input.component.css',
   animations: [
     trigger('slideUpDown', [
       state('in', style({ height: '*', opacity: 1 })),

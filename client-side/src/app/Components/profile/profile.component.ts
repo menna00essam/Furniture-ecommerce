@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css'],
   imports: [RouterOutlet, CommonModule],
 })
 export class ProfileComponent implements OnInit {

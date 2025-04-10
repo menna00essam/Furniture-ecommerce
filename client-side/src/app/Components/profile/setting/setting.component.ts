@@ -111,4 +111,7 @@ export class SettingComponent {
         });
     }
   }
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = '/images/user.png';
+  }
 }

@@ -31,6 +31,7 @@ import { PaymentOptionsComponent } from './Components/help/payment-options/payme
 import { OrderSuccessComponent } from './Components/order-success/order-success.component';
 import { orderGuard } from './Guards/order.guard';
 import { profileGuard } from './Guards/profile.guard';
+import { checkoutGuard } from './Guards/checkout.guard';
 
 export const routes: Routes = [
   {
@@ -89,6 +90,7 @@ export const routes: Routes = [
       {
         path: 'checkout',
         component: CheckoutComponent,
+        canActivate: [checkoutGuard],
       },
       {
         path: 'order-success',

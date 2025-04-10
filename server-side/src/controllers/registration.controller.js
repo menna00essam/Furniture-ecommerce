@@ -50,7 +50,7 @@ const signup = asyncWrapper(async (req, res, next) => {
 const login = asyncWrapper(async (req, res, next) => {
   const user = req.body;
   let foundedUser = await userModel.findOne({
-    email: user.email,
+    email: { $eq: user.email },
   });
   if (!foundedUser) {
     return next(
@@ -165,7 +165,7 @@ const transporter = nodemailer.createTransport({
 
 const forgotPassword = asyncWrapper(async (req, res, next) => {
   const { email } = req.body;
-  let user = await userModel.findOne({ email });
+  let user = await userModel.findOne({ email: { $eq: email } });
   if (!user) {
     return next(
       new AppError(
@@ -206,7 +206,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
 });
 const resetPassword = asyncWrapper(async (req, res, next) => {
   const { token, password } = req.body;
-  let user = await userModel.findOne({ resetToken: token });
+  let user = await userModel.findOne({ resetToken: { $eq: token } });
   if (!user || user.resetTokenExpiry < Date.now()) {
     return next(
       new AppError("Invalid or expired token.", 400, httpStatusText.FAIL)

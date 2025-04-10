@@ -9,8 +9,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
-import { DropdownComponent } from '../shared/dropdown/dropdown.component';
-import { ProductService } from '../../Services/product.service';
+import { DropdownComponent } from '../../shared/dropdown/dropdown.component';
+import { ProductService } from '../../../Services/product.service';
 
 @Component({
   selector: 'app-search',

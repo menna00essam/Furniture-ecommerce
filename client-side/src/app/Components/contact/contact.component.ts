@@ -26,10 +26,12 @@ import { ModalService } from '../../Services/modal.service';
     InputComponent,
   ],
   templateUrl: './contact.component.html',
+  styleUrl: './contact.component.css',
 })
 export class ContactComponent {
   message: string = '';
   isSuccess: boolean = false;
+  isLoading: boolean = false;
 
   contactForm = new FormGroup({
     name: new FormControl<string>('', [
@@ -55,6 +57,8 @@ export class ContactComponent {
 
   onSubmit() {
     if (this.contactForm.valid) {
+      this.isLoading = true; // Set loading to true
+
       const formValues = this.contactForm.value;
       const contactData = {
         name: formValues.name ?? '',
@@ -63,9 +67,27 @@ export class ContactComponent {
         message: formValues.message ?? '',
       };
 
-      this.contactService.sendMessage(contactData).subscribe();
-      this.modalService.show(ContactConfirmModalComponent);
-      this.contactForm.reset();
+      this.contactService.sendMessage(contactData).subscribe({
+        next: () => {
+          this.isLoading = false; // Reset loading
+          this.modalService.show(ContactConfirmModalComponent, {
+            isSuccess: true,
+            title: 'Thank you for reaching out!',
+            message: 'We will get back to you as soon as we can.',
+            buttonText: 'Continue Shopping',
+          });
+          this.contactForm.reset();
+        },
+        error: () => {
+          this.isLoading = false; // Reset loading
+          this.modalService.show(ContactConfirmModalComponent, {
+            isSuccess: false,
+            title: 'Something went wrong!',
+            message: 'Please try again later.',
+            buttonText: 'Try Again',
+          });
+        },
+      });
     } else {
       this.message = 'Please fill all fields correctly.';
       this.isSuccess = false;

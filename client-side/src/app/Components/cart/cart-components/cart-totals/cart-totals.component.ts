@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../shared/button/button.component';
 import { CartService } from '../../../../Services/cart.service';
 import { Observable } from 'rxjs';
+import { productCart } from '../../../../Models/productCart.model';
 
 @Component({
   selector: 'app-cart-totals',
@@ -14,6 +15,7 @@ import { Observable } from 'rxjs';
 })
 export class CartTotalsComponent {
   subtotal$!: Observable<number>;
+  @Input() cartItems: productCart[] = [];
 
   constructor(private cartService: CartService, private router: Router) {}
 

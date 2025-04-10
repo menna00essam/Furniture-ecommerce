@@ -40,6 +40,10 @@ export class UserActionsComponent implements OnInit {
       this.isLoggedIn = status;
     });
 
+    if (this.isLoggedIn) {
+      this.userService.getUser().subscribe();
+    }
+
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
     this.favoritesLength$ = this.favoriteService.favorites$.pipe(
       map((favorites) => favorites.length)

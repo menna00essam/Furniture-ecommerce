@@ -30,7 +30,7 @@
     @if (favoritesLength$|async) { @for (item of favorites$|async; track
     item.id) {
     <div
-      class="flex items-center shadow-sm px-2 rounded hover:shadow-xl duration-300 ease"
+      class="flex items-center shadow-sm p-2 rounded hover:shadow-xl duration-300 ease"
     >
       <div
         class="flex flex-1 gap-3 items-center cursor-pointer"
@@ -39,7 +39,7 @@
         <img
           src="{{ item.image }}"
           alt="{{ item.name }}"
-          class="w-[80px] rounded-[10px]"
+          class="w-20 h-20 object-cover rounded-[10px]"
         />
         <h3 class="text-base cursor-pointer flex-1">
           {{ item.name }}
@@ -90,7 +90,7 @@
       @if (cartLength$|async) {
       <div
         *ngFor="let item of cart$ | async"
-        class="flex items-center shadow-sm px-2 rounded hover:shadow-xl duration-300 ease"
+        class="flex items-center shadow-sm p-2 rounded hover:shadow-xl duration-300 ease"
       >
         <div
           class="flex flex-1 gap-3 items-center cursor-pointer"
@@ -99,7 +99,7 @@
           <img
             [src]="item.image"
             [alt]="item.name"
-            class="w-[80px] rounded-[10px]"
+            class="w-20 h-20 object-cover rounded-[10px]"
           />
           <div class="flex flex-col">
             <h3 class="text-base cursor-pointer">{{ item.name }}</h3>
@@ -135,12 +135,13 @@
       class="border py-[5px] px-[30px] text-xs rounded-[50px]"
       >Cart</a
     >
-    <a
-      routerLink="/checkout"
-      (click)="toggleCartModal(false)"
-      class="border py-[5px] px-[30px] text-xs rounded-[50px]"
+    @if (cartLength$|async) {
+    <a     
+      (click)="handleCheckoutClick()"
+      class="border py-[5px] px-[30px] text-xs rounded-[50px] cursor-pointer"
       >Checkout</a
     >
+  }
     <a
       routerLink="/comparison"
       (click)="toggleCartModal(false)"

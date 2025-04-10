@@ -1,8 +1,8 @@
 <main>
   <div
-    class="bg-[url('/images/hero.png')] bg-cover bg-no-repeat bg-center h-screen flex justify-center md:justify-end items-center p-10 bg-fixed"
+    class="bg-[url('/images/hero.png')] bg-cover bg-no-repeat bg-center h-[calc(100vh-100px)] min-h-max flex justify-center md:justify-end items-center p-10 bg-fixed"
   >
-    <div class="content bg-secondary p-10 md:p-15 rounded-md opacity-[0.9]">
+    <div class="content bg-secondary p-5 md:p-10 lg:p-15 rounded-md opacity-[0.9]">
       <p class="tracking-wider font-semibold text-gray-dark">New Arrival</p>
       <h1
         class="text-2xl md:text-5xl md:w-sm md:leading-15 font-extrabold text-(--color-dark) my-3"
@@ -15,13 +15,15 @@
         comfort and joy. Experience Furniro's feel-good design and make yourself
         at home.
       </p>
-      <app-button btnPadding="20px">{{ "Buy Now" | uppercase }}</app-button>
+      <app-button btnPadding="20px" [routerLink]="['/shop']">{{
+        "Buy Now" | uppercase
+      }}</app-button>
     </div>
   </div>
 
   <div class="flex flex-col items-center justify-center p-10">
-    <h2 class="text-4xl my-3 font-bold">Browse The Range</h2>
-    <p class="text-gray text-center max-w-xl">
+    <h2 class="text-2xl md:text-4xl my-3 font-bold">Browse The Range</h2>
+    <p class="text-sm md:text-base text-gray text-center max-w-xl">
       Find beautifully crafted furniture and décor that perfectly complement
       your space. Discover timeless designs made for comfort and style.
     </p>
@@ -54,7 +56,7 @@
     <div
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-10 w-full"
     >
-      @for (item of products$|async; track item.id) {
+      @for (item of (products$|async)?.slice(0,4); track item.id) {
       <app-product-item [product]="item"> </app-product-item>
       }
     </div>
@@ -66,16 +68,17 @@
     class="flex flex-col md:flex-row items-center justify-center gap-5 p-10 bg-secondary"
   >
     <div class="md:w-[50%]">
-      <h2 class="text-4xl font-bold my-2">50+ Beautiful rooms inspiration</h2>
+      <h2 class="text-2xl md:text-3xl font-bold my-2">50+ Beautiful rooms inspiration</h2>
       <p class="my-3 text-gray">
         Our designer already made a lot of beautiful prototipe of rooms that
         inspire you
       </p>
       <app-button type="primary-fill">Explore More</app-button>
     </div>
+
     <div #swiperRef class="swiper w-full">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <div class="relative transform transition-transform duration-300">
             <img
               [src]="product.image"
@@ -97,7 +100,7 @@
     <h2 class="text-4xl font-semibold">#FurniroFurniture</h2>
     <div #imageSwiper class="swiper w-full">
       <div class="swiper-wrapper py-2">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <img
             [src]="product.image"
             class="h-[100px] w-[200px] md:h-[200px] md:w-[300px] lg:h-[300px] lg:w-[400px] object-cover rounded-lg shadow"
@@ -107,7 +110,7 @@
     </div>
     <div #imageSwiper2 class="swiper w-full">
       <div class="swiper-wrapper py-2">
-        <div class="swiper-slide" *ngFor="let product of productsImages">
+        <div class="swiper-slide" *ngFor="let product of products$ | async">
           <img
             [src]="product.image"
             class="h-[100px] w-[200px] md:h-[200px] md:w-[300px] lg:h-[300px] lg:w-[400px] object-cover rounded-lg shadow"

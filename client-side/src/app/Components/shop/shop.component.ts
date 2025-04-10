@@ -36,7 +36,7 @@ import { product } from '../../Models/product.model';
 import { category } from '../../Models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { SearchComponent } from '../search/search.component';
+import { SearchComponent } from './search/search.component';
 import { Router } from '@angular/router';
 
 // Enums
@@ -108,7 +108,7 @@ export class ShopComponent implements OnInit {
   maxPrice!: number;
 
   // Pagination
-  productsPerPage = 5;
+  productsPerPage = 8;
   currentPage = 1;
   totalProducts = 0;
   pagesCount = 0;
@@ -176,6 +176,7 @@ export class ShopComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
+          console.log(this.selectedCategories);
           console.log('Products fetched:', response.data);
           this.totalProducts = response.data.totalProducts;
           this.updatePagesCount();
@@ -201,6 +202,7 @@ export class ShopComponent implements OnInit {
     console.log(
       `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
     );
+    this.currentPage = 1;
     this.fetchProducts();
   }
 
@@ -220,6 +222,7 @@ export class ShopComponent implements OnInit {
       ? [...this.selectedCategories, category.id]
       : this.selectedCategories.filter((c) => c !== category.id);
     console.log(`Category selection changed: ${this.selectedCategories}`);
+    this.currentPage = 1;
     this.fetchProducts();
   }
 
@@ -231,26 +234,6 @@ export class ShopComponent implements OnInit {
       this.totalProducts
     );
     return `Showing ${start}-${end} of ${this.totalProducts} results`;
-  }
-
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.pagesCount) {
-      console.log(`Navigating to page: ${page}`);
-      this.currentPage = page;
-      this.fetchProducts();
-      this.scrollToProducts();
-    }
-  }
-
-  private scrollToProducts(): void {
-    if (this.productsContainer) {
-      const offset = 100;
-      const topPosition =
-        this.productsContainer.nativeElement.getBoundingClientRect().top +
-        window.scrollY -
-        offset;
-      window.scrollTo({ top: topPosition, behavior: 'smooth' });
-    }
   }
 
   toggleShowFilter(open: boolean = !this.showFilters): void {

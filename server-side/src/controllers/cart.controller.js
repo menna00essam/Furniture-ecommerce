@@ -68,16 +68,12 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
 // POST: Add products to cart
 const addToCart = asyncWrapper(async (req, res, next) => {
   const userId = req.user._id;
-  console.log('my cart user :', userId);
   const items = req.body;
-  console.log('my cart items :', items);
 
-  // Validate the items array
   if (!Array.isArray(items) || items.length === 0) {
     return next(new AppError('Invalid cart items.', 400, httpStatusText.FAIL));
   }
 
-  // Validate each item in the cart
   for (const item of items) {
     const { productId, quantity, color } = item;
 
@@ -96,12 +92,10 @@ const addToCart = asyncWrapper(async (req, res, next) => {
       return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
     }
 
-    // If no color is provided, use the first available color
     if (!color && product.colors.length > 0) {
       item.color = product.colors[0].name;
     }
 
-    // Validate the color
     const colorVariant = product.colors.find((c) => c.name === item.color);
     if (!colorVariant) {
       return next(
@@ -114,29 +108,14 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     }
   }
 
-  // Find or create the user's cart
   let cart = await Cart.findOne({ userId });
   if (!cart) {
     cart = new Cart({ userId, products: [] });
   }
 
-  // Add or update items in the cart
   for (const { productId, quantity, color } of items) {
     const product = await Product.findById(productId).lean();
-
-    if (!product) {
-      return next(new AppError('Product not found.', 404, httpStatusText.FAIL));
-    }
-
-    // Find the color variant in the product
     const colorVariant = product.colors.find((c) => c.name === color);
-    if (!colorVariant) {
-      return next(
-        new AppError(`Color ${color} not available.`, 400, httpStatusText.FAIL)
-      );
-    }
-
-    // Ensure requested quantity does not exceed available stock
     const availableQuantity = colorVariant.quantity;
     const finalQuantity = Math.min(quantity, availableQuantity);
 
@@ -154,13 +133,51 @@ const addToCart = asyncWrapper(async (req, res, next) => {
     }
   }
 
-  // Save the cart and populate product details
   await cart.save();
-  await cart.populate('products.productId', '_id productName productPrice');
+  cart = await Cart.findOne({ userId })
+    .populate(
+      'products.productId',
+      '_id productName colors productPrice productSale'
+    )
+    .lean();
+
+  const products = cart.products
+    .map(({ productId, quantity, color }) => {
+      if (!productId) return null;
+
+      const colorVariant = productId.colors.find((c) => c.name === color);
+      if (!colorVariant) return null;
+
+      const availableQuantity = colorVariant.quantity;
+      const finalQuantity = Math.min(quantity, availableQuantity);
+
+      const effectivePrice = productId.productSale
+        ? productId.productPrice * (1 - productId.productSale / 100)
+        : productId.productPrice;
+
+      return {
+        _id: productId._id,
+        productQuantity: finalQuantity,
+        productName: productId.productName,
+        productImage:
+          colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
+        productPrice: effectivePrice,
+        productSubtotal: finalQuantity * effectivePrice,
+      };
+    })
+    .filter((product) => product !== null);
+
+  const totalPrice = products.reduce(
+    (sum, item) => sum + item.productSubtotal,
+    0
+  );
 
   res.status(201).json({
     status: httpStatusText.SUCCESS,
-    data: { cart },
+    data: {
+      products,
+      totalPrice,
+    },
   });
 });
 

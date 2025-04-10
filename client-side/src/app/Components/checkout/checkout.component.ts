@@ -115,7 +115,7 @@ export class CheckoutComponent implements OnDestroy {
 
   /** Load cart data on component initialization */
   private loadCartData(): void {
-    this.cartService.getCart().subscribe(cartItems => {
+    this.cartService.getCart().subscribe((cartItems) => {
       this.cartItems = cartItems;
     });
     this.subtotal$ = this.cartService.cartSubtotal$;
@@ -184,8 +184,9 @@ export class CheckoutComponent implements OnDestroy {
       additionalInfo: billingValues.additionalInfo,
       // province: billingValues.city,
     };
+
     console.log('cartItems>>>>>>>>>>', this.cartItems);
-    
+
     const orderItems: OrderItem[] = this.cartItems.map((item) => ({
       productId: item.productId,
       productName: item.name,
@@ -199,8 +200,6 @@ export class CheckoutComponent implements OnDestroy {
       orderItems,
     };
     console.log('checkoutData>>>>>>>>>', checkoutData);
-
-    
     if (billingValues.paymentMethod === 'bank') {
       this.cartService.cartSubtotal$.pipe(first()).subscribe((totalAmount) => {
         this.checkoutService
