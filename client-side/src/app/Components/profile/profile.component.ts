@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit {
   }
 
   routeTo(r: string) {
+    this.activeComponent = r;
     this.router.navigate([`/profile/${r}`]);
   }
 
