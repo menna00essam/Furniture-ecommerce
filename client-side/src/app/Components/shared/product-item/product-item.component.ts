@@ -121,7 +121,10 @@ export class ProductItemComponent implements OnInit, OnDestroy {
   onAddToComparison(): void {
     if (this.product) {
       console.log('Adding to comparison:', this.product.id);
-      this.ComparisonService.addToComparison(this.product.id);
+      this.ComparisonService.addToComparison(
+        this.product.id,
+        this.product.name
+      );
     }
   }
 

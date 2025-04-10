@@ -42,12 +42,12 @@ export class UserActionsComponent implements OnInit {
 
     if (this.isLoggedIn) {
       this.userService.getUser().subscribe();
+      this.favoritesLength$ = this.favoriteService.favorites$.pipe(
+        map((favorites) => favorites.length)
+      );
     }
 
     this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
-    this.favoritesLength$ = this.favoriteService.favorites$.pipe(
-      map((favorites) => favorites.length)
-    );
   }
 
   showFavModal() {

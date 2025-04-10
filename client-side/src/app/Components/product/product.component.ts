@@ -316,7 +316,10 @@ export class ProductComponent implements OnInit {
       }
       // Use the existing ComparisonService to handle adding to the comparison
       if (currentProduct) {
-        this.comparisonService.addToComparison(currentProduct.id);
+        this.comparisonService.addToComparison(
+          currentProduct.id,
+          currentProduct.productName
+        );
       }
     }
   }

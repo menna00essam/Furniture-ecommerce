@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { ComparisonService } from '../../Services/comparison.service';
 import { ProductDetails } from '../../Models/product-details.model';
@@ -64,8 +63,8 @@ export class ComparisonComponent implements OnInit {
   }
 
   // In ComparisonComponent
-  removeProduct(productId: string): void {
-    this.comparisonService.removeFromComparison(productId);
+  removeProduct(productId: string, productName: string): void {
+    this.comparisonService.removeFromComparison(productId, productName);
     // Force reload comparison products
     this.loadComparisonProducts();
   }

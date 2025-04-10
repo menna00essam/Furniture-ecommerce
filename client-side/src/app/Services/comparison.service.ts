@@ -4,6 +4,7 @@ import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ProductService } from './product.service';
 import { ProductDetails } from '../Models/product-details.model';
+import { NgToastService } from 'ng-angular-popup';
 
 @Injectable({
   providedIn: 'root',
@@ -13,11 +14,12 @@ export class ComparisonService {
 
   constructor(
     private http: HttpClient,
-    private productService: ProductService
+    private productService: ProductService,
+    private toast: NgToastService
   ) {}
 
   // In ComparisonService
-  addToComparison(productId: string): void {
+  addToComparison(productId: string, productName: string): void {
     let comparison = JSON.parse(
       localStorage.getItem(this.comparisonKey) || '[]'
     );
@@ -28,6 +30,7 @@ export class ComparisonService {
     // Add to the end of array if not full
     if (comparison.length < 4) {
       comparison.push(productId);
+      this.toast.success(`${productName} Added to comparison`);
     } else {
       // If full, remove oldest and add new (FIFO)
       comparison = [comparison[1], productId];
@@ -68,7 +71,7 @@ export class ComparisonService {
   }
 
   // Remove a product from the comparison (by ID)
-  removeFromComparison(productId: string): void {
+  removeFromComparison(productId: string, productName: string): void {
     let comparison = JSON.parse(
       localStorage.getItem(this.comparisonKey) || '[]'
     );
@@ -78,6 +81,7 @@ export class ComparisonService {
 
     // Update LocalStorage with the new list
     localStorage.setItem(this.comparisonKey, JSON.stringify(comparison));
+    this.toast.success(`${productName} removed from comparison`);
   }
 
   // Clear the entire comparison list from LocalStorage

@@ -52,7 +52,7 @@
         <thead>
           <tr>
             <th
-              class="w-48 bg-[var(--color-gray-light)] p-6 text-left text-[var(--color-gray)] font-semibold"
+              class="w-24 bg-[var(--color-gray-light)] p-6 text-left text-[var(--color-gray)] font-semibold"
             >
               Product Details
             </th>
@@ -65,7 +65,7 @@
               >
                 <button
                   class="absolute top-2 right-2 text-[var(--color-gray)] hover:text-[var(--color-primary)] bg-white rounded-full shadow-sm p-1 transition-colors cursor-pointer"
-                  (click)="removeProduct(product.id)"
+                  (click)="removeProduct(product.id, product.productName)"
                 >
                   <svg
                     class="w-5 h-5"
@@ -153,7 +153,7 @@
               *ngFor="let product of comparisonProducts"
               class="p-4 bg-white text-center border border-[var(--color-gray-light)]"
             >
-              <div class="min-h-[40px] flex items-center justify-center ">
+              <div class="min-h-[40px] flex items-center justify-center">
                 {{
                   product.additionalInformation?.general?.configuration || "N/A"
                 }}
@@ -169,7 +169,7 @@
             </td>
             <td
               *ngFor="let product of comparisonProducts"
-              class="p-4 bg-white text-center  border border-[var(--color-gray-light)]"
+              class="p-4 bg-white text-center border border-[var(--color-gray-light)]"
             >
               <div class="min-h-[40px] flex items-center justify-center">
                 {{ product.additionalInformation?.dimensions?.width || "N/A" }}
