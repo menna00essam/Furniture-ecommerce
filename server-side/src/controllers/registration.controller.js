@@ -95,7 +95,7 @@ const google = (req, res, next) => {
   );
   // res.redirect(`http://localhost:4200/auth/login?token=${token}`);
   res.redirect(
-    `https://furniture-ecommerce-frontend.vercel.app/login?token=${token}`
+    `https://furniture-ecommerce-frontend.vercel.app/auth/login?token=${token}`
   );
 }; 
 // const code = req.query.code;
