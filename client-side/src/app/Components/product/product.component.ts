@@ -19,6 +19,7 @@ import { take, tap } from 'rxjs/operators';
 import { product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
+import { ComparisonService } from '../../Services/comparison.service';
 
 @Component({
   selector: 'app-product',
@@ -67,6 +68,7 @@ export class ProductComponent implements OnInit {
   salePrice: number = 0;
   isInCartState: boolean = false;
   isFavoriteState: boolean = false;
+  private cartSub!: Subscription;
 
   private routeSub: Subscription = new Subscription();
   skeletonArr = Array(4);
@@ -91,9 +93,21 @@ export class ProductComponent implements OnInit {
         this.loadProduct();
       }
     });
+    this.cartSub = this.cartService.cart$.subscribe((cart) => {
+      this.updateCartStateForCurrentProduct();
+    });
     this.loadProduct();
   }
 
+  private updateCartStateForCurrentProduct(): void {
+    if (!this.productId || !this.selectedColor) return;
+
+    this.isInCartState = this.cartService.isColorInCart(
+      this.productId,
+      this.selectedColor.name
+    );
+    this.cdr.markForCheck();
+  }
   toggleFavorite() {
     const product = this.productSubject.getValue();
     if (product) {
@@ -137,19 +151,12 @@ export class ProductComponent implements OnInit {
 
     const product = this.getMappedProduct(productDetails);
     const colorName = this.selectedColor.name;
+    console.log('Product price when toggling cart:', product.price);
 
     if (this.isInCartState) {
       this.cartService.removeColorVariant(product.id, colorName);
     } else {
       this.cartService.addProductWithColor(product, this.count);
-    }
-
-    // Optimistic update for guest users
-    if (!this.cartService.isUserLoggedIn()) {
-      this.isInCartState = this.cartService.isColorInCart(
-        product.id,
-        colorName
-      );
     }
   }
 
@@ -158,6 +165,7 @@ export class ProductComponent implements OnInit {
       tap({
         next: (productData) => {
           if (productData) {
+            this.count = 1;
             this.productSubject.next(productData);
             this.originalPrice = productData.productPrice;
             this.productcategories = (productData.productCategories ?? []).map(
@@ -165,6 +173,8 @@ export class ProductComponent implements OnInit {
             );
             this.salePrice =
               this.originalPrice * (1 - (productData.productSale || 0) / 100);
+            console.log('[product component] sale price', this.salePrice);
+
             this.colors = productData.colors || [];
             if (this.colors.length > 0) this.setSelectedColor(0);
             this.isInCartState = this.cartService.isInCart(productData.id);
@@ -174,7 +184,7 @@ export class ProductComponent implements OnInit {
             console.log(
               '[ProductComponent -- fetch product] Categories:',
               this.productcategories
-            ); // Check if categories are populated correctly
+            );
             this.productLoading = false;
             this.fetchProducts();
           } else {
@@ -193,11 +203,6 @@ export class ProductComponent implements OnInit {
 
   // related products
   fetchProducts() {
-    console.log(
-      '[ProductComponent -- fetch products] Categories:',
-      this.productcategories
-    );
-
     this.productService.getProducts(1, 4, this.productcategories).subscribe({
       next: (response) => {
         this.productsLoading = false;
@@ -227,27 +232,11 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  // no need fot it
-  // updatePrices() {
-  //   this.product$.subscribe((product) => {
-  //     if (product) {
-  //       this.originalPrice = product.productPrice;
-  //       this.salePrice =
-  //         this.originalPrice * (1 - (product.productSale || 0) / 100);
-  //     }
-  //   });
-  // }
   setSelectedColor(index: number) {
     this.selectedColorIndex = index;
     this.selectedImage = this.colors[index]?.mainImage || 'default-image.jpg';
     this.selectedColor = this.colors[this.selectedColorIndex];
-
-    if (this.productId && this.selectedColor) {
-      this.isInCartState = this.cartService.isColorInCart(
-        this.productId,
-        this.selectedColor.name
-      );
-    }
+    this.updateCartStateForCurrentProduct();
   }
 
   selectThumbnail(image: string) {
@@ -297,5 +286,9 @@ export class ProductComponent implements OnInit {
       this.warningMessage = null;
       this.count--;
     }
+  }
+  ngOnDestroy(): void {
+    this.routeSub.unsubscribe();
+    this.cartSub.unsubscribe(); // Cleanup subscription
   }
 }

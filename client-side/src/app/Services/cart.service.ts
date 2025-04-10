@@ -154,15 +154,15 @@ export class CartService {
 
   private handleGuestAddProduct(product: product, quantity: number): void {
     let cart = [...this.cartSubject.getValue()];
-    const price = this.calculateDiscountedPrice(product.price, product.sale);
+    // const price = this.calculateDiscountedPrice(product.price, product.sale);
 
     cart.push({
       id: product.id,
       name: product.name,
       image: product.image,
-      price,
+      price: product.price,
       quantity,
-      subtotal: price,
+      subtotal: product.price * product.quantity,
     });
 
     this.saveGuestCart(cart);
@@ -290,10 +290,7 @@ export class CartService {
     console.log('[CartService] Cart state updated:', cart);
   }
 
-  // In CartService
   addProductWithColor(product: product, quantity: number): void {
-    const price = this.calculateDiscountedPrice(product.price, product.sale);
-
     if (this.isLoggedInSubject.getValue()) {
       this.http
         .post(
@@ -324,7 +321,7 @@ export class CartService {
           },
         });
     } else {
-      this.handleGuestAddProductWithColor(product, quantity, price);
+      this.handleGuestAddProductWithColor(product, quantity, product.price);
       this.toast.success(
         `${product.name} (${product.color}) added to cart successfully`
       );
@@ -370,10 +367,13 @@ export class CartService {
     this.updateCartState(cart);
   }
 
-  isColorInCart(productId: string, color: string): boolean {
-    return this.cartSubject
-      .getValue()
-      .some((p) => p.id === productId && p.color === color);
+  isColorInCart(productId: string, colorName: string): boolean {
+    const cart = this.cartSubject.getValue();
+    console.log('[isColorInCart]', cart);
+
+    return cart.some(
+      (item) => item.id === productId && item.color === colorName
+    );
   }
   isUserLoggedIn(): boolean {
     return this.isLoggedInSubject.getValue();
