@@ -5,8 +5,8 @@ import {
   NavigationEnd,
   RouterModule,
 } from '@angular/router';
-import { BlogPost } from '../../Models/blog.model';
-import { BlogService } from '../../Services/blog.service';
+import { BlogPost } from '../../odels/blog.model';
+import { BlogService } from '../../ervices/blog.service';
 import { Subscription } from 'rxjs';
 import { BlogSkeletonComponent } from './blog-skeleton/blog-skeleton.component';
 import { CommonModule } from '@angular/common';

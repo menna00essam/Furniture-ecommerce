@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../Services/user.service';
-import { user } from '../../Models/user.model';
+import { UserService } from '../../ervices/user.service';
+import { user } from '../../odels/user.model';
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
-import { AuthService } from '../../Services/auth.service';
+import { AuthService } from '../../ervices/auth.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 

@@ -1,8 +1,8 @@
 import { Component, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../Services/auth.service';
-import { ModalService } from '../../Services/modal.service';
+import { AuthService } from '../../ervices/auth.service';
+import { ModalService } from '../../ervices/modal.service';
 import { LoginPromptModalComponent } from '../modals/login-prompt-modal/login-prompt-modal.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
@@ -11,8 +11,8 @@ import { ButtonComponent } from '../shared/button/button.component';
 import { StepperComponent } from '../shared/stepper/stepper.component';
 import { InputComponent } from '../shared/input/input.component';
 import { NgToastService } from 'ng-angular-popup';
-import { CartService } from '../../Services/cart.service';
-import { CheckoutService } from '../../Services/checkout.service';
+import { CartService } from '../../ervices/cart.service';
+import { CheckoutService } from '../../ervices/checkout.service';
 import { first, Observable, Subject, takeUntil } from 'rxjs';
 import {
   FormGroup,
@@ -34,7 +34,7 @@ import {
   CheckoutData,
   OrderItem,
   ShippingAddress,
-} from '../../Models/checkout.model';
+} from '../../odels/checkout.model';
 
 // Custom Validator: No Numbers
 export function noNumbersValidator(): ValidatorFn {

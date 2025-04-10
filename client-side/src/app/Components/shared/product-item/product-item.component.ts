@@ -18,12 +18,12 @@ import {
   state,
 } from '@angular/animations';
 
-import { FavoriteService } from '../../../Services/favorite.service';
-import { CartService } from '../../../Services/cart.service';
-import { product } from '../../../Models/product.model';
-import { productCart } from '../../../Models/productCart.model';
+import { FavoriteService } from '../../../ervices/favorite.service';
+import { CartService } from '../../../ervices/cart.service';
+import { product } from '../../../odels/product.model';
+import { productCart } from '../../../odels/productCart.model';
 import { Subscription } from 'rxjs';
-import { ComparisonService } from '../../../Services/comparison.service';
+import { ComparisonService } from '../../../ervices/comparison.service';
 
 @Component({
   selector: 'app-product-item',

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { ProductService } from './product.service';
-import { ProductDetails } from '../Models/product-details.model';
+import { ProductDetails } from '../odels/product-details.model';
 import { NgToastService } from 'ng-angular-popup';
 
 @Injectable({

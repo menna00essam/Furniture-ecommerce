@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
-import { ComparisonService } from '../../Services/comparison.service';
-import { ProductDetails } from '../../Models/product-details.model';
+import { ComparisonService } from '../../ervices/comparison.service';
+import { ProductDetails } from '../../odels/product-details.model';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
 @Component({

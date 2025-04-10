@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap, map, first, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { NgToastService } from 'ng-angular-popup';
-import { productFavorite } from '../Models/productFavorite.model';
+import { productFavorite } from '../odels/productFavorite.model';
 import { ModalService } from './modal.service';
 import { LoginPromptModalComponent } from '../Components/modals/login-prompt-modal/login-prompt-modal.component';
 import { environment } from '../environments/environment';

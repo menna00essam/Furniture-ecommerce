@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../shared/button/button.component';
-import { CartService } from '../../../../Services/cart.service';
+import { CartService } from '../../../../ervices/cart.service';
 import { Observable } from 'rxjs';
-import { productCart } from '../../../../Models/productCart.model';
+import { productCart } from '../../../../odels/productCart.model';
 
 @Component({
   selector: 'app-cart-totals',

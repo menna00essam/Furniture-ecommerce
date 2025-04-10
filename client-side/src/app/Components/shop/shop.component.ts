@@ -28,12 +28,12 @@ import { ProductItemComponent } from '../shared/product-item/product-item.compon
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 // Services
-import { ProductService } from '../../Services/product.service';
-import { CategoriesService } from '../../Services/categories.service';
+import { ProductService } from '../../ervices/product.service';
+import { CategoriesService } from '../../ervices/categories.service';
 
 // Models
-import { product } from '../../Models/product.model';
-import { category } from '../../Models/category.model';
+import { product } from '../../odels/product.model';
+import { category } from '../../odels/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SearchComponent } from './search/search.component';

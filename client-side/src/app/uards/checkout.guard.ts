@@ -1,18 +1,18 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { CartService } from '../Services/cart.service';
+import { CartService } from '../ervices/cart.service';
 import { map } from 'rxjs/operators';
 
-export const checkoutGuard: CanActivateFn = (route, state)=> {
+export const checkoutGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const cartService = inject(CartService);
 
   return cartService.getCart().pipe(
-    map(cartItems => {
+    map((cartItems) => {
       if (cartItems && cartItems.length > 0) {
-        return true; 
+        return true;
       } else {
-        router.navigate(['/']); 
+        router.navigate(['/']);
         return false;
       }
     })

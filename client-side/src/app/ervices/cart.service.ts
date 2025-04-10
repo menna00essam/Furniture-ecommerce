@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { product } from '../Models/product.model';
+import { product } from '../odels/product.model';
 import { AuthService } from './auth.service';
-import { productCart } from '../Models/productCart.model';
+import { productCart } from '../odels/productCart.model';
 import { NgToastService } from 'ng-angular-popup';
 import { environment } from '../environments/environment';
 
