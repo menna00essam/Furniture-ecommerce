@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
 import { DropdownComponent } from '../../shared/dropdown/dropdown.component';
-import { ProductService } from '../../../ervices/product.service';
+import { ProductService } from '../../../Services/product.service';
 
 @Component({
   selector: 'app-search',

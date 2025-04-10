@@ -8,8 +8,8 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
-import { BlogService } from '../../ervices/blog.service';
-import { BlogPost } from '../../odels/blog.model';
+import { BlogService } from '../../Services/blog.service';
+import { BlogPost } from '../../Models/blog.model';
 
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';

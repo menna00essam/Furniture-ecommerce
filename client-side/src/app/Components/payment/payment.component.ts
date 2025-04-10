@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { CheckoutService } from '../../ervices/checkout.service';
+import { CheckoutService } from '../../Services/checkout.service';
 import {
   loadStripe,
   Stripe,
   StripeCardElement,
   StripeElements,
 } from '@stripe/stripe-js';
-import { ModalService } from '../../ervices/modal.service';
+import { ModalService } from '../../Services/modal.service';
 import { PaymentFailedModalComponent } from '../modals/payment-failed-modal/payment-failed-modal.component';
 import { environment } from '../../environments/environment';
 @Component({

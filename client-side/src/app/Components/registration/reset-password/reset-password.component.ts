@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../ervices/auth.service';
+import { AuthService } from '../../../Services/auth.service';
 import {
   FormControl,
   FormGroup,

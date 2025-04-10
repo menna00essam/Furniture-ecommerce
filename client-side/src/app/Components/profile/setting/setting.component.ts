@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../../shared/button/button.component';
-import { user } from '../../../odels/user.model';
-import { UserService } from '../../../ervices/user.service';
+import { user } from '../../../Models/user.model';
+import { UserService } from '../../../Services/user.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {

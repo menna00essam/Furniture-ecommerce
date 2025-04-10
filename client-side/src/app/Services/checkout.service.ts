@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, catchError, of, tap, throwError } from 'rxjs';
-import { CheckoutData } from '../odels/checkout.model';
+import { CheckoutData } from '../Models/checkout.model';
 import { AuthService } from './auth.service';
 import { NgToastService } from 'ng-angular-popup';
 import { environment } from '../environments/environment';

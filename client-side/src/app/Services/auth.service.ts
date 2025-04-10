@@ -3,7 +3,7 @@ import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { product } from '../odels/product.model';
+import { product } from '../Models/product.model';
 import { CartService } from './cart.service';
 import { environment } from '../environments/environment';
 @Injectable({

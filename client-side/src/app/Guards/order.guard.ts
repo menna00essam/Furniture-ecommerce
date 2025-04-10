@@ -1,6 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { CheckoutService } from '../ervices/checkout.service';
+import { CheckoutService } from '../Services/checkout.service';
 
 export const orderGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);

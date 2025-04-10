@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { product } from '../odels/product.model';
-import { ProductDetails } from '../odels/product-details.model';
+import { product } from '../Models/product.model';
+import { ProductDetails } from '../Models/product-details.model';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { catchError, tap, take, map, switchMap } from 'rxjs/operators';

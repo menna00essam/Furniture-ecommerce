@@ -18,8 +18,8 @@ import { FavoritesComponent } from './Components/favorites/favorites.component';
 import { ForgotPasswordComponent } from './Components/registration/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './Components/registration/reset-password/reset-password.component';
 import { AdminComponent } from './Components/admin/admin.component';
-import { adminGuard } from './uards/admin.guard';
-import { authGuard } from './uards/auth.guard';
+import { adminGuard } from './Guards/admin.guard';
+import { authGuard } from './Guards/auth.guard';
 
 import { ProfileComponent } from './Components/profile/profile.component';
 import { SettingComponent } from './Components/profile/setting/setting.component';
@@ -29,9 +29,9 @@ import { PrivacyPolicyComponent } from './Components/help/privacy-policy/privacy
 import { ReturnsComponent } from './Components/help/returns/returns.component';
 import { PaymentOptionsComponent } from './Components/help/payment-options/payment-options.component';
 import { OrderSuccessComponent } from './Components/order-success/order-success.component';
-import { orderGuard } from './uards/order.guard';
-import { profileGuard } from './uards/profile.guard';
-import { checkoutGuard } from './uards/checkout.guard';
+import { orderGuard } from './Guards/order.guard';
+import { profileGuard } from './Guards/profile.guard';
+import { checkoutGuard } from './Guards/checkout.guard';
 
 export const routes: Routes = [
   {

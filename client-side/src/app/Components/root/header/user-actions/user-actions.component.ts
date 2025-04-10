@@ -1,11 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FavoriteService } from '../../../../ervices/favorite.service';
-import { CartService } from '../../../../ervices/cart.service';
-import { AuthService } from '../../../../ervices/auth.service';
-import { UserService } from '../../../../ervices/user.service';
-import { user } from '../../../../odels/user.model';
+import { FavoriteService } from '../../../../Services/favorite.service';
+import { CartService } from '../../../../Services/cart.service';
+import { AuthService } from '../../../../Services/auth.service';
+import { UserService } from '../../../../Services/user.service';
+import { user } from '../../../../Models/user.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 

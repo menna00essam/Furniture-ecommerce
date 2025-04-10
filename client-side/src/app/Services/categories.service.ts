@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { category } from '../odels/category.model';
+import { category } from '../Models/category.model';
 
 import { environment } from '../environments/environment';
 

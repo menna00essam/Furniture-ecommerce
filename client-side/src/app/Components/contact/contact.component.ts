@@ -9,10 +9,10 @@ import { CommonModule } from '@angular/common';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { ButtonComponent } from '../shared/button/button.component';
-import { ContactService } from '../../ervices/contact.service';
+import { ContactService } from '../../Services/contact.service';
 import { InputComponent } from '../shared/input/input.component';
 import { ContactConfirmModalComponent } from '../modals/contact-confim-modal/contact-confirm-modal.component';
-import { ModalService } from '../../ervices/modal.service';
+import { ModalService } from '../../Services/modal.service';
 
 @Component({
   selector: 'app-contact',

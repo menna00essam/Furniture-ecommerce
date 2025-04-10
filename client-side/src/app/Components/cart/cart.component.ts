@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { CartTotalsComponent } from './cart-components/cart-totals/cart-totals.component';
 import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.component';
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
-import { CartService } from '../../ervices/cart.service';
+import { CartService } from '../../Services/cart.service';
 import { Observable, map, take, switchMap, of } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
-import { productCart } from '../../odels/productCart.model';
+import { productCart } from '../../Models/productCart.model';
 import { Router } from '@angular/router';
-import { ProductService } from '../../ervices/product.service';
+import { ProductService } from '../../Services/product.service';
 import { NgToastService } from 'ng-angular-popup';
 
 @Component({

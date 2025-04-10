@@ -8,7 +8,7 @@ import {
 import { InputComponent } from '../../shared/input/input.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../shared/button/button.component';
-import { AuthService } from '../../../ervices/auth.service';
+import { AuthService } from '../../../Services/auth.service';
 import { jwtDecode } from 'jwt-decode';
 import {
   trigger,

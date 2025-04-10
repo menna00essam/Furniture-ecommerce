@@ -5,21 +5,21 @@ import {
   Router,
   RouterModule,
 } from '@angular/router';
-import { ProductService } from '../../ervices/product.service';
+import { ProductService } from '../../Services/product.service';
 import { ThumbnailComponent } from '../products-components/thumbnail/thumbnail.component';
 import { ProductDescriptionComponent } from '../products-components/product-description/product-description.component';
 import { ButtonComponent } from '../shared/button/button.component';
-import { ProductDetails } from '../../odels/product-details.model';
+import { ProductDetails } from '../../Models/product-details.model';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
-import { FavoriteService } from '../../ervices/favorite.service';
-import { CartService } from '../../ervices/cart.service';
+import { FavoriteService } from '../../Services/favorite.service';
+import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { product } from '../../odels/product.model';
+import { product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
-import { ComparisonService } from '../../ervices/comparison.service';
+import { ComparisonService } from '../../Services/comparison.service';
 
 @Component({
   selector: 'app-product',

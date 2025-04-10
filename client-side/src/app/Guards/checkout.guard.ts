@@ -1,6 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { CartService } from '../ervices/cart.service';
+import { CartService } from '../Services/cart.service';
 import { map } from 'rxjs/operators';
 
 export const checkoutGuard: CanActivateFn = (route, state) => {
