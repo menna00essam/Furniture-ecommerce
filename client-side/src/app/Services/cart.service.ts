@@ -82,6 +82,7 @@ export class CartService {
       price: p.productPrice,
       quantity: p.productQuantity,
       subtotal: p.productPrice * p.productQuantity,
+      color: p.productColor,
     };
   }
 
@@ -173,15 +174,16 @@ export class CartService {
     this.toast.success(`${product.name} added to cart successfully.`);
   }
 
-  removeProduct(productId: string): void {
+  removeProduct(productId: string, color?: string): void {
     console.log(`[CartService] Removing product ID: ${productId}`);
-    this.modifyQuantity(productId, 0, true);
+    this.modifyQuantity(productId, 0, true, color);
   }
 
   private modifyQuantity(
     productId: string,
     change: number,
-    remove = false
+    remove = false,
+    color?: string
   ): void {
     let cart = [...this.cartSubject.getValue()];
     let productName = '';
@@ -205,7 +207,7 @@ export class CartService {
       this.http
         .patch(
           this.apiUrl,
-          { productId, quantity: remove ? 0 : product?.quantity || 0 },
+          { productId, quantity: remove ? 0 : product?.quantity || 0, color },
           { headers: this.getAuthHeaders() }
         )
         .pipe(
@@ -292,6 +294,7 @@ export class CartService {
 
   addProductWithColor(product: product, quantity: number): void {
     if (this.isLoggedInSubject.getValue()) {
+      console.log('juiyvuyyyyyyyyyyyyyyyyyyy', product.color);
       this.http
         .post(
           this.apiUrl,
@@ -311,6 +314,7 @@ export class CartService {
               const cartProducts = response.data.products.map(
                 (p: productCart) => this.mapToProductCart(p)
               );
+              console.log(cartProducts);
               this.cartSubject.next(cartProducts);
               this.cartSubtotalSubject.next(response.data.totalPrice);
 
@@ -329,16 +333,19 @@ export class CartService {
   }
 
   removeColorVariant(productId: string, color: string): void {
-    const cart = this.cartSubject.getValue();
-    const product = cart.find((p) => p.id === productId && p.color === color);
-
-    if (product) {
-      const filteredCart = cart.filter(
-        (p) => !(p.id === productId && p.color === color)
-      );
-      this.updateCartState(filteredCart);
-      this.toast.success(`${product.name} (${color}) removed from the cart`);
-    }
+    this.removeProduct(productId, color);
+    // const cart = this.cartSubject.getValue();
+    // const product = cart.find((p) => p.id === productId && p.color === color);
+    // console.log(cart);
+    // console.log(productId);
+    // console.log(color);
+    // if (product) {
+    //   const filteredCart = cart.filter(
+    //     (p) => !(p.id === productId && p.color === color)
+    //   );
+    //   this.updateCartState(filteredCart);
+    //   this.toast.success(`${product.name} (${color}) removed from the cart`);
+    // }
   }
 
   private handleGuestAddProductWithColor(
@@ -370,7 +377,7 @@ export class CartService {
   isColorInCart(productId: string, colorName: string): boolean {
     const cart = this.cartSubject.getValue();
     console.log('[isColorInCart]', cart);
-
+    console.log(cart);
     return cart.some(
       (item) => item.id === productId && item.color === colorName
     );

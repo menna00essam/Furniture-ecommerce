@@ -68,9 +68,10 @@ export class ProductComponent implements OnInit {
   salePrice: number = 0;
   isInCartState: boolean = false;
   isFavoriteState: boolean = false;
-  private cartSub!: Subscription;
 
   private routeSub: Subscription = new Subscription();
+  private subs: Subscription = new Subscription();
+
   skeletonArr = Array(4);
 
   productLoading: boolean = true;
@@ -88,26 +89,49 @@ export class ProductComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.btnWidth = window.innerWidth < 640 ? '340px' : '155px';
+    this.btnWidth = window.innerWidth < 640 ? '100%' : '155px';
     this.routeSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.loadProduct();
       }
     });
-    this.cartSub = this.cartService.cart$.subscribe((cart) => {
-      this.updateCartStateForCurrentProduct();
-    });
+    this.subs.add(
+      this.cartService.cart$.subscribe((cart) => {
+        console.log(cart);
+        this.isInCartState = cart.some(
+          (item) =>
+            item.id === this.productId &&
+            this.selectedColor &&
+            item.color == this.selectedColor.name
+        );
+        this.cdr.markForCheck();
+      })
+    );
     this.loadProduct();
   }
 
   private updateCartStateForCurrentProduct(): void {
-    if (!this.productId || !this.selectedColor) return;
+    // if (!this.productId || !this.selectedColor) return;
+    // console.log(5);
 
-    this.isInCartState = this.cartService.isColorInCart(
-      this.productId,
-      this.selectedColor.name
+    // this.isInCartState = this.cartService.isColorInCart(
+    //   this.productId,
+    //   this.selectedColor.name
+    // );
+    // console.log(this.isInCartState);
+    // this.cdr.markForCheck();
+
+    this.subs.add(
+      this.cartService.cart$.subscribe((cart) => {
+        this.isInCartState = cart.some(
+          (item) =>
+            item.id === this.productId &&
+            this.selectedColor &&
+            item.color == this.selectedColor.name
+        );
+        this.cdr.markForCheck();
+      })
     );
-    this.cdr.markForCheck();
   }
   toggleFavorite() {
     const product = this.productSubject.getValue();
@@ -299,6 +323,5 @@ export class ProductComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
-    this.cartSub.unsubscribe(); // Cleanup subscription
   }
 }

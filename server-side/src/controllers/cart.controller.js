@@ -46,6 +46,7 @@ const getUserCart = asyncWrapper(async (req, res, next) => {
         productName: productId.productName,
         productImage:
           colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
+        productColor: colorVariant.name,
         productPrice: effectivePrice,
         productSubtotal: finalQuantity * effectivePrice,
       };
@@ -161,6 +162,7 @@ const addToCart = asyncWrapper(async (req, res, next) => {
         productName: productId.productName,
         productImage:
           colorVariant.images.length > 0 ? colorVariant.images[0].url : null,
+        productColor: colorVariant.name,
         productPrice: effectivePrice,
         productSubtotal: finalQuantity * effectivePrice,
       };

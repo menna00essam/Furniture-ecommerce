@@ -4,11 +4,11 @@ import { FeatureBannerComponent } from '../shared/feature-banner/feature-banner.
 import { HeaderBannerComponent } from '../shared/header-banner/header-banner.component';
 import { ComparisonService } from '../../Services/comparison.service';
 import { ProductDetails } from '../../Models/product-details.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-comparison',
-  imports: [FeatureBannerComponent, HeaderBannerComponent, CommonModule],
+  imports: [HeaderBannerComponent, CommonModule, CurrencyPipe],
   templateUrl: './comparison.component.html',
 })
 export class ComparisonComponent implements OnInit {

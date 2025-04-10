@@ -26,7 +26,7 @@ export class ComparisonService {
     comparison = comparison.filter((id: string) => id !== productId);
 
     // Add to the end of array if not full
-    if (comparison.length < 2) {
+    if (comparison.length < 4) {
       comparison.push(productId);
     } else {
       // If full, remove oldest and add new (FIFO)
@@ -90,6 +90,6 @@ export class ComparisonService {
     const comparison = JSON.parse(
       localStorage.getItem(this.comparisonKey) || '[]'
     );
-    return comparison.length === 2;
+    return comparison.length === 4;
   }
 }
