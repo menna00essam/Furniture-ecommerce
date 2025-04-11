@@ -101,9 +101,7 @@ const google = (req, res) => {
   });
 
   console.log('[GOOGLE AUTH] Redirecting with token');
-  res.redirect(
-    `https://furniture-ecommerce-frontend.vercel.app/auth/login?token=${token}`
-  );
+  res.redirect(`http://localhost:4200/auth/login?token=${token}`);
 };
 
 // POST /forgot-password
@@ -129,7 +127,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
 
   await user.save();
 
-  const resetLink = `https://furniture-ecommerce-frontend.vercel.app/auth/reset-password?token=${user.resetToken}`;
+  const resetLink = `http://localhost:4200/auth/reset-password?token=${user.resetToken}`;
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
