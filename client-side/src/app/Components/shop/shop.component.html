@@ -65,7 +65,7 @@ async); @let productsMaxPrice = (priceMax$ | async);
     <app-filter-option title="Category">
       <div class="flex flex-col gap-2">
         <div
-          *ngFor="let category of categories$ | async"
+          *ngFor="let category of categories"
           class="flex gap-2 items-center"
         >
           <input

@@ -10,7 +10,7 @@ import {
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 // Angular Material & CDK
@@ -118,8 +118,7 @@ export class ShopComponent implements OnInit {
 
   // Sorting
   sortMenuItems = Object.values(SortOptions);
-  categories$!: Observable<category[]>;
-  categoriesNames$!: Observable<string[]>;
+  categories!: category[];
 
   // Track loading state
   loading = true;
@@ -150,12 +149,10 @@ export class ShopComponent implements OnInit {
     });
   }
 
-  private initializeCategories() {
-    this.categories$ = this.categoriesService.categories$;
-    this.categoriesNames$ = this.categories$.pipe(
-      map((categories) => categories.map((cat) => cat.name))
-    );
-    this.categoriesService.getCategories().subscribe();
+  private initializeCategories(): void {
+    this.categoriesService.getCategories().subscribe((categories) => {
+      this.categories = categories;
+    });
   }
 
   goToProduct(id: string) {

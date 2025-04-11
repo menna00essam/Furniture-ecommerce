@@ -48,7 +48,7 @@ const seedData = async () => {
     // ======================
     // const categories = await Category.insertMany([
     //   {
-    //     catName: "beds",
+    //     name: "beds",
     //     description:
     //       "Beds are essential furniture pieces designed for sleeping and resting. They come in various styles, sizes, and materials to suit different preferences and needs.",
     //     image:
