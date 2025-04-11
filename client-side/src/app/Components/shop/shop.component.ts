@@ -37,7 +37,7 @@ import { category } from '../../Models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SearchComponent } from './search/search.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Enums
 enum SortOptions {
@@ -89,7 +89,7 @@ export class ShopComponent implements OnInit {
   @ViewChild('sortMenu', { static: false }) sortMenuRef!: ElementRef;
 
   // UI State
-  showFilters = false;
+  showFilters = true;
   showSortMenu = false;
   disableAnimation = false;
 
@@ -127,16 +127,21 @@ export class ShopComponent implements OnInit {
     private productService: ProductService,
     private categoriesService: CategoriesService,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     console.log('Initializing ShopComponent');
     this.products$ = this.productService.products$;
+    const state = history.state;
+    if (state?.category) {
+      this.selectedCategories = [state.category];
+      history.replaceState('category', '');
+    }
     this.fetchProducts();
     this.initializePriceRange();
     this.initializeCategories();
-    this.checkScreenSize();
   }
 
   private initializePriceRange() {
@@ -244,9 +249,13 @@ export class ShopComponent implements OnInit {
     this.showSortMenu = open;
   }
 
+  isLgScreen(): boolean {
+    return window.innerWidth >= 1024;
+  }
+
   @HostListener('window:resize')
-  checkScreenSize(): void {
-    this.disableAnimation = window.innerWidth >= 1024;
+  onResize() {
+    this.showFilters = this.isLgScreen();
   }
 
   @HostListener('document:click', ['$event'])

@@ -46,7 +46,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     private productService: ProductService,
     private categoriesService: CategoriesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       next: () => this.cdr.detectChanges(),
     });
     this.categoriesService.getCategories().subscribe((categories) => {
-      console.log(categories);
+      this.categories = categories;
     });
   }
 

@@ -17,17 +17,27 @@ export class CategoriesService {
   constructor(private http: HttpClient) {}
 
   getCategories(): Observable<category[]> {
-    return this.http
-      .get<{ data: { categories: category[] } }>(this.apiUrl)
-      .pipe(
-        tap((response) =>
-          this.categoriesSubject.next(response.data.categories)
-        ),
-        catchError((error) => {
-          console.error('Error fetching categories:', error);
-          return of([]);
-        }),
-        map((response) => Array.isArray(response) ? [] : response.data.categories)
-      );
+    return this.http.get<{ data: { categories: any[] } }>(this.apiUrl).pipe(
+      tap((response) => {
+        const categories = response.data.categories.map((category) => ({
+          ...category,
+          id: category._id,
+        }));
+        this.categoriesSubject.next(categories);
+      }),
+      catchError((error) => {
+        console.error('Error fetching categories:', error);
+        return of([]);
+      }),
+      map((response) => {
+        if ('data' in response && response.data.categories) {
+          return response.data.categories.map((category) => ({
+            ...category,
+            id: category._id,
+          }));
+        }
+        return [];
+      })
+    );
   }
 }
