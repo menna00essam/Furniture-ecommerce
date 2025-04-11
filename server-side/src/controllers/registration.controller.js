@@ -92,19 +92,87 @@ const login = asyncWrapper(async (req, res, next) => {
 const google = (req, res) => {
   console.log('[GOOGLE AUTH] Google login callback for:', req.user.email);
 
-  const token = generateToken({
-    _id: req.user._id,
-    email: req.user.email,
-    username: req.user.username,
-    role: req.user.role,
-    thumbnail: req.user.thumbnail,
-  });
-
-  console.log('[GOOGLE AUTH] Redirecting with token');
+const google = (req, res, next) => {
+  const token = jwt.sign(
+    {
+      email: req.user.email,
+      username: req.user.username,
+      role: req.user.role,
+      _id: req.user._id,
+      thumbnail: req.user.thumbnail,
+    },
+    process.env.JWT_SECRET
+  );
   res.redirect(`http://localhost:4200/auth/login?token=${token}`);
 };
+// const code = req.query.code;
+// const { tokens } = await googleAuth.verifyIdToken(code);
+// const payload = jwt.decode(tokens.id_token);
+// let user;
+// let foundedUser = await userModel.findOne({ email: payload.email });
+// if (!foundedUser) {
+//   user = await userModel.create({
+//     email: payload.email,
+//     username: payload.name,
+//     role: "user",
+//   });
+// }
+// const token = jwt.sign(
+//   {
+//     email: user.email,
+//     username: user.username,
+//     _id: user._id,
+//     role: user.role,
+//   },
+//   process.env.JWT_SECRET
+// );
+// res.status(201).json({
+//   status: httpStatusText.SUCCESS,
+//   message: "Logged in successfully",
+//   data: { token },
+// });
 
-// POST /forgot-password
+// const google = asyncWrapper(async (req, res, next) => {
+//   const code = req.query.code;
+//   const { tokens } = await googleAuth.verifyIdToken(code);
+//   const payload = jwt.decode(tokens.id_token);
+//   let user = await userModel.findOne({ email: payload.email });
+//   if (!user) {
+//     user = await userModel.create({
+//       email: payload.email,
+//       username: payload.name,
+//       role: "user",
+//     });
+//   }
+//   const token = jwt.sign(
+//     {
+//       email: user.email,
+//       username: user.username,
+//       _id: user._id,
+//       role: user.role,
+//     },
+//     process.env.JWT_SECRET
+//   );
+//   res.status(201).json({
+//     status: httpStatusText.SUCCESS,
+//     message: "Logged in successfully",
+//     data: { token },
+//   });
+const logout = asyncWrapper(async (req, res, next) => {});
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
 const forgotPassword = asyncWrapper(async (req, res, next) => {
   const { email } = req.body;
   console.log('[FORGOT PASSWORD] Request for:', email);
@@ -126,8 +194,7 @@ const forgotPassword = asyncWrapper(async (req, res, next) => {
   user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
 
   await user.save();
-
-  const resetLink = `http://localhost:4200/auth/reset-password?token=${resetToken}`;
+  const resetLink = `http://localhost:4200/auth/reset-password?token=${user.resetToken}`;
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.email,
