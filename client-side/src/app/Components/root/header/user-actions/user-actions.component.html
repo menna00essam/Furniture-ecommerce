@@ -2,6 +2,8 @@
 (cartLength$|async)??0; @let favoritesLength = (favoritesLength$|async)??0;
 
 <ul class="flex gap-[15px] py-[15px] w-full justify-center">
+  @if(isLoggedIn){
+
   <li class="relative h-[20px]">
     <button class="cursor-pointer" (click)="showFavModal()">
       <img src="icons/heart.svg" alt="" srcset="" class="w-[20px]" />
@@ -16,6 +18,7 @@
     </div>
     }
   </li>
+  }
   <li class="relative h-[20px]">
     <button class="cursor-pointer" (click)="showCartModal()">
       <img src="icons/shopping-cart.svg" alt="" srcset="" class="w-[20px]" />
