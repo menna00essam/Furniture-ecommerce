@@ -53,6 +53,7 @@ export class BlogService {
           this.postsSubject.next(data.data.posts);
           this.totalPostsSubject.next(data.data.totalPosts);
         }),
+        map((res) => res.data.posts),
         catchError(this.handleError)
       );
   }

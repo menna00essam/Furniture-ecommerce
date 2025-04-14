@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { FavoriteService } from '../../../../Services/favorite.service';
 import { CartService } from '../../../../Services/cart.service';
 import { AuthService } from '../../../../Services/auth.service';
@@ -18,9 +18,9 @@ export class UserActionsComponent implements OnInit {
   @Output() openFavorites = new EventEmitter<void>();
   @Output() openCart = new EventEmitter<void>();
 
-  user$!: Observable<user | null>;
-  cartLength$!: Observable<number>;
-  favoritesLength$!: Observable<number>;
+  user!: user;
+  cartLength!: number;
+  favoritesLength!: number;
   isLoggedIn = false;
 
   constructor(
@@ -31,19 +31,26 @@ export class UserActionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user$ = this.userService.user$;
-    this.authService.isLoggedIn$.subscribe((status) => {
-      this.isLoggedIn = status;
+    this.authService.isLoggedIn$
+      .pipe(
+        filter((status) => status === true),
+        take(1),
+        switchMap(() =>
+          combineLatest([
+            this.userService.getUser(),
+            this.favoriteService.favorites$,
+          ])
+        )
+      )
+      .subscribe(([user, favorites]) => {
+        this.user = user;
+        this.favoritesLength = favorites.length;
+        this.isLoggedIn = true;
+      });
+
+    this.cartService.cart$.subscribe((cart) => {
+      this.cartLength = cart.length;
     });
-
-    if (this.isLoggedIn) {
-      this.userService.getUser().subscribe();
-      this.favoritesLength$ = this.favoriteService.favorites$.pipe(
-        map((favorites) => favorites.length)
-      );
-    }
-
-    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
   }
 
   showFavModal() {

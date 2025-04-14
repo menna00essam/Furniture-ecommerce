@@ -7,7 +7,6 @@ const userValidation = require('../utils/userValidation');
 const asyncWrapper = require('../middlewares/asyncWrapper.middleware');
 const AppError = require('../utils/appError');
 const httpStatusText = require('../utils/httpStatusText');
-const { tokenBlacklist } = require('../middlewares/checkBlacklist.middleware');
 
 // Helper: Token Generator
 const generateToken = (payload, expiresIn = null) => {
@@ -183,15 +182,11 @@ const resetPassword = asyncWrapper(async (req, res, next) => {
 // POST /logout
 const logout = asyncWrapper(async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  console.log('[LOGOUT] Token to blacklist:', token);
-
+  
   if (!token) {
     console.warn('[LOGOUT] No token provided');
     return next(new AppError('Token is required', 400, httpStatusText.FAIL));
   }
-
-  tokenBlacklist.add(token);
-  console.log('[LOGOUT] Token blacklisted successfully');
 
   res.status(200).json({
     status: httpStatusText.SUCCESS,

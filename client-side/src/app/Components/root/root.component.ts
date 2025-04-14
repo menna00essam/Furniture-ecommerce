@@ -49,9 +49,9 @@ import { NgToastService } from 'ng-angular-popup';
 export class RootComponent {
   ToasterPosition = ToasterPosition;
   user$!: Observable<user | null>;
-  cartProductsTotalPrice!: Observable<number>;
-  cartLength$!: Observable<number>;
-  cart$!: Observable<productCart[]>;
+  cartProductsTotalPrice!: number;
+  cartLength!: number;
+  cart!: productCart[];
   favorites$!: Observable<productFavorite[]>;
   favoritesLength$!: Observable<number>;
   favModalShow = false;
@@ -69,22 +69,26 @@ export class RootComponent {
   ) {}
 
   ngOnInit(): void {
-    this.user$ = this.userService.user$;
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
 
     if (this.isLoggedIn) {
-      this.userService.getUser().subscribe();
+      this.user$ = this.userService.getUser();
       this.favorites$ = this.favoriteService.favorites$;
       this.favoritesLength$ = this.favoriteService.favorites$.pipe(
         map((favorites) => favorites.length)
       );
     }
 
-    this.cart$ = this.cartService.cart$;
-    this.cartLength$ = this.cartService.cart$.pipe(map((cart) => cart.length));
-    this.cartProductsTotalPrice = this.cartService.cartSubtotal$;
+    this.cartService.cart$.subscribe((cart) => {
+      this.cart = cart;
+      this.cartLength = this.cart.length;
+    });
+
+    this.cartService.cartSubtotal$.subscribe((subtotal) => {
+      this.cartProductsTotalPrice = subtotal;
+    });
   }
 
   deleteFavorite(id: string): void {
@@ -111,17 +115,17 @@ export class RootComponent {
   }
 
   handleCheckoutClick(): void {
-    this.cart$
-      .subscribe((cartItems) => {
-        this.toggleCartModal(false);
-        if (cartItems.length === 0) {
-          this.toast.danger('cart is empty!, please add items to checkout');
-          this.router.navigate(['/']);
-        } else {
-          this.router.navigate(['/checkout']);
-        }
-      })
-      .unsubscribe();
+    // this.cart$
+    //   .subscribe((cartItems) => {
+    //     this.toggleCartModal(false);
+    //     if (cartItems.length === 0) {
+    //       this.toast.danger('cart is empty!, please add items to checkout');
+    //       this.router.navigate(['/']);
+    //     } else {
+    //       this.router.navigate(['/checkout']);
+    //     }
+    //   })
+    //   .unsubscribe();
   }
 
   private toggleBodyScroll(isOpen: boolean): void {

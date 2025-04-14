@@ -9,7 +9,7 @@ import { NgToastService } from 'ng-angular-popup';
 import { environment } from '../environments/environment';
 
 @Injectable({ providedIn: 'root' })
-export class CartService {
+export class CartService{
   private apiUrl = `${environment.apiUrl}/cart`;
 
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);

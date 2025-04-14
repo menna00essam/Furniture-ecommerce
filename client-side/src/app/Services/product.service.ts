@@ -105,7 +105,6 @@ export class ProductService {
             console.error('[ProductService] Invalid API response:', response);
             return;
           }
-          console.log('#################', response);
           const apiProducts = response.data.products.map((p) => ({
             id: p._id,
             name: p.name,
@@ -125,6 +124,7 @@ export class ProductService {
           );
           this.productsSubject.next(apiProducts);
         }),
+        map((response) => response.data.products),
         catchError((error) => {
           console.error('[ProductService] Error fetching products:', error);
           return of([]);

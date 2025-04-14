@@ -16,7 +16,6 @@ import { productFavorite } from '../../../Models/productFavorite.model';
 export class FavoritesItemsComponent implements OnInit {
   favorites$!: Observable<productFavorite[]>;
   favoritesLength$!: Observable<number>;
-  cart$!: Observable<productCart[]>;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -25,7 +24,6 @@ export class FavoritesItemsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cart$ = this.cartService.cart$;
     this.favorites$ = this.favoriteService.favorites$;
     this.favoritesLength$ = this.favoriteService.favorites$.pipe(
       map((favorites) => favorites.length)

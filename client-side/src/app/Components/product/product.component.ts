@@ -39,7 +39,7 @@ import { ComparisonService } from '../../Services/comparison.service';
   templateUrl: './product.component.html',
 })
 export class ProductComponent implements OnInit {
-  id: string | null = null;
+  id!: string;
   private productSubject = new BehaviorSubject<ProductDetails | null>(null);
   product$ = this.productSubject.asObservable(); // Observable for the product
   relatedProducts$!: Observable<product[]>;
@@ -95,18 +95,15 @@ export class ProductComponent implements OnInit {
         this.loadProduct();
       }
     });
-    this.subs.add(
-      this.cartService.cart$.subscribe((cart) => {
-        console.log(cart);
-        this.isInCartState = cart.some(
-          (item) =>
-            item.id === this.id &&
-            this.selectedColor &&
-            item.color == this.selectedColor.name
+    this.cartService.cart$.subscribe(() => {
+      if (this.selectedColor?.name) {
+        this.isInCartState = this.cartService.isColorInCart(
+          this.id,
+          this.selectedColor.name
         );
-        this.cdr.markForCheck();
-      })
-    );
+      }
+      this.cdr.markForCheck();
+    });
 
     this.subs.add(
       this.favoriteService.favorites$.subscribe((favorites) => {
@@ -249,7 +246,7 @@ export class ProductComponent implements OnInit {
   loadProduct(): void {
     this.productLoading = true;
     this.productsLoading = true;
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.id = this.route.snapshot.paramMap.get('id') ?? '';
     if (this.id) {
       this.fetchProduct(this.id).subscribe(() => {
         console.log('[ProductComponent] Product data fetched successfully.');
