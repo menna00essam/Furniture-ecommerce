@@ -1,12 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartService } from '../../../Services/cart.service';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../button/button.component';
 import { Observable, map } from 'rxjs';
 import { FavoriteService } from '../../../Services/favorite.service';
-import { productCart } from '../../../Models/productCart.model';
-import { productFavorite } from '../../../Models/productFavorite.model';
+import { ProductFavorite } from '../../../Models/productFavorite.model';
 @Component({
   selector: 'app-favorites-items',
   imports: [ButtonComponent, CommonModule, RouterModule],
@@ -14,12 +12,11 @@ import { productFavorite } from '../../../Models/productFavorite.model';
   styleUrl: './favorites-items.component.css',
 })
 export class FavoritesItemsComponent implements OnInit {
-  favorites$!: Observable<productFavorite[]>;
+  favorites$!: Observable<ProductFavorite[]>;
   favoritesLength$!: Observable<number>;
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private cartService: CartService,
     private favoriteService: FavoriteService
   ) {}
 

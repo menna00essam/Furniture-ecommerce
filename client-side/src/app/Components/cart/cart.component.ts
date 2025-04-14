@@ -7,10 +7,10 @@ import { HeaderBannerComponent } from '../shared/header-banner/header-banner.com
 import { CartService } from '../../Services/cart.service';
 import { take, switchMap, of } from 'rxjs';
 import { StepperComponent } from '../shared/stepper/stepper.component';
-import { productCart } from '../../Models/productCart.model';
 import { Router } from '@angular/router';
 import { ProductService } from '../../Services/product.service';
 import { NgToastService } from 'ng-angular-popup';
+import { ProductCart } from '../../Models/productCart.model';
 
 @Component({
   selector: 'app-cart',
@@ -27,7 +27,7 @@ import { NgToastService } from 'ng-angular-popup';
   ],
 })
 export class CartComponent implements OnInit {
-  cart!: productCart[];
+  cart!: ProductCart[];
   cartLength!: number;
 
   constructor(
@@ -50,7 +50,7 @@ export class CartComponent implements OnInit {
     this.cartService.removeProduct(itemId);
   }
 
-  increaseQuantity(item: productCart) {
+  increaseQuantity(item: ProductCart) {
     this.productService
       .getProduct(item.id)
       .pipe(

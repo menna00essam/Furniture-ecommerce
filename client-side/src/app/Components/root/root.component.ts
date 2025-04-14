@@ -5,17 +5,15 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 import { NgToastModule } from 'ng-angular-popup';
 import { ToasterPosition } from 'ng-angular-popup';
 import { map, Observable } from 'rxjs';
-import { user } from '../../Models/user.model';
-import { productCart } from '../../Models/productCart.model';
+import { User } from '../../Models/user.model';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { AuthService } from '../../Services/auth.service';
 import { UserService } from '../../Services/user.service';
-import { productFavorite } from '../../Models/productFavorite.model';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Router } from '@angular/router';
-import { NgToastService } from 'ng-angular-popup';
+import { ProductCart } from '../../Models/productCart.model';
+import { ProductFavorite } from '../../Models/productFavorite.model';
 
 @Component({
   selector: 'app-root',
@@ -48,11 +46,11 @@ import { NgToastService } from 'ng-angular-popup';
 })
 export class RootComponent {
   ToasterPosition = ToasterPosition;
-  user$!: Observable<user | null>;
+  user$!: Observable<User | null>;
   cartProductsTotalPrice!: number;
   cartLength!: number;
-  cart!: productCart[];
-  favorites$!: Observable<productFavorite[]>;
+  cart!: ProductCart[];
+  favorites$!: Observable<ProductFavorite[]>;
   favoritesLength$!: Observable<number>;
   favModalShow = false;
   cartModalShow = false;
@@ -63,8 +61,6 @@ export class RootComponent {
     private cartService: CartService,
     private authService: AuthService,
     private userService: UserService,
-    private router: Router,
-    private toast: NgToastService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -112,20 +108,6 @@ export class RootComponent {
   toggleCartModal(open: boolean): void {
     this.cartModalShow = open;
     this.toggleBodyScroll(open);
-  }
-
-  handleCheckoutClick(): void {
-    // this.cart$
-    //   .subscribe((cartItems) => {
-    //     this.toggleCartModal(false);
-    //     if (cartItems.length === 0) {
-    //       this.toast.danger('cart is empty!, please add items to checkout');
-    //       this.router.navigate(['/']);
-    //     } else {
-    //       this.router.navigate(['/checkout']);
-    //     }
-    //   })
-    //   .unsubscribe();
   }
 
   private toggleBodyScroll(isOpen: boolean): void {

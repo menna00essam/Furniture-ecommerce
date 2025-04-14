@@ -20,8 +20,8 @@ import {
 
 import { FavoriteService } from '../../../Services/favorite.service';
 import { CartService } from '../../../Services/cart.service';
-import { product } from '../../../Models/product.model';
-import { productCart } from '../../../Models/productCart.model';
+import { Product } from '../../../Models/product.model';
+import { ProductCart } from '../../../Models/productCart.model';
 import { Subscription } from 'rxjs';
 import { ComparisonService } from '../../../Services/comparison.service';
 
@@ -44,7 +44,7 @@ import { ComparisonService } from '../../../Services/comparison.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductItemComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) product!: product;
+  @Input({ required: true }) product!: Product;
 
   isHovered = false;
   showActions = false;

@@ -3,7 +3,7 @@ import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { product } from '../Models/product.model';
+import { Product } from '../Models/product.model';
 import { CartService } from './cart.service';
 import { environment } from '../environments/environment';
 @Injectable({
@@ -37,7 +37,7 @@ export class AuthService {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     if (cart.length > 0) {
       const cartService = this.getCartService();
-      cart.forEach((p: product) => {
+      cart.forEach((p: Product) => {
         cartService.addProduct(p, p.quantity);
       });
       localStorage.removeItem('cart');

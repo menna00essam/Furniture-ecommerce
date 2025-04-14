@@ -1,11 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { filter, map, switchMap, take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { FavoriteService } from '../../../../Services/favorite.service';
 import { CartService } from '../../../../Services/cart.service';
 import { AuthService } from '../../../../Services/auth.service';
 import { UserService } from '../../../../Services/user.service';
-import { user } from '../../../../Models/user.model';
+import { User } from '../../../../Models/user.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -18,7 +18,7 @@ export class UserActionsComponent implements OnInit {
   @Output() openFavorites = new EventEmitter<void>();
   @Output() openCart = new EventEmitter<void>();
 
-  user!: user;
+  user!: User;
   cartLength!: number;
   favoritesLength!: number;
   isLoggedIn = false;

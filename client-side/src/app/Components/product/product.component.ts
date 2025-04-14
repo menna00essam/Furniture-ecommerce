@@ -15,8 +15,8 @@ import { ProductItemComponent } from '../shared/product-item/product-item.compon
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
 import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
-import { product } from '../../Models/product.model';
+import { tap } from 'rxjs/operators';
+import { Product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { ComparisonService } from '../../Services/comparison.service';
@@ -41,8 +41,8 @@ import { ComparisonService } from '../../Services/comparison.service';
 export class ProductComponent implements OnInit {
   id!: string;
   private productSubject = new BehaviorSubject<ProductDetails | null>(null);
-  product$ = this.productSubject.asObservable(); // Observable for the product
-  relatedProducts$!: Observable<product[]>;
+  product$ = this.productSubject.asObservable();
+  relatedProducts$!: Observable<Product[]>;
   warningMessage: string | null = null;
   colors: {
     name: string;
@@ -149,7 +149,7 @@ export class ProductComponent implements OnInit {
     }
   }
 
-  getMappedProduct(product: ProductDetails): product {
+  getMappedProduct(product: ProductDetails): Product {
     return {
       id: product.id,
       name: product.name,

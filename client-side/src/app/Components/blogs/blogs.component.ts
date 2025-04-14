@@ -9,7 +9,7 @@ import { DropdownComponent } from '../shared/dropdown/dropdown.component';
 import { PaginationComponent } from '../shared/pagination/pagination.component';
 
 import { BlogService } from '../../Services/blog.service';
-import { BlogPost } from '../../Models/blog.model';
+import { Blog } from '../../Models/blog.model';
 
 import { RouterModule } from '@angular/router';
 import { BlogSkeletonComponent } from '../blog/blog-skeleton/blog-skeleton.component';
@@ -35,7 +35,7 @@ export class BlogsComponent implements OnInit {
   selectedCategory: string = 'All';
   isMenuOpen: boolean = false;
   searchQuery: string = '';
-  posts!:BlogPost[];
+  posts!: Blog[];
   loading = true;
 
   currentPage: number = 1;

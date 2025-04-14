@@ -139,7 +139,7 @@
     >
     @if (cartLength) {
     <a
-      (click)="handleCheckoutClick()"
+      [routerLink]="['/checkout']"
       class="border py-[5px] px-[30px] text-xs rounded-[50px] cursor-pointer"
       >Checkout</a
     >
