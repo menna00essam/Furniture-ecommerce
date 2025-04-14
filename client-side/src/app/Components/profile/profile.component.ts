@@ -33,6 +33,10 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = '/images/user.png';
+  }
+
   toggleCheck() {
     this.isChecked = !this.isChecked;
   }

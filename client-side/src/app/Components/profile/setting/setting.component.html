@@ -39,7 +39,8 @@
               data-nimg="1"
               class="rounded-full w-15 h-15 object-cover"
               [src]="(user$ | async)?.thumbnail"
-              style="color: transparent"
+              (error)="onImageError($event)"
+              referrerpolicy="no-referrer"
             />
             <div
               class="flex flex-col items-center justify-center gap-1 scale-75 ut-button:ring-primary ut-button:bg-primary/75 hover:ut-button:bg-primary ut-button:transition-all ut-button:duration-500 ut-label:hidden ut-allowed-content:hidden"
@@ -110,46 +111,3 @@
     </div>
   </div>
 </section>
-<!--  <div class="space-y-2">
-          <label
-            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            for=":r1a:-form-item"
-            >Two Factor Authentication</label
-          >
-          <p
-            id=":r1a:-form-item-description"
-            class="text-sm text-muted-foreground"
-          >
-            Enable two factor authentication to add an extra layer of security
-            to your account.
-          </p>
-          <button
-            type="button"
-            role="switch"
-            value="on"
-            class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background {{
-              isChecked ? 'bg-primary' : 'bg-gray-light'
-            }}"
-          >
-            <span
-              data-state="unchecked"
-              data-disabled=""
-              class="pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform {{
-                isChecked ? 'translate-x-5' : 'translate-x-0'
-              }}"
-            ></span></button
-          ><input
-            tabindex="-1"
-            type="checkbox"
-            value="on"
-            (input)="toggleCheck()"
-            style="
-              transform: translateX(-100%);
-              position: absolute;
-              opacity: 0;
-              margin: 0px;
-              width: 44px;
-              height: 24px;
-            "
-          />
-        </div> -->

@@ -1,5 +1,5 @@
 <ul class="flex gap-[15px] py-[15px] w-full justify-center">
-  @if(isLoggedIn){
+  @if(isLoggedIn$|async){
   <li class="relative h-[20px]">
     <button class="cursor-pointer" (click)="showFavModal()">
       <img src="/icons/heart.svg" alt="" srcset="" class="w-[20px]" />
@@ -31,13 +31,18 @@
   </li>
 
   <li class="rounded-4xl overflow-hidden">
-    <a routerLink="{{ isLoggedIn ? ['/profile'] : '/auth' }}">
+    @if(isLoggedIn$|async){
+    <a [routerLink]="['/profile']">
       <img
-        [src]="isLoggedIn ? user.thumbnail : '/icons/account-alert.svg'"
+        [src]="(user$ | async)?.thumbnail"
         alt=""
         class="w-[20px] h-[20px] object-cover"
-        (onimageerror)="onImageError($event)"
+        (error)="onImageError($event)"
+        referrerpolicy="no-referrer"
       />
     </a>
+    } @else {
+    <a [routerLink]="['/auth']" class="font-semibold">LOG IN</a>
+    }
   </li>
 </ul>

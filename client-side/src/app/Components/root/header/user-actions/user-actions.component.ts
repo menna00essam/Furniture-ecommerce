@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { FavoriteService } from '../../../../Services/favorite.service';
 import { CartService } from '../../../../Services/cart.service';
@@ -18,10 +18,10 @@ export class UserActionsComponent implements OnInit {
   @Output() openFavorites = new EventEmitter<void>();
   @Output() openCart = new EventEmitter<void>();
 
-  user!: User;
+  user$!: Observable<User | null>;
   cartLength!: number;
   favoritesLength!: number;
-  isLoggedIn = false;
+  isLoggedIn$!: Observable<boolean>;
 
   constructor(
     private favoriteService: FavoriteService,
@@ -31,6 +31,8 @@ export class UserActionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn$ = this.authService.isLoggedIn$;
+    this.user$ = this.userService.user$;
     this.authService.isLoggedIn$
       .pipe(
         filter((status) => status === true),
@@ -43,9 +45,7 @@ export class UserActionsComponent implements OnInit {
         )
       )
       .subscribe(([user, favorites]) => {
-        this.user = user;
         this.favoritesLength = favorites.length;
-        this.isLoggedIn = true;
       });
 
     this.cartService.cart$.subscribe((cart) => {

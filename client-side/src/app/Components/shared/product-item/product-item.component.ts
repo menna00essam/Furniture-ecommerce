@@ -115,9 +115,6 @@ export class ProductItemComponent implements OnInit, OnDestroy {
     return date > oneMonthAgo.getTime();
   }
 
-  onImageError(event: Event): void {
-    (event.target as HTMLImageElement).src = '/images/mainsofa.png';
-  }
   onAddToComparison(): void {
     if (this.product) {
       console.log('Adding to comparison:', this.product.id);
