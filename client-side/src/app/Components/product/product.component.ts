@@ -14,7 +14,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProductItemComponent } from '../shared/product-item/product-item.component';
 import { FavoriteService } from '../../Services/favorite.service';
 import { CartService } from '../../Services/cart.service';
-import { Observable, BehaviorSubject, map, Subscription } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Product } from '../../Models/product.model';
 import { ProductSkeletonComponent } from './product-skeleton/product-skeleton.component';
@@ -95,58 +95,34 @@ export class ProductComponent implements OnInit {
         this.loadProduct();
       }
     });
-    this.cartService.cart$.subscribe(() => {
-      if (this.selectedColor?.name) {
+
+    this.subs.add(
+      this.cartService.cart$.subscribe(() => {
         this.isInCartState = this.cartService.isColorInCart(
           this.id,
-          this.selectedColor.name
+          this.selectedColor?.name ?? ''
         );
-      }
-      this.cdr.markForCheck();
-    });
+      })
+    );
 
     this.subs.add(
       this.favoriteService.favorites$.subscribe((favorites) => {
-        this.isFavoriteState = favorites.some((fav) => fav.id === this.id);
-        this.cdr.markForCheck();
+        this.isFavoriteState = this.favoriteService.isInFavorites(this.id);
       })
     );
+
     this.loadProduct();
   }
 
   private updateCartStateForCurrentProduct(): void {
-    // if (!this.id || !this.selectedColor) return;
-    // console.log(5);
-
-    // this.isInCartState = this.cartService.isColorInCart(
-    //   this.id,
-    //   this.selectedColor.name
-    // );
-    // console.log(this.isInCartState);
-    // this.cdr.markForCheck();
-
-    this.subs.add(
-      this.cartService.cart$.subscribe((cart) => {
-        this.isInCartState = cart.some(
-          (item) =>
-            item.id === this.id &&
-            this.selectedColor &&
-            item.color == this.selectedColor.name
-        );
-        this.cdr.markForCheck();
-      })
+    this.isInCartState = this.cartService.isColorInCart(
+      this.id,
+      this.selectedColor?.name ?? ''
     );
   }
+
   toggleFavorite() {
-    const product = this.productSubject.getValue();
-    if (product) {
-      this.favoriteService.toggleFavourite(product.id).subscribe({
-        next: () => {
-          this.isFavoriteState = this.favoriteService.isInFavorites(product.id);
-          this.cdr.markForCheck();
-        },
-      });
-    }
+    this.favoriteService.toggleFavourite(this.id).subscribe();
   }
 
   getMappedProduct(product: ProductDetails): Product {
@@ -215,12 +191,10 @@ export class ProductComponent implements OnInit {
           } else {
             console.warn('[ProductComponent] No product data received.');
           }
-          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('[ProductComponent] Error fetching product:', error);
           this.productLoading = false;
-          this.cdr.detectChanges();
         },
       })
     );
@@ -231,7 +205,6 @@ export class ProductComponent implements OnInit {
     this.productService.getProducts(1, 4, this.categories).subscribe({
       next: (response) => {
         this.productsLoading = false;
-        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(
@@ -239,7 +212,6 @@ export class ProductComponent implements OnInit {
           error
         );
         this.productsLoading = false;
-        this.cdr.detectChanges();
       },
     });
   }

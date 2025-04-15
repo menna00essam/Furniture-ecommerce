@@ -25,11 +25,13 @@ export class FavoriteService {
   ) {
     this.authService.isLoggedIn$.subscribe((status) => {
       if (status) this.loadFavorites();
+      else {
+        this.favoritesSubject.next([]);
+      }
     });
   }
 
   /*** AUTHORIZATION HEADER ***/
-
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getToken();
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
