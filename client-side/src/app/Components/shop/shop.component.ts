@@ -1,3 +1,4 @@
+import { ThumbnailComponent } from './../products-components/thumbnail/thumbnail.component';
 import {
   ChangeDetectorRef,
   Component,
@@ -10,7 +11,7 @@ import {
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, animate, style } from '@angular/animations';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 
 // Angular Material & CDK
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -36,7 +37,7 @@ import { Category } from '../../Models/category.model';
 import { ProductItemSkeletonComponent } from '../shared/product-item/product-item-skeleton/product-item-skeleton.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { SearchComponent } from './search/search.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // Enums
 enum SortOptions {
@@ -101,8 +102,8 @@ export class ShopComponent implements OnInit {
   selectedSortValue$ = this.selectedSortValueSubject.asObservable();
 
   // Price Range
-  priceMin$!: Observable<number>;
-  priceMax$!: Observable<number>;
+  priceMin!: number;
+  priceMax!: number;
   minPrice!: number;
   maxPrice!: number;
 
@@ -126,30 +127,53 @@ export class ShopComponent implements OnInit {
     private productService: ProductService,
     private categoriesService: CategoriesService,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     console.log('Initializing ShopComponent');
-    this.products$ = this.productService.products$;
-    const state = history.state;
-    if (state?.category) {
-      this.selectedCategories = [state.category];
-      history.replaceState('category', '');
-    }
-    this.fetchProducts();
+
     this.initializePriceRange();
     this.initializeCategories();
     this.onResize();
+
+    // Wait for prices to be initialized first
+    combineLatest([
+      this.productService.getMinPrice(),
+      this.productService.getMaxPrice(),
+    ]).subscribe(([minPriceFromService, maxPriceFromService]) => {
+      // Now handle query params
+      this.route.queryParams.subscribe((params) => {
+        this.currentPage = +params['page'] || 1;
+        this.productsPerPage = +params['perPage'] || 9;
+        this.selectedCategories = params['categories']
+          ? params['categories'].split(',')
+          : [];
+        this.selectedSortValueSubject.next(params['sort'] || 'default');
+
+        this.minPrice =
+          params['minPrice'] !== undefined
+            ? +params['minPrice']
+            : Math.floor(minPriceFromService);
+        this.maxPrice =
+          params['maxPrice'] !== undefined
+            ? +params['maxPrice']
+            : Math.ceil(maxPriceFromService);
+
+        this.products$ = this.productService.products$;
+        this.fetchProducts();
+      });
+    });
   }
 
   private initializePriceRange() {
-    this.priceMin$ = this.productService.getMinPrice();
-    this.priceMax$ = this.productService.getMaxPrice();
-    combineLatest([this.priceMin$, this.priceMax$]).subscribe(([min, max]) => {
-      console.log(`Price range initialized: ${min} - ${max}`);
-      this.minPrice = Math.floor(min);
-      this.maxPrice = Math.ceil(max);
+    forkJoin([
+      this.productService.getMinPrice(),
+      this.productService.getMaxPrice(),
+    ]).subscribe(([min, max]) => {
+      this.priceMin = min;
+      this.priceMax = max;
     });
   }
 
@@ -181,6 +205,16 @@ export class ShopComponent implements OnInit {
           this.totalProducts = data.totalProducts;
           this.updatePagesCount();
           this.loading = false;
+          this.router.navigate(['/shop'], {
+            queryParams: {
+              page: this.currentPage,
+              perPage: this.productsPerPage,
+              categories: this.selectedCategories.join(','),
+              sort: this.selectedSortValueSubject.value,
+              minPrice: this.minPrice,
+              maxPrice: this.maxPrice,
+            },
+          });
         },
         error: (error) => {
           console.error('Error fetching products:', error);

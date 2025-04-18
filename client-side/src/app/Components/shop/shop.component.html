@@ -1,5 +1,4 @@
-@let products = (products$ | async) ?? []; @let productsMinPrice = (priceMin$ |
-async); @let productsMaxPrice = (priceMax$ | async);
+@let products = (products$ | async) ?? [];
 
 <app-header-banner
   bannerTitle="Shop"
@@ -87,15 +86,16 @@ async); @let productsMaxPrice = (priceMax$ | async);
     </app-filter-option>
 
     <app-filter-option title="Price Range">
-      <mat-slider [min]="productsMinPrice" [max]="productsMaxPrice">
+      <mat-slider [min]="priceMin" [max]="priceMax">
         <input
-          [value]="minPrice"
           matSliderStartThumb
+          [value]="minPrice"
+          max=""
           (change)="onPriceChange($event, true)"
         />
         <input
-          [value]="maxPrice"
           matSliderEndThumb
+          [value]="maxPrice"
           (change)="onPriceChange($event, false)"
         />
       </mat-slider>
