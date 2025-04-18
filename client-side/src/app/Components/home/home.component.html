@@ -36,7 +36,11 @@
         *ngFor="let item of (categories$ | async)?.slice(0, 3)"
         class="bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 cursor-pointer"
         (click)="
-          this.router.navigate(['/shop'], { state: { category: item.id } })
+          this.router.navigate(['/shop'], {
+            queryParams: {
+              categories: item.id
+            }
+          })
         "
       >
         <img [src]="item.image" class="w-80 h-80 object-cover" />
