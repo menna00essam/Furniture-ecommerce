@@ -46,7 +46,7 @@ import {
 })
 export class FilterOptionComponent {
   @Input() title: string = '';
-  isActive: boolean = false;
+  isActive: boolean = true;
 
   toggleActive() {
     this.isActive = !this.isActive;
