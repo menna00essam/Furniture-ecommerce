@@ -33,7 +33,7 @@ import { ButtonComponent } from '../button/button.component';
       >
         {{ currentPage - 1 }}
       </app-button>
-      }
+      } @if(pagesCount!=1){
 
       <app-button
         type="primary-fill"
@@ -42,8 +42,7 @@ import { ButtonComponent } from '../button/button.component';
       >
         {{ currentPage }}
       </app-button>
-
-      @if(pagesCount!=1&&pagesCount!=currentPage){
+      } @if(pagesCount!=1&&pagesCount!=currentPage){
       <app-button
         type="secondary-fill"
         btnWidth="60px"
