@@ -97,7 +97,7 @@ export class ShopComponent implements OnInit {
   products$!: Observable<Product[]>;
   selectedCategories: string[] = [];
   private selectedSortValueSubject = new BehaviorSubject<SortOptions>(
-    SortOptions.Default
+    SortOptions.Default,
   );
   selectedSortValue$ = this.selectedSortValueSubject.asObservable();
 
@@ -128,7 +128,7 @@ export class ShopComponent implements OnInit {
     private categoriesService: CategoriesService,
     private renderer: Renderer2,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -197,7 +197,7 @@ export class ShopComponent implements OnInit {
         this.selectedCategories,
         this.selectedSortValueSubject.value,
         this.minPrice,
-        this.maxPrice
+        this.maxPrice,
       )
       .subscribe({
         next: (data) => {
@@ -234,7 +234,7 @@ export class ShopComponent implements OnInit {
       ? (this.minPrice = Math.floor(Math.min(value, this.maxPrice - 1)))
       : (this.maxPrice = Math.ceil(Math.max(value, this.minPrice + 1)));
     console.log(
-      `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`
+      `Price updated: Min - ${this.minPrice}, Max - ${this.maxPrice}`,
     );
     this.currentPage = 1;
     this.fetchProducts();
@@ -265,7 +265,7 @@ export class ShopComponent implements OnInit {
     const start = (this.currentPage - 1) * this.productsPerPage + 1;
     const end = Math.min(
       this.currentPage * this.productsPerPage,
-      this.totalProducts
+      this.totalProducts,
     );
     return `Showing ${start}-${end} of ${this.totalProducts} results`;
   }
@@ -294,7 +294,7 @@ export class ShopComponent implements OnInit {
   onClickOutside(event: Event): void {
     if (this.showSortMenu && this.sortMenuRef) {
       const clickedInsideMenu = this.sortMenuRef.nativeElement.contains(
-        event.target
+        event.target,
       );
       if (!clickedInsideMenu) {
         this.showSortMenu = false;
